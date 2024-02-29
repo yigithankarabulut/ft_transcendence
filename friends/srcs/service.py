@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from .repository import IFriendsRepository
-
+from django.core.paginator import Paginator
+from .serializers import FriendsSerializer
 
 class BaseResponse:
     def __init__(self, err: bool, msg: str, data, pagination=None):
@@ -36,7 +37,11 @@ class IFriendsService(ABC):
         pass
 
     @abstractmethod
-    def get_friends(self, user_id: int) -> tuple[dict[str, str], bool]:
+    def get_requests(self, user_id: int) -> tuple[dict[str, str], bool]:
+        pass
+
+    @abstractmethod
+    def get_friends(self, user_id: int, page: int, limit: int) -> tuple[dict[str, str], bool]:
         pass
 
 
@@ -89,7 +94,39 @@ class FriendsService(IFriendsService):
         return BaseResponse(False, "Friendship accepted successfully", None).res()
 
     def reject_request(self, sender_id: int, receiver_id: int) -> tuple[dict[str, str], bool]:
-        pass
+        fr = self.repository.get_double(sender_id, receiver_id)
+        if not fr:
+            return BaseResponse(True, "Friendship not found", None).res()
+        if fr.state != 0:
+            return BaseResponse(True, "Friendship not requested", None).res()
+        if not self.repository.reject(sender_id, receiver_id):
+            return BaseResponse(True, "Failed to reject friendship", None).res()
+        return BaseResponse(False, "Friendship rejected successfully", None).res()
+    
+    def get_requests(self, user_id: int) -> tuple[dict[str, str], bool]:
+        requests = self.repository.get_all_request(user_id)
+        if requests is None:
+            return BaseResponse(True, "Failed to get friend requests", None).res()
+        return BaseResponse(False, "Friend requests retrieved successfully", requests).res()
 
-    def get_friends(self, user_id: int) -> tuple[dict[str, str], bool]:
-        pass
+    def get_friends(self, user_id: int, page: int, limit: int) -> tuple[dict[str, str], bool]:
+        friends = self.repository.get_all_friends(user_id)
+        if friends is None:
+            return BaseResponse(True, "Failed to get friends", None).res()
+        paginator = Paginator(friends, limit)
+        try:
+            friends = paginator.page(page)
+        except Exception as e:
+            if e is Exception.EmptyPage:
+                return BaseResponse(True, "No friends found in this page", None).res()
+            return BaseResponse(True, "Failed to get friends", None).res()
+        if not friends:
+            return BaseResponse(True, "No friends found", None).res()
+        res = FriendsSerializer.response(friends)
+        paginate_data = {
+            "current_page": page,
+            "page_size": limit,
+            "total_pages": paginator.num_pages,
+            "total_records": paginator.count
+        }
+        return BaseResponse(False, "Friends found", res, paginate_data).res()

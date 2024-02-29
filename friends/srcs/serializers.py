@@ -19,9 +19,8 @@ class FriendsSerializer(serializers.Serializer):
     @staticmethod
     def single_representation(instance):
         return {
-            "id": instance.id,
-            "username": instance.username,
+            "id": instance['receiver_id'],
         }
-
+    @classmethod
     def response(self, instance):
         return [self.single_representation(i) for i in instance]

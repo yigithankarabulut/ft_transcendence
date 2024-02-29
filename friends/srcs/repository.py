@@ -59,7 +59,11 @@ class FriendsRepository(IFriendsRepository):
         return False
 
     def reject(self, sender_id: int, receiver_id: int):
-        pass
+        fr = Friends.objects.filter(sender_id=sender_id, receiver_id=receiver_id, deleted_at=None).first()
+        if fr is None:
+            return False
+        fr.soft_delete()
+        return True
 
     def get(self, sender_id: int, receiver_id: int):
         fr = Friends.objects.filter(sender_id=sender_id, receiver_id=receiver_id).first()
@@ -68,10 +72,14 @@ class FriendsRepository(IFriendsRepository):
         return True
         
     def get_all_friends(self, user_id: int):
-        pass
+        senders = Friends.objects.filter(sender_id=user_id, state=1, deleted_at=None).values('receiver_id')
+        receivers = Friends.objects.filter(receiver_id=user_id, state=1, deleted_at=None).values('sender_id')
+
+        return senders.union(receivers)
+        
 
     def get_all_request(self, user_id: int):
-        pass
+        return Friends.objects.filter(receiver_id=user_id, state=0, deleted_at=None).all().values('sender_id')
 
     def set_state(self, sender_id: int, receiver_id: int, state: int):
         if Friends.objects.filter(sender_id=sender_id, receiver_id=receiver_id).update(state=state):
