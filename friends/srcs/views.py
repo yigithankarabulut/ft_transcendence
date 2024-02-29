@@ -1,12 +1,13 @@
-from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
 from .serializers import BaseSerializer
 from .service import FriendsService
 from .repository import FriendsRepository
 
+
 class FriendsHandler(viewsets.ViewSet):
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.service = FriendsService(FriendsRepository())
 
     def add(self, request) -> Response:

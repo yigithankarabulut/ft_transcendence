@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from .repository import IFriendsRepository
 
+
 class BaseResponse:
     def __init__(self, err: bool, msg: str, data, pagination=None):
         self.err = err
@@ -19,29 +20,31 @@ class BaseResponse:
 
 class IFriendsService(ABC):
     @abstractmethod
-    def add_friend(self, sender_id: int, receiver_id: int) -> BaseResponse:
+    def add_friend(self, sender_id: int, receiver_id: int) -> tuple[dict[str, str], bool]:
         pass
 
     @abstractmethod
-    def delete_friend(self, sender_id: int, receiver_id: int):
+    def delete_friend(self, sender_id: int, receiver_id: int) -> tuple[dict[str, str], bool]:
         pass
 
     @abstractmethod
-    def accept_request(self, sender_id: int, receiver_id: int):
+    def accept_request(self, sender_id: int, receiver_id: int) -> tuple[dict[str, str], bool]:
         pass
 
     @abstractmethod
-    def reject_request(self, sender_id: int, receiver_id: int):
+    def reject_request(self, sender_id: int, receiver_id: int) -> tuple[dict[str, str], bool]:
         pass
 
     @abstractmethod
-    def get_friends(self, user_id: int):
+    def get_friends(self, user_id: int) -> tuple[dict[str, str], bool]:
         pass
+
 
 class FriendsService(IFriendsService):
     def __init__(self, repository: IFriendsRepository):
         self.repository = repository
-    def add_friend(self, sender_id: int, receiver_id: int) -> BaseResponse:
+
+    def add_friend(self, sender_id: int, receiver_id: int) -> tuple[dict[str, str], bool]:
         if sender_id == receiver_id:
             return BaseResponse(True, "Cannot add yourself as a friend", None).res()
 
@@ -64,8 +67,8 @@ class FriendsService(IFriendsService):
             return BaseResponse(True, "Failed to send friend request", None).res()
 
         return BaseResponse(False, "Friend request sent successfully", None).res()
-    
-    def delete_friend(self, sender_id: int, receiver_id: int):
+
+    def delete_friend(self, sender_id: int, receiver_id: int) -> tuple[dict[str, str], bool]:
         fr = self.repository.get_double(sender_id, receiver_id)
         if not fr:
             return BaseResponse(True, "Friendship not found", None).res()
@@ -74,9 +77,8 @@ class FriendsService(IFriendsService):
         if not self.repository.delete(sender_id, receiver_id):
             return BaseResponse(True, "Failed to delete friendship", None).res()
         return BaseResponse(False, "Friendship deleted successfully", None).res()
-        
 
-    def accept_request(self, sender_id: int, receiver_id: int):
+    def accept_request(self, sender_id: int, receiver_id: int) -> tuple[dict[str, str], bool]:
         fr = self.repository.get_double(sender_id, receiver_id)
         if not fr:
             return BaseResponse(True, "Friendship not found", None).res()
@@ -85,10 +87,9 @@ class FriendsService(IFriendsService):
         if not self.repository.accept(sender_id, receiver_id):
             return BaseResponse(True, "Failed to accept friendship", None).res()
         return BaseResponse(False, "Friendship accepted successfully", None).res()
-        
 
-    def reject_request(self, sender_id: int, receiver_id: int):
+    def reject_request(self, sender_id: int, receiver_id: int) -> tuple[dict[str, str], bool]:
         pass
 
-    def get_friends(self, user_id: int):
+    def get_friends(self, user_id: int) -> tuple[dict[str, str], bool]:
         pass
