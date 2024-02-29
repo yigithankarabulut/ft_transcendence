@@ -2,9 +2,10 @@ from abc import ABC, abstractmethod
 from .repository import IUserManagementRepository
 from .models import UserManagement
 from .serializers import ManagementSerializer
+from usermanagement.settings import SERVICE_ROUTES
+import requests
 from django.core.paginator import Paginator, EmptyPage
 from hashlib import sha256
-import jwt
 from datetime import datetime, timedelta
 from django.conf import settings
 
@@ -70,7 +71,7 @@ class UserManagementService(IUserManagementService):
             return BaseResponse(True, "User not found", None).res()
         res = ManagementSerializer().response([user])
         return BaseResponse(False, "User found", res).res()
-    
+
     def update(self, user: UserManagement) -> BaseResponse: # TODO: verifying email and phone 
         uname = self.repository.get_by_username(user.username)
         uemail = self.repository.get_by_email(user.email)
@@ -142,14 +143,12 @@ class UserManagementService(IUserManagementService):
             return BaseResponse(True, "User not found", None).res()
         if user.password != sha256(req.password.encode()).hexdigest():
             return BaseResponse(True, "Invalid password", None).res()
-        token = self.generate_token(user.id)
-        res = {
-            "id": user.id,
-            "username": user.username,
-            "phone": user.phone,
-            "token": token
-        }
-        return BaseResponse(False, "Login successful", res).res()
+        # request to auth service add query params user_id and get token
+        response = requests.get(f"{SERVICE_ROUTES['/auth']}/token/generate", params={"user_id": user.id})
+        if response.status_code != 200:
+            return BaseResponse(True, "Token generation failed", None).res()
+        token = response.json().get('token')
+        return BaseResponse(False, "Login successful", {"token": token}).res()
     
     def forgot_password(self, req: UserManagement) -> BaseResponse:
         # TODO: send email with a link to reset password
@@ -167,13 +166,3 @@ class UserManagementService(IUserManagementService):
         if not res:
             return BaseResponse(True, "Password change failed", None).res()
         return BaseResponse(False, "Password changed successfully", None).res()
-
-    def generate_token(self, user_id: int):
-        payload = {
-            'user_id': user_id,
-            'exp': datetime.utcnow() + timedelta(days=1),
-            'iat': datetime.utcnow()
-        }
-        token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
-        return token
-
