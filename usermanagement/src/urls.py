@@ -8,7 +8,7 @@ urlpatterns = [
     path('list', UserManagementHandler.as_view({'get': 'list_user'})),
 ]
 
-auth_urlpatterns = [
+login_urlpatterns = [
     path('register', AuthHandler.as_view({'post': 'register'})),
     path('login', AuthHandler.as_view({'post': 'login'})),
     path('pwd/forgot', AuthHandler.as_view({'post': 'forgot_password'})),
