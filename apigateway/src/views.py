@@ -9,7 +9,7 @@ class APIGatewayView(APIView):
     def operations(self, request, path):
         headers = dict(request.headers)
         if not (settings.EXCLUDED_ROUTES and request.path in settings.EXCLUDED_ROUTES):
-            headers['user_id'] = request.user_id
+            headers['user_id'] = str(request.user_id)
         return self.pass_request_to_destination_service(request, path, headers)
 
     def pass_request_to_destination_service(self, request, path, headers):
@@ -22,8 +22,8 @@ class APIGatewayView(APIView):
         if params:
             full_url += f"?{params.urlencode()}"
         method = request.method.lower()
-        
-        response = getattr(requests, method)(full_url, data=request.data, headers=headers)
+
+        response = requests.request(method, full_url, headers=headers, json=request.data)
         return Response(response.json(), status=response.status_code)
 
     def get_service_url(self, path):
