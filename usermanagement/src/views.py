@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from .serializers import CreateManagementSerializer, GetUserByIdSerializer, PaginationSerializer, RegisterSerializer, LoginSerializer, ChangePasswordSerializer
+from .serializers import CreateManagementSerializer, GetUserByIdSerializer, PaginationSerializer, RegisterSerializer, LoginSerializer, ChangePasswordSerializer, ForgotPasswordSerializer
 # from . import serializers
 from .repository import UserManagementRepository
 from .service import UserManagementService
@@ -82,5 +82,10 @@ class AuthHandler(viewsets.ViewSet):
         return Response(res, status=200)
 
     def forgot_password(self, request):
-        # TODO: Implement this method
-        pass
+        req = ForgotPasswordSerializer(data=request.data)
+        if not req.is_valid():
+            return Response(req.errors, status=400)
+        res, err = self.service.forgot_password(req.validated_data['username'], req.validated_data['email'])
+        if err:
+            return Response(res, status=400)
+        return Response(res, status=200)

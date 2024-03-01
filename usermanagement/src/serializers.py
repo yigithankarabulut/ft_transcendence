@@ -62,3 +62,7 @@ class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True, min_length=8, max_length=20)
     new_password = serializers.CharField(required=True, min_length=8, max_length=20)
     
+
+class ForgotPasswordSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True, min_length=3, max_length=20)
+    email = serializers.EmailField(required=True)
