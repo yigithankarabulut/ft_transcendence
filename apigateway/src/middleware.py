@@ -1,11 +1,11 @@
 import requests
 from django.http import JsonResponse
-from apigateway.apigateway.settings import SERVICE_ROUTES
+from django.conf import settings
 
 class JWTAuthenticationMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
-        self.paths_to_exclude = ['/login', '/register', '/forget_password']
+        self.paths_to_exclude = settings.EXCLUDED_ROUTES
 
     def __call__(self, request):
         response = self.get_response(request)
@@ -19,7 +19,7 @@ class JWTAuthenticationMiddleware:
         if not token:
             return JsonResponse({'error': 'Missing token'}, status=401)
 
-        response = requests.post(f"{SERVICE_ROUTES['/auth']}/token/verify", headers={'Authorization': token})
+        response = requests.post(f"{settings.SERVICE_ROUTES['/auth']}/auth/token/validate", headers={'Authorization': token})
         if response.status_code != 200:
             return JsonResponse({'error': 'Invalid token'}, status=401)
 
