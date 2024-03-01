@@ -6,9 +6,7 @@ from usermanagement.settings import SERVICE_ROUTES
 import requests
 from django.core.paginator import Paginator, EmptyPage
 from hashlib import sha256
-from datetime import datetime, timedelta
-from django.conf import settings
-
+from .publisher import PublisherBase
 
 class BaseResponse:
     def __init__(self, err: bool, msg: str, data, pagination=None):
@@ -47,15 +45,19 @@ class IUserManagementService(ABC):
     def delete(self, id: int)-> BaseResponse:
         pass
 
+    @abstractmethod
     def register(self, user: UserManagement) -> BaseResponse:
         pass
 
+    @abstractmethod
     def login(self, req: UserManagement) -> BaseResponse:
         pass
 
-    def forgot_password(self, req: UserManagement) -> BaseResponse:
+    @abstractmethod
+    def forgot_password(self, username, email) -> BaseResponse:
         pass
 
+    @abstractmethod
     def change_password(self, req: UserManagement) -> BaseResponse:
         pass
 
@@ -150,9 +152,25 @@ class UserManagementService(IUserManagementService):
         token = response.json().get('token')
         return BaseResponse(False, "Login successful", {"token": token}).res()
 
-    def forgot_password(self, req: UserManagement) -> BaseResponse:
-        # TODO: send email with a link to reset password
-        pass
+    def forgot_password(self, username, email) -> BaseResponse:
+        user = self.repository.get_by_username(username)
+        if not user:
+            return BaseResponse(True, "User not found", None).res()
+        if user.email != email:
+            return BaseResponse(True, "Invalid email", None).res()
+        # publish message to mailservice queue
+        message = {
+            'subject': 'Forgot Password Request Email',
+            'body': {'username': username, 'email': email},
+            'type': 'forgot_password'
+        }
+        publisher = PublisherBase('mailservice')
+        res = publisher.publish_message(message)
+        if not res:
+            return BaseResponse(True, "Password sending failed", None).res()
+        publisher.close_connection()
+        return BaseResponse(False, "Password sent to your email", None).res()
+
     
     def change_password(self, req) -> BaseResponse:
         user = self.repository.get_by_username(req.get("username"))
