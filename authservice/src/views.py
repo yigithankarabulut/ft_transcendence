@@ -27,6 +27,7 @@ class AuthHandler(viewsets.ViewSet):
         if not token:
             return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
         try:
+            token = token.split(' ')[1]
             decoded_token = jwt.decode(token, self.SECRET_KEY, algorithms=['HS256'])
             return Response({'user_id': decoded_token['user_id']}, status=status.HTTP_200_OK)
         except jwt.ExpiredSignatureError:
@@ -39,8 +40,14 @@ class AuthHandler(viewsets.ViewSet):
         if not token:
             return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
         try:
+            token = token.split(' ')[1]
             decoded_token = jwt.decode(token, self.SECRET_KEY, algorithms=['HS256'])
-            new_token = self.generate_token(decoded_token['user_id'])
+            payload = {
+                'user_id': decoded_token['user_id'],
+                'exp': datetime.utcnow() + timedelta(days=1),
+                'iat': datetime.utcnow()
+            }
+            new_token = jwt.encode(payload, self.SECRET_KEY, algorithm='HS256')
             return Response({'token': new_token}, status=status.HTTP_200_OK)
         except jwt.ExpiredSignatureError:
             return Response({'error': 'Token has expired'}, status=status.HTTP_401_UNAUTHORIZED)

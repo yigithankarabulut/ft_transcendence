@@ -1,6 +1,7 @@
-from django.urls import path
-from src.views import APIGatewayViewSet
+from django.urls import re_path
+
+from src.views import APIGatewayView
 
 urlpatterns = [
-    path('/', APIGatewayViewSet.as_view({'get': 'dispatch', 'post': 'dispatch', 'put': 'dispatch', 'delete': 'dispatch'})),
+    re_path(r'^(?P<path>.*)$', APIGatewayView.as_view()),
 ]

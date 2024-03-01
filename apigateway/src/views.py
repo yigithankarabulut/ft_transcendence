@@ -1,31 +1,48 @@
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework import viewsets
 import requests
-from apigateway.apigateway.settings import SERVICE_ROUTES
+from django.conf import settings
 
-class APIGatewayViewSet(viewsets.ViewSet):
-    def dispatch(self, request, *args, **kwargs):
-        headers = {'user_id': request.user_id}
-        return self.pass_request_to_destination_service(request, headers)
+class APIGatewayView(APIView):
 
-    def pass_request_to_destination_service(self, request, headers):
+    def operations(self, request, path):
+        headers = dict(request.headers)
+        if not (settings.EXCLUDED_ROUTES and request.path in settings.EXCLUDED_ROUTES):
+            headers['user_id'] = request.user_id
+        return self.pass_request_to_destination_service(request, path, headers)
+
+    def pass_request_to_destination_service(self, request, path, headers):
         base_url = self.get_service_url(request.path)
         if not base_url:
             return Response({'error': 'Invalid path'}, status=status.HTTP_404_NOT_FOUND)
-
-        destination_service_url = f"{base_url}{request.path}"
+        
+        full_url = f"{base_url}/{path}"
+        params = request.query_params
+        if params:
+            full_url += f"?{params.urlencode()}"
         method = request.method.lower()
-        data = request.data
-
-        response = getattr(requests, method)(destination_service_url, data=data, headers=headers)
-        if response.status_code != 200:
-            return Response({'error': 'Destination service error'}, status=response.status_code)
-
+        
+        response = getattr(requests, method)(full_url, data=request.data, headers=headers)
         return Response(response.json(), status=response.status_code)
 
     def get_service_url(self, path):
-        for route, url in SERVICE_ROUTES.items():
+        for route, url in settings.SERVICE_ROUTES.items():
             if path.startswith(route):
                 return url
         return None
+
+    def get(self, request, path):
+        return self.operations(request, path)
+    
+    def post(self, request, path):
+        return self.operations(request, path)
+    
+    def put(self, request, path):
+        return self.operations(request, path)
+    
+    def patch(self, request, path):
+        return self.operations(request, path)
+    
+    def delete(self, request, path):
+        return self.operations(request, path)

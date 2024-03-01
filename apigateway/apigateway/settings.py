@@ -47,8 +47,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'apigateway.middleware.JWTAuthenticationMiddleware',
+    'src.middleware.JWTAuthenticationMiddleware',
 ]
+
+EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/forget_password']
 
 SERVICE_ROUTES = {
     '/user': 'http://localhost:8001',
