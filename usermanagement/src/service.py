@@ -144,12 +144,12 @@ class UserManagementService(IUserManagementService):
         if user.password != sha256(req.password.encode()).hexdigest():
             return BaseResponse(True, "Invalid password", None).res()
         # request to auth service add query params user_id and get token
-        response = requests.get(f"{SERVICE_ROUTES['/auth']}/token/generate", params={"user_id": user.id})
+        response = requests.post(f"{SERVICE_ROUTES['/auth']}/auth/token", params={"user_id": user.id})
         if response.status_code != 200:
             return BaseResponse(True, "Token generation failed", None).res()
         token = response.json().get('token')
         return BaseResponse(False, "Login successful", {"token": token}).res()
-    
+
     def forgot_password(self, req: UserManagement) -> BaseResponse:
         # TODO: send email with a link to reset password
         pass
