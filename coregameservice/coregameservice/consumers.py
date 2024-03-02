@@ -27,33 +27,36 @@ class Pong(AsyncWebsocketConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.room_id = "test"
+        self.room_id = None
 
     async def connect(self):
         await self.accept()
-        await self.channel_layer.group_add(
-            self.room_id,
-            self.channel_name
-        )
-        print('Connected to: ', self.room_id)
-        if self.room_id not in rooms:
-            rooms[self.room_id] = {
-                'padd_left': {
-                    'player': self.channel_name,
-                    'info': padd_left.copy()
-                }
-            }
-            print(rooms[self.room_id])
-        elif len(rooms[self.room_id]) == 1:
-            rooms[self.room_id]['padd_right'] = {
-                'player': self.channel_name,
-                'info': padd_right.copy()
-            }
-            print('Starting game for: ', self.room_id)
-            await self.start_game(self.room_id)
-        else:
-            print('Room is full')
+        query_params = self.scope['query_string'].decode('utf-8')
+        tmp_room_id = query_params.split('=')[1]
+        if tmp_room_id in rooms and 'padd_left' in rooms[tmp_room_id] and 'padd_right' in rooms[tmp_room_id]:
             await self.close()
+        else:
+            self.room_id = tmp_room_id
+            await self.channel_layer.group_add(
+                self.room_id,
+                self.channel_name
+            )
+            print('Connected to: ', self.room_id)
+            if self.room_id not in rooms:
+                rooms[self.room_id] = {
+                    'padd_left': {
+                        'player': self.channel_name,
+                        'info': padd_left.copy()
+                    }
+                }
+                print(rooms[self.room_id])
+            elif len(rooms[self.room_id]) == 1:
+                rooms[self.room_id]['padd_right'] = {
+                    'player': self.channel_name,
+                    'info': padd_right.copy()
+                }
+                print('Starting game for: ', self.room_id)
+                await self.start_game(self.room_id)
 
     def init_game(self, room_id):
         rooms[room_id]['ball'] = {
@@ -68,6 +71,14 @@ class Pong(AsyncWebsocketConsumer):
         rooms[room_id]['padd_right']['info']['score'] = 0
 
     async def pong_message(self, event):
+        if event['message'] == 'game_over':
+            winner = "Left"
+            if rooms[self.room_id]['padd_left']['info']['score'] == 5:
+                winner = "Right"
+            await self.send(text_data=json.dumps({
+                'message': 'game_over',
+                'winner': winner    
+                }))
         await self.send(text_data=json.dumps({
             'message': event['message'],
             'padd_left': rooms[self.room_id]['padd_left']['info'],
@@ -140,6 +151,8 @@ class Pong(AsyncWebsocketConsumer):
         else:
             rooms[room_id]['padd_left']['info']['score'] += 1
             rooms[room_id]['ball']['speedX'] = -10
+        if rooms[room_id]['padd_left']['info']['score'] == 5 or rooms[room_id]['padd_right']['info']['score'] == 5:
+            return
         rooms[room_id]['ball']['positionX'] = canvas_width / 2
         rooms[room_id]['ball']['positionY'] = canvas_height / 2
         if rooms[room_id]['ball']['dir']:
@@ -152,6 +165,8 @@ class Pong(AsyncWebsocketConsumer):
         rooms[room_id]['padd_left']['info']['positionY'] = canvas_height / 2 - 100
         rooms[room_id]['padd_right']['info']['positionX'] = canvas_width - 100
         rooms[room_id]['padd_right']['info']['positionY'] = canvas_height / 2 - 100
+        
+
 
     def BallCollision(self, room_id):
         if ((rooms[room_id]['ball']['positionX'] +
@@ -179,10 +194,12 @@ class Pong(AsyncWebsocketConsumer):
             return rooms[room_id]['padd_right']['info']['positionY'] + size_y / 2
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(
-            self.room_id,
-            self.channel_name,
-        )
+        if self.room_id in rooms:
+            await self.channel_layer.group_discard(
+                self.room_id,
+                self.channel_name,
+            )
+            del rooms[self.room_id]
 
     async def receive(self, text_data=None, bytes_data=None):
         room_id = self.room_id
@@ -223,4 +240,13 @@ class Pong(AsyncWebsocketConsumer):
                 rooms[room_id]['ball']['speedY'] += 0.01
             else:
                 rooms[room_id]['ball']['speedY'] -= 0.01
+            if rooms[room_id]['padd_left']['info']['score'] == 5 or rooms[room_id]['padd_right']['info']['score'] == 5:
+                await self.channel_layer.group_send(
+                    room_id,
+                    {
+                        'type': 'pong_message',
+                        'message': 'game_over',
+                    }
+                )
+                break
             await asyncio.sleep(0.025)

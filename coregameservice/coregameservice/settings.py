@@ -74,7 +74,7 @@ ASGI_APPLICATION = "coregameservice.asgi.application"
 
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',  # Örnek bir kanal katmanı arka ucu
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
 }
 
