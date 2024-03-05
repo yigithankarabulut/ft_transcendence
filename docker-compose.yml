@@ -1,13 +1,22 @@
 version: '3.8'
 
 services:
-  nginx:
-    image: nginx:latest
-    container_name: nginx
+  game:
+    build: ./coregameservice/
     restart: always
     ports:
-      - "80:80"
-      - "443:443"
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    
+  nginx:
+    image: nginx:latest
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./index.html:/etc/nginx/html/login/login.html;:ro
+      - ./:/usr/share/nginx/html:ro
+    ports:
+      - "80:80"
+    restart: always
+    depends_on:
+      - game
+
