@@ -7,6 +7,8 @@ from django.conf import settings
 class APIGatewayView(APIView):
 
     def operations(self, request, path):
+        print(request.headers)
+        print("selam")
         headers = dict(request.headers)
         if not (settings.EXCLUDED_ROUTES and request.path in settings.EXCLUDED_ROUTES):
             headers['user_id'] = str(request.user_id)
@@ -46,3 +48,6 @@ class APIGatewayView(APIView):
     
     def delete(self, request, path):
         return self.operations(request, path)
+
+    def options(self, request, path):
+        return Response(status=status.HTTP_200_OK)

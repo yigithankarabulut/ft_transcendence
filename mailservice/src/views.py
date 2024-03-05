@@ -22,4 +22,3 @@ class ProcessPasswordResetAPIView(APIView):
         #    def send_email(self, sender_email, receiver_email, subject, body):
         mail_service.send_email('[email protected]', data['email'], 'Password Reset', 'Please click the link to reset your password')
         return Response({'message': 'Password reset email sent successfully'}, status=status.HTTP_200_OK)
-    
