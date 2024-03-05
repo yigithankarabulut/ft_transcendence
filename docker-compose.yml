@@ -4,8 +4,6 @@ services:
   game:
     build: ./coregameservice/
     restart: always
-    ports:
-      - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
     
@@ -19,4 +17,3 @@ services:
     restart: always
     depends_on:
       - game
-
