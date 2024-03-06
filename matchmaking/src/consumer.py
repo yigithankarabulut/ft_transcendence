@@ -1,6 +1,6 @@
 import pika
 import json
-from .models import Player, Match
+from .service import QuickPlayService, MatchService
 
 
 class RabbitMQConsumer:
@@ -20,20 +20,16 @@ class RabbitMQConsumer:
         payload = json.loads(body)
         player_id = payload['player_id']
 
-        try:
-            player = Player.objects.get(id=player_id)
-        except Player.DoesNotExist:
-            print("Player not found")
-            return
+        player = QuickPlayService.get_by_id(player_id)
 
         if not self._current_match:
-            self._current_match = Match.objects.create()
+            self._current_match = MatchService.create(player)
 
-        self._current_match.match_players.add(player)
-        self._current_match.save()
+        MatchService.add_player(self._current_match, player)
+        MatchService.save_state(self._current_match)
 
         # İki oyuncu geldikten sonra mevcut maçı sıfırla
-        if self._current_match.match_players.count() == 2:
+        if len(self._current_match.players) == 2:
             self._current_match = None
 
         # Mesajı işleme doğrulama

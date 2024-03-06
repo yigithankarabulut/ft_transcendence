@@ -5,6 +5,7 @@ from .serializers import JoinPlayerSerializer
 from .service import QuickPlayService
 from .repository import QuickPlayRepository
 
+
 class QuickPlayHandlers(viewsets.ViewSet):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
