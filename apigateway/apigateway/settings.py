@@ -50,12 +50,12 @@ MIDDLEWARE = [
     'src.middleware.JWTAuthenticationMiddleware',
 ]
 
-EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/forget_password']
+EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/pwd/forgot']
 
 SERVICE_ROUTES = {
-    '/user': 'http://localhost:8001',
+    '/auth': 'http://localhost:8001',
     '/friend': 'http://localhost:8002',
-    '/auth': 'http://localhost:8003',
+    '/user': 'http://localhost:8004',
 }
 
 ROOT_URLCONF = 'apigateway.urls'

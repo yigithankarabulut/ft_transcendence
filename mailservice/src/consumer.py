@@ -24,7 +24,6 @@ class RabbitMQConsumer:
         mail_service.send_email('yigithannkarabulutt@gmail.com', payload['body']['email'], payload['subject'], f"Please click the link to reset your password. Username: {payload['body']['username']}")
         print(" [x] Done")
         ch.basic_ack(delivery_tag=method.delivery_tag)  # Mesajın işlendiğini doğrulama
-        
 
     def start_consuming(self):
         print("Waiting for messages...")

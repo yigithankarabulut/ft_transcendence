@@ -24,4 +24,3 @@ class PublisherBase:
         # Bağlantıyı kapatma
         self.connection.close()
         print("Connection closed")
-        
