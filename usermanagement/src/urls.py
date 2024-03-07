@@ -11,6 +11,8 @@ urlpatterns = [
     path('login', AuthHandler.as_view({'post': 'login'})),
     path('pwd/forgot', AuthHandler.as_view({'post': 'forgot_password'})),
     path('pwd/change', AuthHandler.as_view({'post': 'change_password'})),
+
+    path('oauth/create', AuthHandler.as_view({'post': 'oauth_user_create'})),
 ]
 
 # login_urlpatterns = [

@@ -21,7 +21,6 @@ class QuickPlayHandlers(viewsets.ViewSet):
             return Response(res, status=status.HTTP_400_BAD_REQUEST)
         return Response(res, status=status.HTTP_200_OK)
         
-        
     def leave(self, request):
         return Response({'status': 'ok'})
 

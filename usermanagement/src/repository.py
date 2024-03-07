@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from .models import UserManagement
+from .models import UserManagement, OAuthUser
 
 class IUserManagementRepository(ABC):
     @abstractmethod
@@ -74,6 +74,65 @@ class UserManagementRepository(IUserManagementRepository):
     def delete(self, id: int) -> bool:
         try:
             model = UserManagement.objects.filter(id=id).first()
+            model.delete()
+            return True
+        except:
+            return False
+
+
+class IOAuthUserRepository(ABC):
+    @abstractmethod
+    def oauth_user_create(self, req: OAuthUser) -> OAuthUser:
+        pass
+
+    @abstractmethod
+    def get_oauth_user_with_provider_and_provider_user_id(self, provider: str, provider_user_id: str) -> OAuthUser:
+        pass
+
+    @abstractmethod
+    def get_oauth_user_by_id(self, user_id: int) -> OAuthUser:
+        pass
+
+    @abstractmethod
+    def update_oauth_user(self, oauth_user: OAuthUser) -> OAuthUser:
+        pass
+
+    @abstractmethod
+    def delete_oauth_user(self, id: int) -> bool:
+        pass
+
+class OAuthUserRepository(IOAuthUserRepository):
+    def oauth_user_create(self, req: OAuthUser) -> OAuthUser:
+        try:
+            req.save()
+            return req
+        except:
+            return None
+
+    def get_oauth_user_with_provider_and_provider_user_id(self, provider: str, provider_user_id: str) -> OAuthUser:
+        try:
+            model = OAuthUser.objects.filter(provider=provider, provider_user_id=provider_user_id).first()
+            return model
+        except:
+            return None
+
+    def get_oauth_user_by_id(self, user_id: int) -> OAuthUser:
+        try:
+            model = OAuthUser.objects.filter(id=user_id).first()
+            return model
+        except:
+            return None
+
+    def update_oauth_user(self, oauth_user: OAuthUser) -> OAuthUser:
+        try:
+            oauth_user.save()
+            return oauth_user
+        except:
+            return None
+
+    def delete_oauth_user(self, id: int) -> bool:
+        try:
+            model = OAuthUser.objects.filter(id=id).first()
             model.delete()
             return True
         except:

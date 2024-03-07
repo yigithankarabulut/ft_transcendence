@@ -27,8 +27,24 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+INTRA_REDIRECT_URL = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-3b2d21a8dedc530deaf675b608df969d808a866822cc57edba8db2a5f12213c7&redirect_uri=http%3A%2F%2Flocalhost%3A8001%2Fauth%2Fintra%2Fcallback&response_type=code'
+INTRA_UID = 'u-s4t2ud-3b2d21a8dedc530deaf675b608df969d808a866822cc57edba8db2a5f12213c7'
+INTRA_SECRET = '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'
+INTRA_API_URL = "https://api.intra.42.fr"
+INTRA_CALLBACK_URL = "http://localhost:8001/auth/intra/callback"
+
+USER_MANAGEMENT_URL = "http://localhost:8004"
 
 # Application definition
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ],
+}
 
 INSTALLED_APPS = [
     'django.contrib.admin',

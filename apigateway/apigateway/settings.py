@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'src.middleware.JWTAuthenticationMiddleware',
 ]
 
-EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/pwd/forgot']
+EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/pwd/forgot', '/auth/intra', '/auth/intra/callback']
 
 SERVICE_ROUTES = {
     '/auth': 'http://localhost:8001',

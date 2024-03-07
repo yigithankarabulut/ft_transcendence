@@ -52,8 +52,8 @@ MIDDLEWARE = [
 ]
 
 SERVICE_ROUTES = {
+    '/auth': 'http://localhost:8001',
     '/friend': 'http://localhost:8002',
-    '/auth': 'http://localhost:8003',
 }
 
 REST_FRAMEWORK = {

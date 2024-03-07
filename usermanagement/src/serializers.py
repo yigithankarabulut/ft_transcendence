@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import UserManagement
+from .models import UserManagement, OAuthUser
 
 class GetUserByIdSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=True)
@@ -29,11 +29,25 @@ class ManagementSerializer(serializers.Serializer):
             "phone": instance.phone,
             "is_active": instance.is_active
         }
+    
+    def single_representation_oauth(self, instance):
+        return {
+            "id": instance.id,
+            "provider": instance.provider,
+            "provider_user_id": instance.provider_user_id,
+            "access_token": instance.access_token,
+            "refresh_token": instance.refresh_token,
+            "expires_in": instance.expires_in
+        }
 
-    def response(self, instance):
+    def response(self, instance, oauth=False):
         arr = []
-        for i in instance:
-            arr.append(self.single_representation(i))
+        if oauth:
+            for i in instance:
+                arr.append(self.single_representation_oauth(i))
+        else:
+            for i in instance:
+                arr.append(self.single_representation(i))
         return arr
 
 
@@ -66,3 +80,15 @@ class ChangePasswordSerializer(serializers.Serializer):
 class ForgotPasswordSerializer(serializers.Serializer):
     username = serializers.CharField(required=True, min_length=3, max_length=20)
     email = serializers.EmailField(required=True)
+
+class OauthCreateSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True, min_length=3, max_length=20)
+    email = serializers.EmailField(required=True)
+    first_name = serializers.CharField(required=True, min_length=3, max_length=100)
+    last_name = serializers.CharField(required=True, min_length=3, max_length=100)
+    phone = serializers.CharField(required=False)
+    provider = serializers.CharField(required=True)
+    provider_user_id = serializers.CharField(required=True)
+    access_token = serializers.CharField(required=True)
+    refresh_token = serializers.CharField(required=True)
+    expires_in = serializers.CharField(required=True)
