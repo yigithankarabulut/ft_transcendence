@@ -53,9 +53,9 @@ MIDDLEWARE = [
 EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/pwd/forgot', '/auth/intra', '/auth/intra/callback']
 
 SERVICE_ROUTES = {
-    '/auth': 'http://localhost:8001',
-    '/friend': 'http://localhost:8002',
-    '/user': 'http://localhost:8004',
+    '/auth': 'http://authservice:8001',
+    '/friend': 'http://friend:8002',
+    '/user': 'http://usermanagement:8004',
 }
 
 ROOT_URLCONF = 'apigateway.urls'

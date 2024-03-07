@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  apigateway:
+    build: ./apigateway
+    ports:
+      - "8080:8080"
+    networks:
+      - my_network
+    depends_on:
+      - authservice
+      # - coregameservice
+      # - friends
+      # - mailservice
+      # - matchmaking
+      - usermanagement
+      - rabbitmq
+
+  authservice:
+    build: ./authservice
+    networks:
+      - my_network
+
+  # coregameservice:
+  #   build: ./coregameservice
+  #   networks:
+  #     - my_network
+
+  # friends:
+  #   build: ./friends
+  #   networks:
+  #     - my_network
+
+  # mailservice:
+  #   build: ./mailservice
+  #   networks:
+  #     - my_network
+
+  # matchmaking:
+  #   build: ./matchmaking
+  #   networks:
+  #     - my_network
+
+  usermanagement:
+    build: ./usermanagement
+    networks:
+      - my_network
+
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
