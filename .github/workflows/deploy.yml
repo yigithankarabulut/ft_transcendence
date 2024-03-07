@@ -28,6 +28,8 @@ jobs:
 
             docker-compose down -v --remove-orphans
 
+            docker system prune -f
+
             git pull origin main
 
             docker-compose up --build -d

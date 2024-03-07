@@ -14,7 +14,6 @@ services:
       # - mailservice
       # - matchmaking
       - usermanagement
-      - rabbitmq
 
   authservice:
     build: ./authservice
@@ -47,7 +46,7 @@ services:
       - my_network
 
   rabbitmq:
-    image: rabbitmq:management
+    image: rabbitmq:3.8
     ports:
       - "5672:5672"
       - "15672:15672"
