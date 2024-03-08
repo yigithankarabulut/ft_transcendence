@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-4+_=!fz64vf%cf-^@d_v$yoty&cd-bk^=*_9623**cn+0v0$q%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['34.141.6.250', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -52,8 +52,8 @@ MIDDLEWARE = [
 ]
 
 SERVICE_ROUTES = {
-    '/friend': 'http://localhost:8002',
-    '/auth': 'http://localhost:8003',
+    '/auth': 'http://authservice:8001',
+    '/friend': 'http://friend:8002',
 }
 
 REST_FRAMEWORK = {

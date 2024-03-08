@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-#fvj*dfcvw*q5!$2)=29sw+z$)1w#f6#6u@k=r(x47(c+g657v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['34.141.6.250', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -50,12 +50,12 @@ MIDDLEWARE = [
     'src.middleware.JWTAuthenticationMiddleware',
 ]
 
-EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/forget_password']
+EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/pwd/forgot', '/auth/intra', '/auth/intra/callback']
 
 SERVICE_ROUTES = {
-    '/user': 'http://localhost:8001',
-    '/friend': 'http://localhost:8002',
-    '/auth': 'http://localhost:8003',
+    '/auth': 'http://authservice:8001',
+    '/friend': 'http://friend:8002',
+    '/user': 'http://usermanagement:8004',
 }
 
 ROOT_URLCONF = 'apigateway.urls'

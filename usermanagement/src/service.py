@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from .repository import IUserManagementRepository
-from .models import UserManagement
+from .repository import IUserManagementRepository, IOAuthUserRepository
+from .models import UserManagement, OAuthUser
 from .serializers import ManagementSerializer
 from usermanagement.settings import SERVICE_ROUTES
 import requests
@@ -61,11 +61,16 @@ class IUserManagementService(ABC):
     def change_password(self, req: UserManagement) -> BaseResponse:
         pass
 
+    @abstractmethod
+    def oauth_user_create(self, user_management: UserManagement, oauth_user: OAuthUser) -> BaseResponse:
+        pass
+
 
 
 class UserManagementService(IUserManagementService):
-    def __init__(self, repository: IUserManagementRepository):
+    def __init__(self, repository: IUserManagementRepository, oauth_repository = IOAuthUserRepository):
         self.repository = repository
+        self.oauth_repository = oauth_repository
 
     def get(self, id: int) -> BaseResponse:
         user = self.repository.get(id)
@@ -83,10 +88,10 @@ class UserManagementService(IUserManagementService):
             return BaseResponse(True, "Please provide a different username", None).res()
         if uemail and uemail.id != user.id:
             return BaseResponse(True, "Email already exists", None).res()
-        
+
         elif uemail and uemail.id == user.id:
             return BaseResponse(True, "Please provide a different email", None).res()
-        
+
         new_user = self.repository.update(user)
         if not new_user:
             return BaseResponse(True, "User update failed", None).res()
@@ -184,3 +189,20 @@ class UserManagementService(IUserManagementService):
         if not res:
             return BaseResponse(True, "Password change failed", None).res()
         return BaseResponse(False, "Password changed successfully", None).res()
+
+    def oauth_user_create(self, user_management: UserManagement, oauth_user: OAuthUser) -> BaseResponse:
+        uname = self.repository.get_by_username(user_management.username)
+        umail = self.repository.get_by_email(user_management.email)
+        if uname:
+            return BaseResponse(True, "Username already exists", None).res()
+        elif umail:
+            return BaseResponse(True, "Email already exists", None).res()
+        user_management = self.repository.create(user_management)
+        if not user_management:
+            return BaseResponse(True, "User creation failed", None).res()
+        oauth_user.user = user_management
+        new_oauth_user = self.oauth_repository.oauth_user_create(oauth_user)
+        if not new_oauth_user:
+            return BaseResponse(True, "OAuth user creation failed", None).res()
+        res = ManagementSerializer().response([user_management])
+        return BaseResponse(False, "User created successfully", res).res()

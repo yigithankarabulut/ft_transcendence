@@ -6,4 +6,6 @@ urlpatterns = [
     path('token', AuthHandler.as_view({'post': 'generate_token'})),
     path('token/validate', AuthHandler.as_view({'post': 'validate_token'})),
     path('token/refresh', AuthHandler.as_view({'post': 'refresh_token'})),
+    path('intra', AuthHandler.as_view({'post': 'intra_oauth'})),
+    path('intra/callback', AuthHandler.as_view({'get': 'intra_oauth_callback'})),
 ]
