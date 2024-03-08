@@ -1,6 +1,7 @@
 asgiref
 autobahn
 bcrypt
+psycopg2-binary
 certifi
 channels
 chardet

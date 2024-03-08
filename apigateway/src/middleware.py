@@ -1,6 +1,6 @@
 import requests
-from django.http import JsonResponse
 from django.conf import settings
+from django.http import JsonResponse
 
 class JWTAuthenticationMiddleware:
     def __init__(self, get_response):

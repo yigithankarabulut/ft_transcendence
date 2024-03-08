@@ -81,16 +81,20 @@ class AuthHandler(viewsets.ViewSet):
         response = requests.post(url, data=data)
         if response.status_code != 200:
             return Response({'error': 'Failed to retrieve OAuth token'}, status=response.status_code)
-        
+
         oauth_token = response.json()
-        
+
         user_creation_response = self.create_user(oauth_token)
         if user_creation_response.status_code != 201:
             return Response(user_creation_response.json(), status=user_creation_response.status_code)
-        user_id = user_creation_response.json().get('id')
+        response_data = user_creation_response.json().get('data')
+        user_id = response_data[0].get('id')
         token = generate_token(user_id)
-        return Response({'token': token}, status=status.HTTP_201_CREATED)
-        
+        res = {
+            'message': user_creation_response.json().get('message'),
+            'data': [{'token': token, 'user_id': user_id}]
+        }
+        return Response(res, status=status.HTTP_201_CREATED)
     
 
     def create_user(self, oauth_token):

@@ -21,7 +21,7 @@ class RabbitMQConsumer:
         if payload['type'] != 'forgot_password':
             print("Invalid message type")
             return
-        mail_service.send_email('yigithannkarabulutt@gmail.com', payload['body']['email'], payload['subject'], f"Please click the link to reset your password. Username: {payload['body']['username']}")
+        mail_service.send_email('yigithannkarabulutt@gmail.com', payload['body']['email'], payload['subject'], f"Please click the link to reset your password. Link: {payload['body']['reset_url']}")
         print(" [x] Done")
         ch.basic_ack(delivery_tag=method.delivery_tag)  # Mesajın işlendiğini doğrulama
 

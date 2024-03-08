@@ -1,71 +1,19 @@
-from abc import ABC, abstractmethod
-from .repository import IUserManagementRepository, IOAuthUserRepository
-from .models import UserManagement, OAuthUser
-from .serializers import ManagementSerializer
-from usermanagement.settings import SERVICE_ROUTES
 import requests
-from django.core.paginator import Paginator, EmptyPage
 from hashlib import sha256
+from .utils import BaseResponse, ResetPasswordTokenGenerator
 from .publisher import PublisherBase
+from .serializers import ManagementSerializer
+from .models import UserManagement, OAuthUser
+from usermanagement.settings import SERVICE_ROUTES
+from django.core.paginator import Paginator, EmptyPage
+from .interfaces.service import IUserManagementService
+from .interfaces.repository import IUserManagementRepository, IOAuthUserRepository
 
-class BaseResponse:
-    def __init__(self, err: bool, msg: str, data, pagination=None):
-        self.err = err
-        self.string = {"error": msg}
-        self.data = {"message": msg, "data": data}
-        self.pagination = pagination
+from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
-    def res(self):
-        if self.err:
-            return self.string, self.err
-        response_data = self.data
-        if self.pagination:
-            response_data['pagination'] = self.pagination
-        return response_data, self.err
-
-
-class IUserManagementService(ABC):
-    @abstractmethod
-    def get(self, id: int):
-        pass
-
-    @abstractmethod
-    def register(self, user: UserManagement)-> BaseResponse:
-        pass
-
-    @abstractmethod
-    def update(self, user: dict) -> BaseResponse:
-        pass
-
-    @abstractmethod
-    def list(self, page, limit) -> BaseResponse:
-        pass
-
-    @abstractmethod
-    def delete(self, id: int)-> BaseResponse:
-        pass
-
-    @abstractmethod
-    def register(self, user: UserManagement) -> BaseResponse:
-        pass
-
-    @abstractmethod
-    def login(self, req: UserManagement) -> BaseResponse:
-        pass
-
-    @abstractmethod
-    def forgot_password(self, username, email) -> BaseResponse:
-        pass
-
-    @abstractmethod
-    def change_password(self, req: UserManagement) -> BaseResponse:
-        pass
-
-    @abstractmethod
-    def oauth_user_create(self, user_management: UserManagement, oauth_user: OAuthUser) -> BaseResponse:
-        pass
-
-
+# TODO: All queries should be made email because email is unique. username sometimes can be null.
 
 class UserManagementService(IUserManagementService):
     def __init__(self, repository: IUserManagementRepository, oauth_repository = IOAuthUserRepository):
@@ -134,7 +82,7 @@ class UserManagementService(IUserManagementService):
         umail = self.repository.get_by_email(user.email)
         if uname:
             return BaseResponse(True, "Username already exists", None).res()
-        elif umail:
+        if umail:
             return BaseResponse(True, "Email already exists", None).res()
         hashpwd = sha256(user.password.encode()).hexdigest()
         user.password = hashpwd
@@ -157,16 +105,18 @@ class UserManagementService(IUserManagementService):
         token = response.json().get('token')
         return BaseResponse(False, "Login successful", {"token": token}).res()
 
-    def forgot_password(self, username, email) -> BaseResponse:
-        user = self.repository.get_by_username(username)
+    def forgot_password(self, email) -> BaseResponse:
+        user = self.repository.get_by_email(email)
         if not user:
             return BaseResponse(True, "User not found", None).res()
-        if user.email != email:
-            return BaseResponse(True, "Invalid email", None).res()
-        # publish message to mailservice queue
+        token = ResetPasswordTokenGenerator().make_hash_value(user, timestamp=None)
+        uid = urlsafe_base64_encode(force_bytes(email))
+        reset_path = reverse('reset_password', kwargs={'uidb64': uid, 'token': token})
+        # TODO: Fix the front back communication this situation
+        reset_url = f"http://localhost:8004/user/{reset_path}"
         message = {
-            'subject': 'Forgot Password Request Email',
-            'body': {'username': username, 'email': email},
+            'subject': 'Transcendence Password Reset Email',
+            'body': {'email': email, 'reset_url': reset_url},
             'type': 'forgot_password'
         }
         publisher = PublisherBase('mailservice')
@@ -176,8 +126,8 @@ class UserManagementService(IUserManagementService):
         publisher.close_connection()
         return BaseResponse(False, "Password sent to your email", None).res()
 
-    
     def change_password(self, req) -> BaseResponse:
+        # TODO: query should be made email, not username.
         user = self.repository.get_by_username(req.get("username"))
         if not user:
             return BaseResponse(True, "User not found", None).res()
@@ -190,19 +140,39 @@ class UserManagementService(IUserManagementService):
             return BaseResponse(True, "Password change failed", None).res()
         return BaseResponse(False, "Password changed successfully", None).res()
 
+    def reset_password(self, req) -> BaseResponse:
+        user = self.repository.get_by_email(req.get("email"))
+        if not user:
+            return BaseResponse(True, "User not found", None).res()
+        token = ResetPasswordTokenGenerator().make_hash_value(user, timestamp=None)
+        if token != req.get("token"):
+            return BaseResponse(True, "Invalid token", None).res()
+        print("new password", req.get("password"))
+        hashpwd = sha256(req.get("password").encode()).hexdigest()
+        user.password = hashpwd
+        res = self.repository.update(user)
+        if not res:
+            return BaseResponse(True, "Password reset failed", None).res()
+        return BaseResponse(False, "Password reset successfully", None).res()
+
     def oauth_user_create(self, user_management: UserManagement, oauth_user: OAuthUser) -> BaseResponse:
         uname = self.repository.get_by_username(user_management.username)
         umail = self.repository.get_by_email(user_management.email)
+        flag = False
         if uname:
-            return BaseResponse(True, "Username already exists", None).res()
-        elif umail:
-            return BaseResponse(True, "Email already exists", None).res()
+            flag = True
+            user_management.username = None
+        if umail:
+            return BaseResponse(True, "Email already exist.Please login with your Email", None).res()
+        user_management.oauth_users = 1
         user_management = self.repository.create(user_management)
         if not user_management:
             return BaseResponse(True, "User creation failed", None).res()
         oauth_user.user = user_management
-        new_oauth_user = self.oauth_repository.oauth_user_create(oauth_user)
-        if not new_oauth_user:
+        oauth_user = self.oauth_repository.oauth_user_create(oauth_user)
+        if not oauth_user:
             return BaseResponse(True, "OAuth user creation failed", None).res()
         res = ManagementSerializer().response([user_management])
+        if flag:
+            return BaseResponse(False, "User created successfully but your intra username is already exist. Please visit your profile and update your username", res).res()
         return BaseResponse(False, "User created successfully", res).res()
