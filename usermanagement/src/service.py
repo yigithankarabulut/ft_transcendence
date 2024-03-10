@@ -1,6 +1,8 @@
 import requests
 from hashlib import sha256
-from .utils import BaseResponse, ResetPasswordTokenGenerator
+
+from django.utils.timezone import now
+from .utils import BaseResponse, make_hash_value, check_token_validity
 from .publisher import PublisherBase
 from .serializers import ManagementSerializer
 from .models import UserManagement, OAuthUser
@@ -10,8 +12,8 @@ from .interfaces.service import IUserManagementService
 from .interfaces.repository import IUserManagementRepository, IOAuthUserRepository
 
 from django.urls import reverse
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 # TODO: All queries should be made email because email is unique. username sometimes can be null.
 
@@ -109,47 +111,79 @@ class UserManagementService(IUserManagementService):
         user = self.repository.get_by_email(email)
         if not user:
             return BaseResponse(True, "User not found", None).res()
-        token = ResetPasswordTokenGenerator().make_hash_value(user, timestamp=None)
+        if user.reset_password_token:
+            err = check_token_validity(user.reset_password_token)
+            if err is None:
+                return BaseResponse(True, "Password reset link already sent", None).res()
+
+        encoded_token = urlsafe_base64_encode(
+            force_bytes(
+                make_hash_value(
+                    user,
+                    now().timestamp(),
+                )
+            )
+        )
         uid = urlsafe_base64_encode(force_bytes(email))
-        reset_path = reverse('reset_password', kwargs={'uidb64': uid, 'token': token})
+        reset_path = reverse(
+            'reset_password',
+            kwargs={'uidb64': uid, 'token': encoded_token},
+        )
+
+        user.reset_password_token = encoded_token
+        res = self.repository.update(user)
+        if not res:
+            return BaseResponse(True, "Unknow error. Please try again later!", None).res()
+
         # TODO: Fix the front back communication this situation
-        reset_url = f"http://localhost:8004/user/{reset_path}"
+        # TODO: Change this url with frontend url
+        reset_url = f"http://localhost:8004{reset_path}"
         message = {
             'subject': 'Transcendence Password Reset Email',
             'body': {'email': email, 'reset_url': reset_url},
             'type': 'forgot_password'
         }
-        publisher = PublisherBase('mailservice')
+
+        publisher = PublisherBase('mail-service')
         res = publisher.publish_message(message)
+        publisher.close_connection()
         if not res:
             return BaseResponse(True, "Password sending failed", None).res()
-        publisher.close_connection()
         return BaseResponse(False, "Password sent to your email", None).res()
 
     def change_password(self, req) -> BaseResponse:
-        # TODO: query should be made email, not username.
         user = self.repository.get_by_username(req.get("username"))
         if not user:
             return BaseResponse(True, "User not found", None).res()
         if user.password != sha256(req.get("old_password").encode()).hexdigest():
             return BaseResponse(True, "Invalid password", None).res()
-        hashpwd = sha256(req.get("new_password").encode()).hexdigest()
-        user.password = hashpwd
+        hash_password = sha256(req.get("new_password").encode()).hexdigest()
+        user.password = hash_password
         res = self.repository.update(user)
         if not res:
             return BaseResponse(True, "Password change failed", None).res()
         return BaseResponse(False, "Password changed successfully", None).res()
 
-    def reset_password(self, req) -> BaseResponse:
-        user = self.repository.get_by_email(req.get("email"))
+    def reset_password(self, req, uid, token) -> BaseResponse:
+        email = force_str(urlsafe_base64_decode(uid))
+        if not email:
+            return BaseResponse(True, "Invalid token", None).res()
+        user = self.repository.get_by_email(email)
         if not user:
             return BaseResponse(True, "User not found", None).res()
-        token = ResetPasswordTokenGenerator().make_hash_value(user, timestamp=None)
-        if token != req.get("token"):
+        if not user.reset_password_token:
+            return BaseResponse(True, "This link is already used", None).res()
+        if user.reset_password_token != token:
             return BaseResponse(True, "Invalid token", None).res()
-        print("new password", req.get("password"))
-        hashpwd = sha256(req.get("password").encode()).hexdigest()
-        user.password = hashpwd
+
+        err = check_token_validity(token)
+        if err is not None:
+            return BaseResponse(True, err, None).res()
+
+        hash_password = sha256(req.get("new_password").encode()).hexdigest()
+        user.password = hash_password
+        user.reset_password_token = None
+
         res = self.repository.update(user)
         if not res:
             return BaseResponse(True, "Password reset failed", None).res()
@@ -174,5 +208,10 @@ class UserManagementService(IUserManagementService):
             return BaseResponse(True, "OAuth user creation failed", None).res()
         res = ManagementSerializer().response([user_management])
         if flag:
-            return BaseResponse(False, "User created successfully but your intra username is already exist. Please visit your profile and update your username", res).res()
+            return BaseResponse(
+                False,
+                "User created successfully but your intra username is already exist."
+                "Please visit your profile and update your username",
+                res
+            ).res()
         return BaseResponse(False, "User created successfully", res).res()

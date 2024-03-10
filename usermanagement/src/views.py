@@ -1,3 +1,5 @@
+import http
+
 from rest_framework import viewsets
 from rest_framework.response import Response
 from .service import UserManagementService
@@ -53,7 +55,7 @@ class AuthHandler(viewsets.ViewSet):
         user = req.bind(req.validated_data)
         res, err = self.service.register(user)
         if err:
-            return Response(res, status=400)
+            return Response(res, status=500)
         return Response(res, status=201)
 
     def login(self, request):
@@ -63,7 +65,7 @@ class AuthHandler(viewsets.ViewSet):
         user = req.bind(req.validated_data)
         res, err = self.service.login(user)
         if err:
-            return Response(res, status=400)
+            return Response(res, status=500)
         return Response(res, status=200)        
 
     def change_password(self, request):
@@ -72,7 +74,7 @@ class AuthHandler(viewsets.ViewSet):
             return Response(req.errors, status=400)
         res, err = self.service.change_password(req.validated_data)
         if err:
-            return Response(res, status=400)
+            return Response(res, status=500)
         return Response(res, status=200)
 
     def forgot_password(self, request):
@@ -81,16 +83,18 @@ class AuthHandler(viewsets.ViewSet):
             return Response(req.errors, status=400)
         res, err = self.service.forgot_password(req.validated_data['email'])
         if err:
-            return Response(res, status=400)
+            return Response(res, status=500)
         return Response(res, status=200)
 
-    def reset_password(self, request): # TODO:  http://localhost:8004/user//user/reset-password/ ----> fix this
+    def reset_password(self, request, uidb64=None, token=None):
+        if not uidb64 or not token:
+            return Response({'error': 'invalid url'}, status=400)
         req = ResetPasswordSerializer(data=request.data)
         if not req.is_valid():
             return Response(req.errors, status=400)
-        res, err = self.service.reset_password(req.validated_data, request)
+        res, err = self.service.reset_password(req.validated_data, uidb64, token)
         if err:
-            return Response(res, status=400)
+            return Response(res, status=500)
         return Response(res, status=200)
 
     def oauth_user_create(self, request):
@@ -101,6 +105,5 @@ class AuthHandler(viewsets.ViewSet):
         user_oauth = req.bind_oauth_user(req.validated_data)
         res, err = self.service.oauth_user_create(user_management, user_oauth)
         if err:
-            return Response(res, status=400)
+            return Response(res, status=500)
         return Response(res, status=201)
-    

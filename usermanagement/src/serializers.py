@@ -72,11 +72,7 @@ class LoginSerializer(serializers.Serializer):
         return UserManagement(**validated_data)
 
 class ResetPasswordSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True)
     new_password = serializers.CharField(required=True, min_length=8, max_length=20)
-
-    def bind(self, validated_data):
-        return UserManagement(**validated_data)
 
 class ChangePasswordSerializer(serializers.Serializer):
     username = serializers.CharField(required=True, min_length=3, max_length=20)

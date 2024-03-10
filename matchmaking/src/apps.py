@@ -2,6 +2,7 @@ from django.apps import AppConfig
 import signal
 import sys
 
+
 class SrcConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'src'

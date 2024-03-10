@@ -1,6 +1,7 @@
 from .models import OAuthUser, UserManagement
 from .interfaces.repository import IUserManagementRepository, IOAuthUserRepository
 
+
 class UserManagementRepository(IUserManagementRepository):
     def get(self, id: int) -> UserManagement:
         try:

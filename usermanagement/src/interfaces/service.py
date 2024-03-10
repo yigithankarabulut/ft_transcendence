@@ -40,7 +40,7 @@ class IUserManagementService(ABC):
         pass
     
     @abstractmethod
-    def reset_password(self, req) -> BaseResponse:
+    def reset_password(self, req, uidb64, token) -> BaseResponse:
         pass
 
     @abstractmethod

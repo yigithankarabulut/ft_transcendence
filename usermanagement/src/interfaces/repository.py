@@ -1,15 +1,16 @@
 from abc import ABC, abstractmethod
-from src.models import UserManagement, OAuthUser
+from ..models import UserManagement, OAuthUser
+
 
 class IUserManagementRepository(ABC):
     @abstractmethod
     def get(self, id: int) -> UserManagement:
         pass
-    
+
     @abstractmethod
     def get_by_username(self, username: str) -> UserManagement:
         pass
-    
+
     @abstractmethod
     def get_by_email(self, email: str) -> UserManagement:
         pass
@@ -27,9 +28,8 @@ class IUserManagementRepository(ABC):
         pass
 
     @abstractmethod
-    def delete(self, id: int)-> bool:
+    def delete(self, id: int) -> bool:
         pass
-
 
 
 class IOAuthUserRepository(ABC):
@@ -52,4 +52,3 @@ class IOAuthUserRepository(ABC):
     @abstractmethod
     def delete_oauth_user(self, id: int) -> bool:
         pass
-
