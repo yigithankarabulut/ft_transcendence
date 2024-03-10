@@ -18,10 +18,10 @@ class UserManagementHandler(viewsets.ViewSet):
         self.service = UserManagementService(UserManagementRepository())
 
     def get_user(self, request):
-        req = GetUserByIdSerializer(data=request.query_params)
-        if not req.is_valid():
-            return Response(req.errors, status=400)
-        res = self.service.get(req.validated_data['id'])
+        id = request.headers.get('id')
+        if not id:
+            return Response('User id not found', status=400)
+        res = self.service.get(id)
         return Response(res, status=200)
 
     def update_user(self, request):

@@ -9,7 +9,7 @@ class APIGatewayView(APIView):
     def operations(self, request, path):
         headers = dict(request.headers)
         if not (settings.EXCLUDED_ROUTES and request.path in settings.EXCLUDED_ROUTES):
-            headers['user_id'] = str(request.user_id)
+            headers['id'] = str(request.user_id)
         return self.pass_request_to_destination_service(request, path, headers)
 
     def pass_request_to_destination_service(self, request, path, headers):

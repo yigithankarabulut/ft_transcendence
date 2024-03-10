@@ -56,6 +56,7 @@ SERVICE_ROUTES = {
     '/auth': 'http://localhost:8001',
     '/friend': 'http://localhost:8002',
     '/user': 'http://localhost:8004',
+    '/game': 'http://localhost:8005',
 }
 
 ROOT_URLCONF = 'apigateway.urls'
