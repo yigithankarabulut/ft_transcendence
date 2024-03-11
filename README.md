@@ -8,6 +8,5 @@ git clone https://github.com/yigithankarablut/ft_transcendence.git
 docker-compose build
 ```
 
-```png
-![transcendence-diagram](https://github.com/yigithankarabulut/ft_transcendence/assets/120645917/3e333d4e-190b-49de-bb2d-8d866b59c68f)
-```
+
+![alt text](https://github.com/yigithankarabulut/ft_transcendence/blob/main/transcendence-diagram.png?raw=true)
