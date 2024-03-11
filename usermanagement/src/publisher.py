@@ -10,7 +10,6 @@ class PublisherBase:
 
     def publish_message(self, message):
         try:
-            # Mesajı yayınlama
             self.channel.basic_publish(exchange='',
                                         routing_key=self.queue_name,
                                         body=json.dumps(message))
@@ -21,6 +20,5 @@ class PublisherBase:
             return False
 
     def close_connection(self):
-        # Bağlantıyı kapatma
         self.connection.close()
         print("Connection closed")

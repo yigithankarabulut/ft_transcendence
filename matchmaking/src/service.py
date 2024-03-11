@@ -266,6 +266,16 @@ class TournamentService(ITournamentService):
         match.state = 2
         err = self.match_repository.update(match)
         tournament = self.tournament_repository.get_by_id(tournament_id)
+        if match is None:
+            return BaseResponse(True, "Tournament not found", None).res()
+        all_matches = self.match_repository.get_all_matches_with_tournament_id(tournament_id)
+        print(all_matches)
+        if all_matches is None:
+            return BaseResponse(True, "Error getting matches", None).res()
+        all_finished_matches = [m for m in all_matches if m.get('state') == 2]
+        if len(all_finished_matches) == len(all_matches):
+            return BaseResponse(False, "Tournament finished", None).res()
+        print()
         message = {
             'subject': tournament.id,
             'body': {'id': match.winner.id, 'user_id': int(match.winner.user_id), 'username': match.winner.username},

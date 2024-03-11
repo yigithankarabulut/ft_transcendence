@@ -74,6 +74,10 @@ class IMatchRepository(ABC):
     def get_by_match_id(self, match_id: int):
         pass
 
+    @abstractmethod
+    def get_all_matches_with_tournament_id(self, tournament_id: int):
+        pass
+
 
 class MatchRepository(IMatchRepository):
     def create(self, player1: Player, player2: Player, tournament_id: int = None):
@@ -106,6 +110,14 @@ class MatchRepository(IMatchRepository):
         try:
             match = Match.objects.filter(id=match_id).first()
             return match
+        except:
+            return None
+
+    def get_all_matches_with_tournament_id(self, tournament_id: int):
+        try:
+            matches = Match.objects.filter(tournament_id=tournament_id).all()
+            matches = list(matches.values())
+            return matches
         except:
             return None
 
@@ -146,6 +158,8 @@ class ITournamentRepository(ABC):
     @abstractmethod
     def get_winner(self, tournament_id: int):
         pass
+
+
 
 from .models import Tournament, TournamentParticipant
 
@@ -205,6 +219,7 @@ class TournamentRepository(ITournamentRepository):
 
     def get_winner(self, tournament_id: int):
         pass
+
 
 
 class ITournamentParticipantRepository(ABC):

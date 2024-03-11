@@ -149,7 +149,7 @@ class TournamentHandler(viewsets.ViewSet):
         res, err = self.service.play_tournament_match(p1, p2, serializer.validated_data['tournament_id'])
         if err:
             return Response({"error": res}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"","ok"}, status=status.HTTP_200_OK)
+        return Response(res, status=status.HTTP_200_OK)
 
     def update(self, request):
         serializer = TournamentMatchSerializer(data=request.data)
@@ -160,4 +160,4 @@ class TournamentHandler(viewsets.ViewSet):
         res, err = self.service.update_match(p1, p2, p1_score, p2_score, serializer.validated_data['tournament_id'], serializer.validated_data['match_id'])
         if err:
             return Response({"error": res}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"","ok"}, status=status.HTTP_200_OK)
+        return Response(res, status=status.HTTP_200_OK)
