@@ -1,0 +1,41 @@
+/* Register Sayfası Stilleri */
+.register-container {
+    width: 300px;
+    margin: 100px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.register-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.register-container input[type="text"],
+.register-container input[type="password"],
+.register-container input[type="email"],
+.register-container input[type="tel"],
+.register-container button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.register-container button {
+    background-color: #28a745;
+    color: #fff;
+    cursor: pointer;
+}
+
+.register-container button:hover {
+    background-color: #218838;
+}
+
+.register-container p {
+    text-align: center;
+}

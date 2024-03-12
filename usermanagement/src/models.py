@@ -11,9 +11,12 @@ class UserManagement(models.Model):
     password = models.CharField(null=True, max_length=128)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100, unique=True)
     phone = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100, unique=True)
     oauth_users = models.IntegerField(default=0)
+    email_verified = models.BooleanField(default=False)
+    twofa_code = models.CharField(default=None, max_length=100, null=True, blank=True)
+    email_verify_token = models.CharField(default=None, max_length=100, null=True, blank=True)
     reset_password_token = models.CharField(default=None, max_length=100, null=True, blank=True)
 
 

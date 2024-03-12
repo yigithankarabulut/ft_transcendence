@@ -1,0 +1,41 @@
+
+<a href="/" class="btn btn-primary m-5 text-white" data-nav>back home</a>
+<div class="container position-absolute top-50 start-50 translate-middle">
+    <div class="row">
+        <div class="col-lg-6 align-self-center mb-5">
+            <h1>Login Page</h1>
+        </div>
+        <div class="col-lg-6 d-flex">
+            <div class="vr d-none d-lg-block"></div>
+            <div class="container-fluid" >
+                <div class="d-flex justify-content-center m-5 d-none" id="login-spinner">
+                    <div class="spinner-border" role="status">
+                    </div>
+                </div>
+                <form class="mb-4 block" id="login">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email">
+                        <div id="EmailHelp" class="form-text">something here</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                        <div id="userPassHelp" class="form-text">don't share your password</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary text-white">Submit</button>
+                    <p class="text-danger mt-2 visible" id="fields-warning"></p>
+                </form>
+                <div class="row justify-content-center align-items-center mb-3">
+                    <div class="col-5"><hr></div>
+                    <div class="col-2 text-center">Or</div>
+                    <div class="col-5"><hr></div>
+                </div>
+                <div class="btn-group bg-primary text-white p-2 rounded-3 text-center mb-3 w-100 justify-content-center">
+                    <a class="text-white text-decoration-none text-center" href="#">Login with <img src="./public/images/ykarabul.ico" style="width:30px;"></a>
+                </div>
+                <p>don't have an account? <a href="/register" data-nav>register here</a></p>
+            </div>
+        </div>
+    </div>
+</div>

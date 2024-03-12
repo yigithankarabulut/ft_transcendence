@@ -1,14 +1,16 @@
 from abc import ABC, abstractmethod
-from src.models import UserManagement, OAuthUser
-from src.utils import BaseResponse
+from ..models import UserManagement, OAuthUser
+from ..utils import BaseResponse
+
 
 class IUserManagementService(ABC):
+
     @abstractmethod
     def get(self, id: int):
         pass
 
     @abstractmethod
-    def register(self, user: UserManagement)-> BaseResponse:
+    def register(self, user: UserManagement) -> BaseResponse:
         pass
 
     @abstractmethod
@@ -20,7 +22,7 @@ class IUserManagementService(ABC):
         pass
 
     @abstractmethod
-    def delete(self, id: int)-> BaseResponse:
+    def delete(self, id: int) -> BaseResponse:
         pass
 
     @abstractmethod
@@ -29,6 +31,10 @@ class IUserManagementService(ABC):
 
     @abstractmethod
     def login(self, req: UserManagement) -> BaseResponse:
+        pass
+
+    @abstractmethod
+    def two_factor_auth(self, req: UserManagement) -> BaseResponse:
         pass
 
     @abstractmethod
@@ -44,6 +50,9 @@ class IUserManagementService(ABC):
         pass
 
     @abstractmethod
-    def oauth_user_create(self, user_management: UserManagement, oauth_user: OAuthUser) -> BaseResponse:
+    def email_verify(self, req, uid, token) -> BaseResponse:
         pass
 
+    @abstractmethod
+    def oauth_user_create(self, user_management: UserManagement, oauth_user: OAuthUser) -> BaseResponse:
+        pass

@@ -1,11 +1,12 @@
-import http
-
-from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework import viewsets
 from .service import UserManagementService
 from .repository import UserManagementRepository, OAuthUserRepository
-from .serializers import CreateManagementSerializer, GetUserByIdSerializer, PaginationSerializer, RegisterSerializer
-from .serializers import LoginSerializer, ChangePasswordSerializer, ForgotPasswordSerializer, OauthCreateSerializer, ResetPasswordSerializer
+from .serializers import RegisterSerializer, OauthCreateSerializer, ResetPasswordSerializer
+from .serializers import LoginSerializer, ChangePasswordSerializer, ForgotPasswordSerializer
+from .serializers import CreateManagementSerializer, GetUserByIdSerializer, PaginationSerializer
+from .serializers import TwoFactorAuthSerializer
+
 
 class UserManagementHandler(viewsets.ViewSet):
 
@@ -66,13 +67,14 @@ class AuthHandler(viewsets.ViewSet):
         res, err = self.service.login(user)
         if err:
             return Response(res, status=500)
-        return Response(res, status=200)        
+        return Response(res, status=200)
 
-    def change_password(self, request):
-        req = ChangePasswordSerializer(data=request.data)
+    def two_factor_auth(self, request):
+        req = TwoFactorAuthSerializer(data=request.data)
         if not req.is_valid():
             return Response(req.errors, status=400)
-        res, err = self.service.change_password(req.validated_data)
+        user = req.bind(req.validated_data)
+        res, err = self.service.two_factor_auth(user)
         if err:
             return Response(res, status=500)
         return Response(res, status=200)
@@ -86,6 +88,15 @@ class AuthHandler(viewsets.ViewSet):
             return Response(res, status=500)
         return Response(res, status=200)
 
+    def change_password(self, request):
+        req = ChangePasswordSerializer(data=request.data)
+        if not req.is_valid():
+            return Response(req.errors, status=400)
+        res, err = self.service.change_password(req.validated_data)
+        if err:
+            return Response(res, status=500)
+        return Response(res, status=200)
+
     def reset_password(self, request, uidb64=None, token=None):
         if not uidb64 or not token:
             return Response({'error': 'invalid url'}, status=400)
@@ -93,6 +104,14 @@ class AuthHandler(viewsets.ViewSet):
         if not req.is_valid():
             return Response(req.errors, status=400)
         res, err = self.service.reset_password(req.validated_data, uidb64, token)
+        if err:
+            return Response(res, status=500)
+        return Response(res, status=200)
+
+    def email_verify(self, request, uidb64=None, token=None):
+        if not uidb64 or not token:
+            return Response({'error': 'invalid url'}, status=400)
+        res, err = self.service.email_verify(request, uidb64, token)
         if err:
             return Response(res, status=500)
         return Response(res, status=200)

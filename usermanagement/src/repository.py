@@ -3,6 +3,7 @@ from .interfaces.repository import IUserManagementRepository, IOAuthUserReposito
 
 
 class UserManagementRepository(IUserManagementRepository):
+
     def get(self, id: int) -> UserManagement:
         try:
             model = UserManagement.objects.filter(id=id).first()
@@ -54,6 +55,7 @@ class UserManagementRepository(IUserManagementRepository):
 
 
 class OAuthUserRepository(IOAuthUserRepository):
+
     def oauth_user_create(self, req: OAuthUser) -> OAuthUser:
         try:
             req.save()

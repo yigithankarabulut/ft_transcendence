@@ -1,0 +1,31 @@
+/* Ana Sayfa Stilleri */
+.homepage-container {
+    width: 80%;
+    margin: 100px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.homepage-container h1 {
+    margin-bottom: 20px;
+}
+
+.homepage-container p {
+    margin-bottom: 20px;
+}
+
+.homepage-container a {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.homepage-container a:hover {
+    background-color: #0056b3;
+}
