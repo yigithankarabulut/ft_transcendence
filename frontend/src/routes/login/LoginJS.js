@@ -2,7 +2,7 @@ import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, appendToElement, toggleHidden } from "../../utils/utils.js";
 
 
-const url = "http://localhost:8004/user/login";
+const url = "http://127.0.0.1:8000/user/login";
 const form = document.getElementById("login");
 
 form.addEventListener("submit", (e) => {
@@ -28,26 +28,34 @@ form.addEventListener("submit", (e) => {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            username: email,
+            email: email,
             password: password,
         }),
     })
-        .then(res => {
-            if (!res.ok) {
-                fields_warning.innerText = "invalid email or password";
-                throw new Error("couldn't log in");
-            }
-            return res.json();
-        })
-        .then(token => {
-            localStorage.setItem("jwt-token", token.access);
-            localStorage.setItem("jwt-token-refresh", token.refresh);
-            localStorage.setItem("email", email);
-            navigateTo("/2fa");
-        })
-        .catch((err) => {
-            toggleHidden('login');
-            toggleHidden('login-spinner');
-
-        })
+    .then(res => {
+        if (!res.ok) {
+            return res.json().then(err => {
+                throw err;
+            });
+        }
+        return res.json();
+    })
+    .then(data => {
+        localStorage.setItem("email", email);
+        navigateTo("/2fa");
+    })
+    .catch((err) => {
+        console.log(err);
+        if (err.error) {
+            fields_warning.innerText = "Error: " + err.error;}
+        else if (err.email) {
+            fields_warning.innerText = "Email error: " + err.email[0];
+        } else if (err.password) {
+            fields_warning.innerText = "Password error: " + err.password[0];
+        } else {
+            fields_warning.innerText = "Error: internal server error";
+        }
+        toggleHidden('login');
+        toggleHidden('login-spinner');
+    })
 })

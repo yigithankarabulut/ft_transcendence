@@ -1,25 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-<div class="register-container">
-    <h2>Register</h2>
-    <form id="registerForm">
-        <input type="text" id="username" placeholder="Username" required>
-        <input type="password" id="password" placeholder="Password" required>
-        <input type="text" id="firstName" placeholder="First Name" required>
-        <input type="text" id="lastName" placeholder="Last Name" required>
-        <input type="email" id="email" placeholder="Email" required>
-        <input type="tel" id="phone" placeholder="Phone" required>
-        <button type="submit">Register</button>
-    </form>
-    <p>Already have an account? <a href="../login/login.html">Login</a></p>
+<div class="container position-absolute top-50 start-50 translate-middle">
+    <div class="row">
+        <div class="col-lg-6 align-self-center mb-5">
+            <h1>ft_transcendence</h1>
+        </div>
+        <div class="col-lg-6 d-flex">
+            <div class="vr d-none d-lg-block"></div>
+            <div class="container-fluid" >
+                <div class="d-flex justify-content-center m-5 d-none" id="register-spinner">
+                    <div class="spinner-border" role="status">
+                    </div>
+                </div>
+                <form class="mb-4 block" id="register">
+                    <div class="mb-3">
+                        <label for="firstname" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstname" name="firstname">
+                        <div id="firstnameHelp" class="form-text">Enter your first name</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="lastname" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastname" name="lastname">
+                        <div id="lastnameHelp" class="form-text">Enter your last name</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username">
+                        <div id="usernameHelp" class="form-text">Choose a unique username</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email">
+                        <div id="emailHelp" class="form-text">We'll never share your email with anyone else</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="lastname" class="form-label">Phone</label>
+                        <input type="text" class="form-control" id="phone" name="phone">
+                        <div id="phoneHelp" class="form-text">Enter a valid phone number</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                        <div id="passwordHelp" class="form-text">Choose a strong password</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary text-white">Register</button>
+                    <p class="text-danger mt-2 visible" id="fields-warning"></p>
+                </form>
+                <div class="row justify-content-center align-items-center mb-3">
+                    <div class="col-5"><hr></div>
+                    <div class="col-2 text-center">Or</div>
+                    <div class="col-5"><hr></div>
+                </div>
+                <div class="btn-group bg-primary text-white p-2 rounded-3 text-center mb-3 w-100 justify-content-center">
+                    <a class="text-white text-decoration-none text-center" href="#">Register with <img src="public/images/42_Logo.svg.png" style="width:30px;"></a>
+                </div>
+                <p>Already have an account? <a href="/login" data-nav>login here</a></p>
+            </div>
+        </div>
+    </div>
 </div>
-<script src="register.js"></script>
-</body>
-</html>

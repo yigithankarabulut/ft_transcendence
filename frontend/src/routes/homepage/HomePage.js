@@ -1,8 +1,9 @@
-class Login {
+from './HomePage.JS' import fetchUserDetails;
+
+class HomePage {
     constructor(path) {
         this.path = path;
     }
-
 
     async render() {
         return fetch(this.path)
@@ -11,7 +12,11 @@ class Login {
                     throw new Error("couldn't fetch route");
                 return res.text();
             })
+            .then(html => {
+                fetchUserDetails();
+                return html;
+            });
     }
 }
 
-export default Login;
+export default HomePage;

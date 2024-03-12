@@ -70,6 +70,7 @@ class AuthHandler(viewsets.ViewSet):
         return Response(res, status=200)
 
     def two_factor_auth(self, request):
+        print(request.data)
         req = TwoFactorAuthSerializer(data=request.data)
         if not req.is_valid():
             return Response(req.errors, status=400)

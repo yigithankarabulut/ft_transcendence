@@ -1,17 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-<div class="homepage-container">
-    <h1>Welcome to the Homepage</h1>
-    <p>You are now logged in.</p>
-    <a href="logout.html">Logout</a>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Website Name</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/profile">Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/game">Game</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container position-absolute top-50 start-50 translate-middle">
+    <div class="row">
+        <div class="col-lg-6 align-self-center mb-5">
+            <h1>Home Page</h1>
+            <div class="user-info">
+                <img id="user-profile-pic" src="./public/images/ykarabul.ico" alt="User Profile Picture">
+                <h2 id="user-name"></h2>
+                <h3 id="user-surname"></h3>
+            </div>
+        </div>
+        <div class="col-lg-6 d-flex">
+            <div class="vr d-none d-lg-block"></div>
+            <div class="container-fluid" >
+                <div class="d-flex justify-content-center m-5 d-none" id="home-spinner">
+                    <div class="spinner-border" role="status">
+                    </div>
+                </div>
+                <div class="mb-4 block" id="home">
+                    <div class="mb-3">
+                        <h2>Welcome to ft_transcendence</h2>
+                        <p>You can play game through Game Page</p>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
-<script src="homepage.js"></script>
-</body>
-</html>

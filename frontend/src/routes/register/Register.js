@@ -1,4 +1,4 @@
-class Login {
+class Register {
     constructor(path) {
         this.path = path;
     }
@@ -14,4 +14,4 @@ class Login {
     }
 }
 
-export default Login;
+export default Register;

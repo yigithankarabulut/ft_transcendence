@@ -8,7 +8,7 @@ window.addEventListener("popstate", router);
 
 // Rastgele bir favicon seçerek sayfa yüklenirken favicon'un değiştirilmesini sağlayan bir fonksiyon.
 function generateFavIcon() {
-    let links = ["public/images/ykarabul.ico"]
+    let links = ["public/images/42_Logo.svg.png"]
     let link = document.querySelector("link[rel~='icon']");
     let rand = Math.floor(Math.random() * 5);
     link.href = links[rand];
