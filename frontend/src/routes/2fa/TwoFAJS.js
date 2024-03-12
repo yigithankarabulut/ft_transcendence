@@ -39,10 +39,8 @@ form.addEventListener("submit", (e) => {
         return res.json();
     })
     .then(token => {
-        localStorage.setItem("jwt-token", token.access);
-        localStorage.setItem("jwt-token-refresh", token.refresh);
-        console.log("token", token.access);
-        console.log("token", token.refresh);
+        localStorage.setItem("token", token.data.token);
+        console.log("oba", token.data.token);
         navigateTo("/");
     })
     .catch((err) => {

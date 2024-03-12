@@ -1,5 +1,4 @@
-from './HomePage.JS' import fetchUserDetails;
-
+import { fetchUserDetails } from './HomePageJS.js';
 class HomePage {
     constructor(path) {
         this.path = path;
@@ -13,7 +12,7 @@ class HomePage {
                 return res.text();
             })
             .then(html => {
-                fetchUserDetails();
+                await fetchUserDetails();
                 return html;
             });
     }

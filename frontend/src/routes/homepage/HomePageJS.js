@@ -2,9 +2,9 @@ import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, appendToElement, toggleHidden } from "../../utils/utils.js";
 
 const homeContainer = document.getElementById("home-container");
-const userDetailUrl = "http://127.0.0.1:8000/user/detail";
+const userDetailUrl = "http://127.0.0.1:8000/user/details";
 
-function fetchUserDetails() {
+export async function fetchUserDetails() {
     const token = localStorage.getItem("token");
     if (!token) {
         navigateTo("/login");
@@ -15,24 +15,30 @@ function fetchUserDetails() {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Token ${token}`
+            "Authorization": "Bearer " + token,
         }
     })
     .then(res => {
         if (!res.ok) {
-            throw new Error("couldn't fetch user details");
+            return res.json().then(err => {
+                throw err;
+            });
         }
         return res.json();
     })
     .then(data => {
         console.log(data)
-        toggleHidden('home-spinner');
-        document.getElementById('user-fullname').innerText = data.first_name + " " + data.last_name;
-        document.getElementById('user-name').innerText = data.username;
-        document.getElementById('user-email').innerText = data.email;
+        document.getElementById('user-fullname').innerText = data[0].data[0].first_name + " " + data[0].data[0].last_name;
+        document.getElementById('user-name').innerText = data[0].data[0].username;
+        document.getElementById('user-email').innerText = data[0].data[0].email;
     })
     .catch(err => {
-        console.log(err);
+        if (err.error) {
+            console.log(err.error);
+        }
+        else {
+            console.log("Error: internal server error", err);
+        }
     });
 
 };
