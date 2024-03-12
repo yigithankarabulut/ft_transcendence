@@ -4,7 +4,7 @@ import { insertIntoElement, appendToElement, toggleHidden } from "../../utils/ut
 const homeContainer = document.getElementById("home-container");
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 
-export async function fetchUserDetails() {
+export function fetchUserDetails() {
     const token = localStorage.getItem("token");
     if (!token) {
         navigateTo("/login");

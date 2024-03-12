@@ -12,7 +12,7 @@ class HomePage {
                 return res.text();
             })
             .then(html => {
-                await fetchUserDetails();
+                fetchUserDetails();
                 return html;
             });
     }
