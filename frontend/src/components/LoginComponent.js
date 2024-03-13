@@ -1,4 +1,4 @@
-class TwoFa {
+class LoginComponent {
     constructor(path) {
         this.path = path;
     }
@@ -14,4 +14,4 @@ class TwoFa {
     }
 }
 
-export default TwoFa;
+export default LoginComponent;

@@ -1,32 +1,32 @@
-import Login from "./routes/login/Login.js";
-import HomePage from "./routes/homepage/HomePage.js";
-import TwoFA from "./routes/2fa/TwoFA.js";
-import Register from "./routes/register/Register.js";
+import LoginComponent from "./components/LoginComponent.js"
+import RegisterComponent from "./components/RegisterComponent.js"
+import TwoFAComponent from "./components/TwoFAComponent.js"
+import HomePageComponent from "./components/HomePageComponent.js"
 
 export const routes = [
     {
          path:"/",
          htmlPath: "./src/routes/homepage/homepage.html",
-         js: "/src/routes/homepage/HomePageJS.js",
-         component: HomePage,
+         js: "/src/routes/homepage/HomePage.js",
+         component: HomePageComponent,
     },
     {
         path:"/login",
         htmlPath: "./src/routes/login/login.html",
-        js: "/src/routes/login/LoginJS.js",
-        component: Login,
+        js: "/src/routes/login/Login.js",
+        component: LoginComponent,
     },
     {
         path:"/2fa",
-        htmlPath: "./src/routes/2fa/2fa.html",
-        js: "/src/routes/2fa/TwoFAJS.js",
-        component: TwoFA,
+        htmlPath: "./src/routes/twofa/twofa.html",
+        js: "/src/routes/twofa/TwoFA.js",
+        component: TwoFAComponent,
     },
     {
          path:"/register",
          htmlPath: "./src/routes/register/register.html",
-         js: "/src/routes/register/RegisterJS.js",
-         component: Register,
+         js: "/src/routes/register/Register.js",
+         component: RegisterComponent,
     },
     // {
     //     path:"/profile",

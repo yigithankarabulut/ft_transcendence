@@ -77,6 +77,7 @@ class AuthHandler(viewsets.ViewSet):
         user = req.bind(req.validated_data)
         res, err = self.service.two_factor_auth(user)
         if err:
+            print(res)
             return Response(res, status=500)
         return Response(res, status=200)
 
