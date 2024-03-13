@@ -60,24 +60,34 @@
     <div class="row align-items-center vh-100">
         <div class="col-sm-6 ">
             <h2 class="mb-3">Login</h2>
-            <form id="login">
+            <!-- <form class="mb-4 block" id="login">
                 <div class="mb-3">
-                  <label class="form-label"  for="exampleInputEmail1" >Email</label> 
-                  <input  id="exampleInputEmail1"class="form-control"  aria-describedby="emailHelp" > <!--   type="email"  -->
-                  <div id="emailHelp" class="form-text">We'll never share your username with anyone else.</div>
-                  <p id="EmailHelp" class="form-text"></p>
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email">
+                    <div id="EmailHelp" class="form-text">something here</div>
                 </div>
                 <div class="mb-3">
-                  <label for="exampleInputPassword1" class="form-label">Password</label>
-                  <input type="password" class="form-control" id="password" required>
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password">
+                    <div id="userPassHelp" class="form-text">don't share your password</div>
+                </div>
+                <button type="submit" class="btn btn-primary text-white">Submit</button>
+                <p class="text-danger mt-2 visible" id="fields-warning"></p>
+            </form> -->
+            <form class="mb-4 block" id="login">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                    <div id="EmailHelp" class="form-text"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password"  required>
                   <p id="passwordHelp" class="form-text"></p>
                 </div>
-                <div class="mb-3 form-check">
-                  <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                  <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-              </form>
+                <button type="submit" class="btn btn-primary text-white">Submit</button>
+                <p class="text-danger mt-2 visible" id="fields-warning"></p>              
+            </form>
               <div class="signin-with">
               <div class="mt-3 signin-with-register">
                 <div class="d-flex flex-row align-items-center justify-content-center">
@@ -87,7 +97,7 @@
                     </button>
                   </div>
                 </div>
-                <p class="text-center text-dark ">Hesabın yok mu? <a id = "signInButtonInRegisterPage" href="/register" class="register-link text-dark">Kaydol</a></p>
+                <p class="text-center text-dark ">Don't have an account? <a id = "signInButtonInRegisterPage" href="/register" class="register-link text-dark">Register</a></p>
                 <p class="text-danger mt-2 visible" id="fields-warning"></p>
             </div>
         </div>

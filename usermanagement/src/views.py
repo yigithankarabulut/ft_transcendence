@@ -50,13 +50,14 @@ class AuthHandler(viewsets.ViewSet):
         self.service = UserManagementService(UserManagementRepository(), OAuthUserRepository())
 
     def register(self, request):
+        print(request.data)
         req = RegisterSerializer(data=request.data)
         if not req.is_valid():
             return Response(req.errors, status=400)
         user = req.bind(req.validated_data)
         res, err = self.service.register(user)
         if err:
-            return Response(res, status=500)
+            return Response(res, status=400)
         return Response(res, status=201)
 
     def login(self, request):

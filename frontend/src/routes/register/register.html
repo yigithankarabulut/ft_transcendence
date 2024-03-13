@@ -74,34 +74,40 @@
             <h2 class="text-center mb-3">Register</h2>
             <form id="register">
                 <div class="mb-3">
-                  <label for="registerUsername" class="form-label">Username</label>
-                  <input type="text" class="form-control" id="registerUsername" placeholder="Enter username">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username">
+                    <div id="usernameHelp" class="form-text">Choose a unique username</div>
                 </div>
                 <div class="mb-3">
-                  <label for="registerPassword" class="form-label">Password</label>
-                  <input type="password" class="form-control" id="registerPassword" placeholder="Password">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password">
+                    <div id="passwordHelp" class="form-text">Choose a strong password</div>
                 </div>
-              <div class="mb-3">
-                <label for="registerFirstName" class="form-label">First Name</label>
-                <input type="text" class="form-control" id="registerFirstName" placeholder="Enter first name">
-              </div>
-              <div class="mb-3">
-                <label for="registerLastName" class="form-label">Last Name</label>
-                <input type="text" class="form-control" id="registerLastName" placeholder="Enter last name">
-              </div>
-              <div class="mb-3">
-                <label for="registerEmail" class="form-label">Email</label>
-                <input type="email" class="form-control" id="registerEmail" placeholder="name@example.com">
-              </div>
-              <div class="mb-3">
-                <label for="registerPhone" class="form-label">Phone</label>
-                <input type="tel" class="form-control" id="registerPhone" placeholder="Enter phone number">
-              </div>
+                <div class="mb-3">
+                    <label for="firstname" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="firstname" name="firstname">
+                    <div id="firstnameHelp" class="form-text">Enter your first name</div>
+                </div>
+                <div class="mb-3">
+                    <label for="lastname" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="lastname" name="lastname">
+                    <div id="lastnameHelp" class="form-text">Enter your last name</div>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email">
+                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else</div>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone</label>
+                    <input type="text" class="form-control" id="phone" name="phone">
+                    <div id="phoneHelp" class="form-text">Enter a valid phone number</div>
+                </div>
               <div class="mb-3 d-flex justify-content-center">
-                  <button type="submit" class="btn btn-primary "><a id="registerButtonInLoginPage" href="/login">Register</a></button>
+                    <button type="submit" class="btn btn-primary text-white">Register</button>
                     <p class="text-danger mt-2 visible" id="fields-warning"></p>
                 </div>
-                <p>Already have an account? <a href="/login" data-nav>login here</a></p>
+                <p>Already have an account? <a href="/login" data-nav>Login</a></p>
             </form>
           </div>
           <div class="col-sm-4 text-center">

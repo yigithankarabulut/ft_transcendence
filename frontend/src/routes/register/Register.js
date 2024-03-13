@@ -64,10 +64,15 @@ form.addEventListener("submit", (e) => {
             insertIntoElement('fields-warning', "Phone error: " + err.phone[0]);
         } else if (err.password) {
             insertIntoElement('fields-warning', "Password error: " + err.password[0]);
+        } else if (err.first_name) {
+            insertIntoElement('fields-warning', "First name error: " + err.first_name[0]); 
+        } else if (err.last_name) {
+            insertIntoElement('fields-warning', "Last name error: " + err.last_name[0]);
         } else {
             insertIntoElement('fields-warning', "Error: internal server error");
+            console.log(err);
         }
-        toggleHidden('fields-warning');
+        // toggleHidden('fields-warning');
         toggleHidden('register');
         // toggleHidden('register-spinner');
     })
