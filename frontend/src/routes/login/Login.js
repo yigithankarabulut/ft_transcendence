@@ -2,14 +2,15 @@ import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, appendToElement, toggleHidden } from "../../utils/utils.js";
 
 const url = "http://127.0.0.1:8000/user/login";
-const form = document.getElementById("login");
+const form = document.querySelector("#form");
+
 
 form.addEventListener("submit", (e) => {
 
     e.preventDefault();
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const fields_warning = document.getElementById('fields-warning');
+    const email = document.querySelector("#email").value;
+    const password = document.querySelector("#password").value;
+    const fields_warning = document.querySelector("#fields-warning");
 
     if (!email  || !password)
     {
@@ -18,7 +19,7 @@ form.addEventListener("submit", (e) => {
     }
 
     toggleHidden('login');
-    toggleHidden('login-spinner');
+    // toggleHidden('login-spinner');
 
     fetch(url, {
         method: "POST",
@@ -54,6 +55,6 @@ form.addEventListener("submit", (e) => {
             fields_warning.innerText = "Error: internal server error";
         }
         toggleHidden('login');
-        toggleHidden('login-spinner');
+        // toggleHidden('login-spinner');
     })
 })

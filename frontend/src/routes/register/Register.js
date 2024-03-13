@@ -24,7 +24,7 @@ form.addEventListener("submit", (e) => {
     }
 
     toggleHidden('register');
-    toggleHidden('register-spinner');
+    // toggleHidden('register-spinner');
 
     fetch(url, {
         method: "POST",
@@ -69,6 +69,6 @@ form.addEventListener("submit", (e) => {
         }
         toggleHidden('fields-warning');
         toggleHidden('register');
-        toggleHidden('register-spinner');
+        // toggleHidden('register-spinner');
     })
 })

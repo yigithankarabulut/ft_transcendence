@@ -1,4 +1,4 @@
-<div class="container position-absolute top-50 start-50 translate-middle">
+<!-- <div class="container position-absolute top-50 start-50 translate-middle">
     <div class="row">
         <div class="col-lg-6 align-self-center mb-5">
             <h1>ft_transcendence</h1>
@@ -57,4 +57,67 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
+
+
+<style>
+    .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+</style>
+    <div class="container">
+        <div class="row register-container ">
+          <div class="col-sm-6 border border-black border-4">
+            <h2 class="text-center mb-3">Register</h2>
+            <form id="register">
+                <div class="mb-3">
+                  <label for="registerUsername" class="form-label">Username</label>
+                  <input type="text" class="form-control" id="registerUsername" placeholder="Enter username">
+                </div>
+                <div class="mb-3">
+                  <label for="registerPassword" class="form-label">Password</label>
+                  <input type="password" class="form-control" id="registerPassword" placeholder="Password">
+                </div>
+              <div class="mb-3">
+                <label for="registerFirstName" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="registerFirstName" placeholder="Enter first name">
+              </div>
+              <div class="mb-3">
+                <label for="registerLastName" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="registerLastName" placeholder="Enter last name">
+              </div>
+              <div class="mb-3">
+                <label for="registerEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="registerEmail" placeholder="name@example.com">
+              </div>
+              <div class="mb-3">
+                <label for="registerPhone" class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="registerPhone" placeholder="Enter phone number">
+              </div>
+              <div class="mb-3 d-flex justify-content-center">
+                  <button type="submit" class="btn btn-primary "><a id="registerButtonInLoginPage" href="/login">Register</a></button>
+                    <p class="text-danger mt-2 visible" id="fields-warning"></p>
+                </div>
+                <p>Already have an account? <a href="/login" data-nav>login here</a></p>
+            </form>
+          </div>
+          <div class="col-sm-4 text-center">
+            <h2 > Welcome to Ft_Transcendance</h2>
+                <img src="/public/images/Ekran Resmi 2024-03-07 03.44.57.png" alt="Image" class="img-fluid rounded">
+          </div>
+        </div>
+      </div>
+
+
+
+<!-- {
+"username" : "umuttakkan",
+"password" : "123456Gs",
+"first_name" : "Umut",
+"last_name" : "Akkan",
+"email" : "umutakkan.321@outlook.com",
+"phone" : "5358138767"
+} -->
