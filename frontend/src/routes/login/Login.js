@@ -1,7 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, appendToElement, toggleHidden } from "../../utils/utils.js";
 
-
 const url = "http://127.0.0.1:8000/user/login";
 const form = document.getElementById("login");
 
@@ -10,7 +9,6 @@ form.addEventListener("submit", (e) => {
     e.preventDefault();
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-    const loginContainer = document.getElementById("login-container");
     const fields_warning = document.getElementById('fields-warning');
 
     if (!email  || !password)

@@ -14,7 +14,9 @@ form.addEventListener("submit", (e) => {
     const lastname = document.getElementById("lastname").value;
     const phone = document.getElementById("phone").value;
     const fields_warning = document.getElementById('fields-warning');
+    const fields_success = document.getElementById('fields-success');
 
+    
     if (!username || !email  || !password || !firstname || !lastname)
     {
         insertIntoElement('fields-warning', "fields shouldn't be empty");
@@ -47,25 +49,26 @@ form.addEventListener("submit", (e) => {
         return res.json();
     })
     .then(data => {
-        localStorage.setItem("username", username);
-        navigateTo("/login");
+        setTimeout(() => {
+            navigateTo("/login");
+        }, 2000);
     })
     .catch((err) => {
-    if (err.error) {
-        fields_warning.innerText = "Error: " + err.error;
-    }
-    else if (err.password) {
-        fields_warning.innerText = "Password error: " + err.password[0];
-    } else if (err.phone) {
-        fields_warning.innerText = "Phone error: " + err.phone[0];
-    } else if (err.email) {
-        fields_warning.innerText = "Email error: " + err.email[0];
-    } else if (err.username) {
-        fields_warning.innerText =  "Username error: " + err.username[0];
-    } else {
-        fields_warning.innerText = "Error: internal server error";
-    }
-    toggleHidden('register');
-    toggleHidden('register-spinner');
+        if (err.error) {
+            insertIntoElement('fields-warning', "Error: " + err.error);
+        } else if (err.username) {
+            insertIntoElement('fields-warning', "Username error: " + err.username[0]);
+        } else if (err.email) {
+            insertIntoElement('fields-warning', "Email error: " + err.email[0]);
+        } else if (err.phone) {
+            insertIntoElement('fields-warning', "Phone error: " + err.phone[0]);
+        } else if (err.password) {
+            insertIntoElement('fields-warning', "Password error: " + err.password[0]);
+        } else {
+            insertIntoElement('fields-warning', "Error: internal server error");
+        }
+        toggleHidden('fields-warning');
+        toggleHidden('register');
+        toggleHidden('register-spinner');
     })
 })

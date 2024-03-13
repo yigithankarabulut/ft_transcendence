@@ -7,7 +7,7 @@ export const routes = [
     {
          path:"/",
          htmlPath: "./src/routes/homepage/homepage.html",
-         js: "/src/routes/homepage/HomePage.js",
+         js: "/src/routes/homepage/HomePage.mjs",
          component: HomePageComponent,
     },
     {

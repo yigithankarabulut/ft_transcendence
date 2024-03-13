@@ -1,5 +1,5 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { insertIntoElement, appendToElement, toggleHidden } from "../../utils/utils.js";
+import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
 
 
 const url = "http://127.0.0.1:8000/user/2fa";
@@ -9,7 +9,6 @@ form.addEventListener("submit", (e) => {
 
     e.preventDefault();
     const code = document.getElementById("code").value;
-    const loginContainer = document.getElementById("login-container");
     const fields_warning = document.getElementById('fields-warning');
 
     if (!code)
@@ -17,7 +16,6 @@ form.addEventListener("submit", (e) => {
         insertIntoElement('fields-warning', "code shouldn't be empty");
         return;
     }
-    var email = localStorage.getItem("email");
     toggleHidden('2fa-code');
     toggleHidden('login-spinner');
 
@@ -40,7 +38,6 @@ form.addEventListener("submit", (e) => {
     })
     .then(token => {
         localStorage.setItem("token", token.data.token);
-        console.log("oba", token.data.token);
         navigateTo("/");
     })
     .catch((err) => {

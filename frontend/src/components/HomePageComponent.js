@@ -1,4 +1,4 @@
-import { fetchUserDetails } from "../routes/homepage/HomePage.js";
+import { fetchUserDetails } from '../routes/homepage/HomePage.js';
 
 class HomePageComponent {
     constructor(path) {

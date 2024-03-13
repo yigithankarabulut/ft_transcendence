@@ -14,6 +14,7 @@ export const router = async () => {
             isMatch: true
         }
     }
+    console.log (match);
     const root = document.getElementById('root');
     const component = new match.route.component(match.route.htmlPath);
     try {
