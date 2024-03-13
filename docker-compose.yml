@@ -1,58 +1,42 @@
-version: '3'
+version: '3.8'
 
 services:
-  apigateway:
-    build: ./apigateway
+  frontend:
+    image: nginx
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+      - ./frontend/nginx.conf:/etc/nginx/nginx.conf
     ports:
-      - "8080:8080"
-    networks:
-      - my_network
-    depends_on:
-      - authservice
-      # - coregameservice
-      # - friends
-      # - mailservice
-      # - matchmaking
-      - usermanagement
+      - "808:80"
+     
+  # apigateway:
+  #   build: ./apigateway
+  #   depends_on:
+  #     - authservice
+  #     - mailservice
+  #     - usermanagement
 
-  authservice:
-    build: ./authservice
-    networks:
-      - my_network
-
-  # coregameservice:
-  #   build: ./coregameservice
-  #   networks:
-  #     - my_network
-
-  # friends:
-  #   build: ./friends
-  #   networks:
-  #     - my_network
+  # authservice:
+  #   build: ./authservice
 
   # mailservice:
   #   build: ./mailservice
-  #   networks:
-  #     - my_network
+  #   depends_on:
+  #     rabbitmq:
+  #       condition: service_healthy
 
-  # matchmaking:
-  #   build: ./matchmaking
-  #   networks:
-  #     - my_network
 
-  usermanagement:
-    build: ./usermanagement
-    networks:
-      - my_network
+  # usermanagement:
+  #   build: ./usermanagement
 
-  rabbitmq:
-    image: rabbitmq:3.8
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    networks:
-      - my_network
-
-networks:
-  my_network:
-    driver: bridge
+    
+  # rabbitmq:
+  #   image: rabbitmq:3.8.17-management
+  #   healthcheck:
+  #     test: rabbitmq-diagnostics check_port_connectivity
+  #     interval: 30s
+  #     timeout: 30s
+  #     retries: 10
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
