@@ -1,8 +1,9 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, appendToElement, toggleHidden } from "../../utils/utils.js";
 
-const url = "http://localhost:8000/user/login";
+const url = "http://127.0.0.1:8000/user/login";
 const form = document.getElementById("login");
+document.getElementById('nav-bar').style.display = 'none';
 
 form.addEventListener("submit", (e) => {
 

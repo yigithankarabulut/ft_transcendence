@@ -2,7 +2,7 @@ import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
 
 
-const url = "http://localhost:8000/user/2fa";
+const url = "http://127.0.0.1:8000/user/2fa";
 const form = document.getElementById("2fa-code");
 
 form.addEventListener("submit", (e) => {
@@ -34,6 +34,7 @@ form.addEventListener("submit", (e) => {
             fields_warning.innerText = "invalid code";
             throw new Error("couldn't log in");
         }
+        document.getElementById('nav-bar').style.display = 'flex';
         return res.json();
     })
     .then(token => {

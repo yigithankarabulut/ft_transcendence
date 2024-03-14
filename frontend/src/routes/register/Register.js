@@ -1,7 +1,7 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
 
-const url = "http://localhost:8000/user/register";
+const url = "http://127.0.0.1:8000/user/register";
 const form = document.getElementById("register");
 
 form.addEventListener("submit", (e) => {
