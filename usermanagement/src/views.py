@@ -27,7 +27,9 @@ class UserManagementHandler(viewsets.ViewSet):
         if not req.is_valid():
             return Response(req.errors, status=400)
         user = req.bind(req.validated_data)
-        res = self.service.update(user)
+        res, err = self.service.update(user)
+        if err:
+            return Response(res, status=500)
         return Response(res, status=200)
 
     def list_user(self, request):
