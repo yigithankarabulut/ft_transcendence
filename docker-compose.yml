@@ -31,14 +31,12 @@ services:
       rabbitmq:
         condition: service_healthy
 
-
   usermanagement:
     container_name: usermanagement
     build: ./usermanagement
     ports:
       - "8004:8004"
 
-    
   rabbitmq:
       container_name: rabbitmq
       image: rabbitmq:3.8.17-management
