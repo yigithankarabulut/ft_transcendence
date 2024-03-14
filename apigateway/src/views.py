@@ -3,6 +3,7 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+import logging
 
 
 class APIGatewayView(APIView):
@@ -29,6 +30,7 @@ class APIGatewayView(APIView):
 
 
 def pass_request_to_destination_service(request, path, headers):
+    logging.error("Bir hata oluştu: %s", request, path, headers)
     base_url = get_service_url(request.path)
     if not base_url:
         return Response({'error': 'Invalid path'}, status=status.HTTP_404_NOT_FOUND)
@@ -38,6 +40,7 @@ def pass_request_to_destination_service(request, path, headers):
     if params:
         full_url += f"?{params.urlencode()}"
     method = request.method.lower()
+    logging.error("Bir hata oluştu: %s", full_url, method, headers, request.data)
     response = requests.request(method, full_url, headers=headers, json=request.data)
     if response.headers.get('content-type') == 'application/json':
         return Response(response.json(), status=response.status_code)

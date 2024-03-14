@@ -1,7 +1,7 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { toggleHidden,  insertIntoElement } from "../../utils/utils.js";
 
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
+const userDetailUrl = "http://localhost:8000/user/details";
 
 export async function fetchUserDetails() {
     const token = localStorage.getItem("token");

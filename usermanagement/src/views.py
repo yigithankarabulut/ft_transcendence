@@ -6,6 +6,7 @@ from .serializers import RegisterSerializer, OauthCreateSerializer, ResetPasswor
 from .serializers import LoginSerializer, ChangePasswordSerializer, ForgotPasswordSerializer
 from .serializers import CreateManagementSerializer, GetUserByIdSerializer, PaginationSerializer
 from .serializers import TwoFactorAuthSerializer
+import logging
 
 
 class UserManagementHandler(viewsets.ViewSet):
@@ -78,7 +79,7 @@ class AuthHandler(viewsets.ViewSet):
         user = req.bind(req.validated_data)
         res, err = self.service.two_factor_auth(user)
         if err:
-            print(res)
+            logging.error(res)
             return Response(res, status=500)
         return Response(res, status=200)
 

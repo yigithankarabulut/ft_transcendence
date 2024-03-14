@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   frontend:
+    container_name: frontend
     image: nginx
     volumes:
       - ./frontend:/usr/share/nginx/html
@@ -9,34 +10,43 @@ services:
     ports:
       - "808:80"
      
-  # apigateway:
-  #   build: ./apigateway
-  #   depends_on:
-  #     - authservice
-  #     - mailservice
-  #     - usermanagement
+  apigateway:
+    container_name: apigateway
+    build: ./apigateway
+    depends_on:
+      - authservice
+      - mailservice
+      - usermanagement
+    ports:
+      - "8000:8000"
 
-  # authservice:
-  #   build: ./authservice
+  authservice:
+    container_name: authservice
+    build: ./authservice
 
-  # mailservice:
-  #   build: ./mailservice
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
+  mailservice:
+    container_name: mailservice
+    build: ./mailservice
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
 
 
-  # usermanagement:
-  #   build: ./usermanagement
+  usermanagement:
+    container_name: usermanagement
+    build: ./usermanagement
+    ports:
+      - "8004:8004"
 
     
-  # rabbitmq:
-  #   image: rabbitmq:3.8.17-management
-  #   healthcheck:
-  #     test: rabbitmq-diagnostics check_port_connectivity
-  #     interval: 30s
-  #     timeout: 30s
-  #     retries: 10
-  #   ports:
-  #     - "5672:5672"
-  #     - "15672:15672"
+  rabbitmq:
+      container_name: rabbitmq
+      image: rabbitmq:3.8.17-management
+      ports:
+        - "5672:5672"
+        - "15672:15672"
+      healthcheck:
+        test: ["CMD", "rabbitmqctl", "node_health_check"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
