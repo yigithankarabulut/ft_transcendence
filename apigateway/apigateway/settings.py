@@ -25,12 +25,13 @@ SECRET_KEY = 'django-insecure-#fvj*dfcvw*q5!$2)=29sw+z$)1w#f6#6u@k=r(x47(c+g657v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['34.141.6.250', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['34.141.6.250', 'localhost', '127.0.0.1', '0.0.0.0']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,12 +52,20 @@ MIDDLEWARE = [
     'src.middleware.JWTAuthenticationMiddleware',
 ]
 
-EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/pwd/forgot', '/auth/intra', '/auth/intra/callback']
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_HEADERS = True
+
+
+EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/2fa', '/user/pwd/forgot', '/auth/intra', '/auth/intra/callback']
 
 SERVICE_ROUTES = {
     '/auth': 'http://authservice:8001',
-    '/friend': 'http://friend:8002',
+    # '/friend': 'http://friend:8002',
     '/user': 'http://usermanagement:8004',
+    # '/auth': 'http://localhost:8001',
+    # '/friend': 'http://localhost:8002',
+    # '/user': 'http://localhost:8004',
 }
 
 ROOT_URLCONF = 'apigateway.urls'

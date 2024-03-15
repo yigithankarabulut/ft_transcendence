@@ -25,12 +25,12 @@ SECRET_KEY = 'django-insecure-4+_=!fz64vf%cf-^@d_v$yoty&cd-bk^=*_9623**cn+0v0$q%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['34.141.6.250', 'localhost', '127.0.0.1']
-
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'apigateway', 'usermanagement', 'authservice']
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -51,9 +52,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True
+
+
 SERVICE_ROUTES = {
     '/auth': 'http://authservice:8001',
-    '/friend': 'http://friend:8002',
+    # '/friend': 'http://friend:8002',
+    # '/auth': 'http://localhost:8001',
+    # '/friend': 'http://localhost:8002',
+    # '/match': 'http://localhost:8008',
 }
 
 REST_FRAMEWORK = {
@@ -94,7 +101,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -112,6 +118,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Internationalization

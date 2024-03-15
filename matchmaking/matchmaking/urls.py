@@ -1,6 +1,5 @@
-from django.urls import path
-from django.urls import include
+from django.urls import path, include
 
 urlpatterns = [
-    path('matchmaking/', include('src.urls')),
+    path('game/', include('src.urls')),
 ]

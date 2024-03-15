@@ -1,8 +1,11 @@
 from rest_framework import serializers
+from datetime import datetime, timedelta
+from django.utils import timezone
 from .models import UserManagement, OAuthUser
 
 class GetUserByIdSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=True)
+
 
 class CreateManagementSerializer(serializers.Serializer):
     first_name = serializers.CharField(required=True, min_length=3, max_length=100)
@@ -14,9 +17,11 @@ class CreateManagementSerializer(serializers.Serializer):
     def bind(self, validated_data):
         return UserManagement(**validated_data)
 
+
 class PaginationSerializer(serializers.Serializer):
     page = serializers.IntegerField(required=False, default=1, min_value=1, max_value=500)
     limit = serializers.IntegerField(required=False, default=10, min_value=1, max_value=500)
+
 
 class ManagementSerializer(serializers.Serializer):
     def single_representation(self, instance):
@@ -27,7 +32,6 @@ class ManagementSerializer(serializers.Serializer):
             "username": instance.username,
             "email": instance.email,
             "phone": instance.phone,
-            "is_active": instance.is_active
         }
     
     def single_representation_oauth(self, instance):
@@ -58,18 +62,28 @@ class RegisterSerializer(serializers.Serializer):
     last_name = serializers.CharField(required=True, min_length=3, max_length=100)
     email = serializers.EmailField(required=True)
     phone = serializers.CharField(required=True, min_length=10, max_length=15)
-    
+
     def bind(self, validated_data):
         return UserManagement(**validated_data)
     
 
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField(required=True, min_length=3, max_length=20)
+    email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True, min_length=8, max_length=20)
         
     def bind(self, validated_data):
         return UserManagement(**validated_data)
-    
+
+class TwoFactorAuthSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    twofa_code = serializers.CharField(required=True, min_length=6, max_length=6)
+
+    def bind(self, validated_data):
+        return UserManagement(**validated_data)
+
+class ResetPasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField(required=True, min_length=8, max_length=20)
+
 
 class ChangePasswordSerializer(serializers.Serializer):
     username = serializers.CharField(required=True, min_length=3, max_length=20)
@@ -78,8 +92,8 @@ class ChangePasswordSerializer(serializers.Serializer):
     
 
 class ForgotPasswordSerializer(serializers.Serializer):
-    username = serializers.CharField(required=True, min_length=3, max_length=20)
     email = serializers.EmailField(required=True)
+
 
 class OauthCreateSerializer(serializers.Serializer):
     username = serializers.CharField(required=True, min_length=3, max_length=20)
@@ -92,3 +106,27 @@ class OauthCreateSerializer(serializers.Serializer):
     access_token = serializers.CharField(required=True)
     refresh_token = serializers.CharField(required=True)
     expires_in = serializers.CharField(required=True)
+
+    def bind_oauth_user(self, validated_data):
+        seconds = int(validated_data['expires_in'])
+        now = timezone.now()
+        expires_in = now + timedelta(seconds=seconds)
+        user_oauth = OAuthUser(
+            provider=validated_data['provider'],
+            provider_user_id=validated_data['provider_user_id'],
+            access_token=validated_data['access_token'],
+            refresh_token=validated_data['refresh_token'],
+            expires_in=expires_in
+        )
+        return user_oauth
+
+    def bind_user_management(self, validated_data):
+        user_management = UserManagement(
+            username=validated_data['username'],
+            password="oauth",
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
+            email=validated_data['email'],
+            phone=validated_data['phone']
+        )
+        return user_management
