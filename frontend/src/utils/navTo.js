@@ -1,5 +1,6 @@
 import { routes } from "../Routes.js";
 
+
 export const router = async () => {
     console.log(location.pathname)
     const potentialMatches = routes.map(route => {

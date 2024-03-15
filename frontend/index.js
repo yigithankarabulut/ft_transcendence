@@ -1,4 +1,7 @@
 import { navigateTo, router } from "./src/utils/navTo.js";
+import { socketInstance } from "./src/socket/BaseSocket.js";
+
+
 
 window.addEventListener("popstate", router);
 
@@ -11,10 +14,13 @@ generateFavIcon();
 
 document.addEventListener("DOMContentLoaded", () => {
     document.body.addEventListener("click", (e) => {
-        if (e.target.matches("[data-nav]")) {
+        console.log(e);
+        if (e.target.matches("a.nav-link")) {
             e.preventDefault();
+            console.log(e.target.href)
             navigateTo(e.target.href);
         }
     })
+
     router();
 })

@@ -1,4 +1,4 @@
-import { fetchUserDetails } from '../routes/homepage/HomePage.js';
+// import { fetchUserDetails } from '../routes/homepage/HomePage.js';
 
 class HomePageComponent {
     constructor(path) {
@@ -11,7 +11,7 @@ class HomePageComponent {
             throw new Error("couldn't fetch route");
         }
         const html = await res.text();
-        await fetchUserDetails();
+        // await fetchUserDetails();
         return html;
     }
 }

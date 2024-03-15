@@ -3,6 +3,14 @@ let button = document.getElementById('connect');
 
 let userUrl = 'http://localhost:8000/user/details';
 
+import { socketInstance } from "../../socket/BaseSocket.js";
+
+if (socketInstance.getSocket() == null) {
+    socketInstance.connect();
+}
+
+
+
 button.addEventListener('click', () => {
     let token = localStorage.getItem('token');
     if (!token) {
