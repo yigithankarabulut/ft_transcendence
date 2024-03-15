@@ -1,6 +1,7 @@
 import { routes } from "../Routes.js";
 
 export const router = async () => {
+    console.log(location.pathname)
     const potentialMatches = routes.map(route => {
         return {
             route,
@@ -14,7 +15,7 @@ export const router = async () => {
             isMatch: true
         }
     }
-    console.log (match);
+    console.log(match);
     const root = document.getElementById('root');
     const component = new match.route.component(match.route.htmlPath);
     try {
