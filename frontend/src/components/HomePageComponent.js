@@ -11,7 +11,7 @@ class HomePageComponent {
             throw new Error("couldn't fetch route");
         }
         const html = await res.text();
-        await fetchUserDetails();
+        // await fetchUserDetails();
         return html;
     }
 }

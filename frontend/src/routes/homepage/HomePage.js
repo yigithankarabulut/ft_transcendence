@@ -8,7 +8,12 @@ export async function fetchUserDetails() {
     if (!token) {
         navigateTo("/login");
         return;
-    }
+    } 
+    // auth istek token kontrolü
+    // token valid olabillir mi || olmayabilir?
+    // valid degilse login
+    // token süresi dolmuş mu?
+    // evet dolmus aut refreshtoken
     toggleHidden('home-spinner');
     try {
         const response = await fetch(userDetailUrl, {

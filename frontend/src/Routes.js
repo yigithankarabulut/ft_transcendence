@@ -2,6 +2,8 @@ import LoginComponent from "./components/LoginComponent.js"
 import RegisterComponent from "./components/RegisterComponent.js"
 import TwoFAComponent from "./components/TwoFAComponent.js"
 import HomePageComponent from "./components/HomePageComponent.js"
+import ProfileComponent from "./components/ProfileComponent.js"
+import EditComponent from "./components/EditComponent.js"
 
 export const routes = [
     {
@@ -28,8 +30,16 @@ export const routes = [
          js: "/src/routes/register/Register.js",
          component: RegisterComponent,
     },
-    // {
-    //     path:"/profile",
-    //     component: Profile
-    // }
+    {
+        path:"/profile",
+        htmlPath: "./src/routes/profile/profile.html",
+        js: "/src/routes/profile/profile.js",
+        component: ProfileComponent,
+    },
+    {
+        path:"/edit",
+        htmlPath: "./src/routes/profile_edit/edit.html",
+        js: "/src/routes/profile_edit/edit.js",
+        component: EditComponent,
+    }
 ]
