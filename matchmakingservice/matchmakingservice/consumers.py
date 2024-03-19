@@ -9,32 +9,37 @@ class QuickPlay(AsyncWebsocketConsumer):
         super().__init__(*args, **kwargs)
     
     async def connect(self):
-        
         self.username = self.scope['path_remaining'].split('/')[1]
         await self.channel_layer.group_add(
             "quickplay",
             self.channel_name
         )
+        if self.username in users:
+            await self.close()
         users.append(self.username)
         await self.accept()
         await self.matchmake()
     
     async def disconnect(self, close_code):
-        print('disconnect')
+        if self.username in users:
+            users.remove(self.username)
+        await self.channel_layer.group_discard("quickplay", self.channel_name)
+            
 
     async def receive(self, text_data):
-        print('recive')
+        pass
 
     async def add_group(self, event):
         data = event['group_name']
         if self.username != event['user']:
             await self.channel_layer.group_add(data, self.channel_name)
+            self.group_name = data
             await self.channel_layer.group_discard("quickplay", self.channel_name)
             await self.channel_layer.group_send(
                 data,
                 {
                     "type": "send.group",
-                    "message": "match found"
+                    "message": data
                 }
             )
 
@@ -48,6 +53,7 @@ class QuickPlay(AsyncWebsocketConsumer):
             user2 = users.pop()
             quickplay_group_name = f'quickplay_{user1}_{user2}'
             await self.channel_layer.group_add(quickplay_group_name, self.channel_name)
+            self.group_name = quickplay_group_name
             await self.channel_layer.group_send(
                 "quickplay",
                 {

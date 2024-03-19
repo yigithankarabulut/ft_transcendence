@@ -1,5 +1,5 @@
-import { navigateTo } from "../../utils/navTo.js";
-import { insertIntoElement, appendToElement, toggleHidden } from "../../utils/utils.js";
+import { navigateTo } from "../../../../ft_transcendence/frontend/src/utils/navTo.js";
+import { insertIntoElement, appendToElement, toggleHidden } from "../../../../ft_transcendence/frontend/src/utils/utils.js";
 
 const url = "http://127.0.0.1:8000/user/login";
 const form = document.getElementById("login");

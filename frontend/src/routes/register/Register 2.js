@@ -1,9 +1,8 @@
-import { navigateTo } from "../../utils/navTo.js";
-import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
+import { navigateTo } from "../../../../ft_transcendence/frontend/src/utils/navTo.js";
+import { insertIntoElement, toggleHidden } from "../../../../ft_transcendence/frontend/src/utils/utils.js";
 
 const url = "http://127.0.0.1:8000/user/register";
 const form = document.getElementById("register");
-document.getElementById('nav-bar').style.display = 'none';
 
 form.addEventListener("submit", (e) => {
 

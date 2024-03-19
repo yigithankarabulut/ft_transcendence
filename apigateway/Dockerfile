@@ -1,12 +1,12 @@
 FROM alpine:3.7
 
-RUN apk add --no-cache python3-dev \
-    && pip3 install --upgrade pip
+RUN apk add --no-cache python3 python3-dev py3-pip build-base libffi-dev openssl-dev
 
 COPY . /app
 
 WORKDIR /app
 
-RUN pip3 install -r requirements.txt
+RUN pip3 install --upgrade pip \
+    && pip3 install -r requirements.txt
 
 CMD [ "python3", "manage.py", "runserver", "0.0.0.0:8000"]

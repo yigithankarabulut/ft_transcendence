@@ -2,8 +2,9 @@ import LoginComponent from "./components/LoginComponent.js"
 import RegisterComponent from "./components/RegisterComponent.js"
 import TwoFAComponent from "./components/TwoFAComponent.js"
 import HomePageComponent from "./components/HomePageComponent.js"
+import ProfileComponent from "./components/ProfileComponent.js"
+import EditComponent from "./components/EditComponent.js"
 import GameComponent from "./components/GameComponent.js"
-import TournamentComponent from "./components/TournamentComponent.js"
 
 export const routes = [
     {
@@ -31,19 +32,21 @@ export const routes = [
          component: RegisterComponent,
     },
     {
+        path:"/profile",
+        htmlPath: "./src/routes/profile/profile.html",
+        js: "/src/routes/profile/profile.js",
+        component: ProfileComponent,
+    },
+    {
+        path:"/edit",
+        htmlPath: "./src/routes/profile_edit/edit.html",
+        js: "/src/routes/profile_edit/edit.js",
+        component: EditComponent,
+    },
+    {
         path:"/game",
         htmlPath: "./src/routes/game/game.html",
         js: "/src/routes/game/Game.js",
         component: GameComponent,
-    },
-    {
-        path:"/tournament",
-        htmlPath: "./src/routes/tournament/tournament.html",
-        js: "/src/routes/tournament/Tournament.js",
-        component: TournamentComponent,
     }
-    // {
-    //     path:"/profile",
-    //     component: Profile
-    // }
 ]

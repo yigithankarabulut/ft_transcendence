@@ -1,10 +1,9 @@
-import { navigateTo } from "../../../../ft_transcendence/frontend/src/utils/navTo.js";
-import { insertIntoElement, toggleHidden } from "../../../../ft_transcendence/frontend/src/utils/utils.js";
+import { navigateTo } from "../../utils/navTo.js";
+import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
 
 
 const url = "http://127.0.0.1:8000/user/2fa";
 const form = document.getElementById("2fa-code");
-document.getElementById('nav-bar').style.display = 'none';
 
 form.addEventListener("submit", (e) => {
 
