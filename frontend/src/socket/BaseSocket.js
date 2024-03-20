@@ -26,7 +26,11 @@ class BaseSocket {
                 } else {
                     console.log('Connection died');
                 }
-            };
+
+            this.socket.onmessage = (event) => {
+                console.log(`Data received from WebSocket: ${event.data}`);
+            }
+        };
         } catch (error) {
             console.error(`Failed to create WebSocket connection: ${error}`);
         }
@@ -53,8 +57,6 @@ class BaseSocket {
             return null;
     }
 }
-
-
 
 const socketInstance = new BaseSocket();
 
