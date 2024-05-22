@@ -8,16 +8,16 @@ form.addEventListener("submit", (e) => {
 
     e.preventDefault();
     const username = document.getElementById("username").value;
-    const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-    const firstname = document.getElementById("firstname").value;
-    const lastname = document.getElementById("lastname").value;
+    const email = document.getElementById("email").value;
+    const firstname = document.getElementById("first_name").value;
+    const lastname = document.getElementById("last_name").value;
     const phone = document.getElementById("phone").value;
     const fields_warning = document.getElementById('fields-warning');
     const fields_success = document.getElementById('fields-success');
 
     
-    if (!username || !email  || !password || !firstname || !lastname)
+    if (!username || !email  || !password || !firstname || !lastname || !phone)
     {
         insertIntoElement('fields-warning', "fields shouldn't be empty");
         return;

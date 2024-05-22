@@ -312,12 +312,12 @@ class UserManagementService(IUserManagementService):
                     raise Exception("OAuth user creation failed")
 
                 # Request to matchmaking service for create user
-                try:
-                    response = requests.post(f"{SERVICE_ROUTES['/match']}/match/user/create", data={"user_id": user.id})
-                except Exception as e:
-                    raise Exception("Matchmaking service request sending failed")
-                if response.status_code != 201:
-                    raise Exception("Matchmaking service not created user")
+                # try:
+                #     response = requests.post(f"{SERVICE_ROUTES['/match']}/match/user/create", data={"user_id": user.id})
+                # except Exception as e:
+                #     raise Exception("Matchmaking service request sending failed")
+                # if response.status_code != 201:
+                #     raise Exception("Matchmaking service not created user")
                 res = ManagementSerializer().response([user_management])
         except Exception as e:
             err = str(e)

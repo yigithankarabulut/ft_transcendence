@@ -18,5 +18,5 @@ urlpatterns = [
 
     # TODO: Frontend must receive the reset url we sent but now we send this url to queue.
     path('reset-password/<uidb64>/<token>/', AuthHandler.as_view({'post': 'reset_password'}), name='reset_password'),
-    path('email_verify/<uidb64>/<token>/', AuthHandler.as_view({'post': 'email_verify'}), name='email_verify'),
+    path('email_verify/<uidb64>/<token>/', AuthHandler.as_view({'get': 'email_verify'}), name='email_verify'),
 ]

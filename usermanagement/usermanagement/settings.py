@@ -58,7 +58,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 SERVICE_ROUTES = {
     '/auth': 'http://authservice:8001',
     # '/friend': 'http://friend:8002',
-    # '/auth': 'http://localhost:8001',
     # '/friend': 'http://localhost:8002',
     # '/match': 'http://localhost:8008',
 }
@@ -96,8 +95,12 @@ WSGI_APPLICATION = 'usermanagement.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'usermanagement',
+        'USER': 'yigit',
+        'PASSWORD': 'yigit',
+        'HOST': 'userpostgres',
+        'PORT': '5432',
     }
 }
 

@@ -7,7 +7,8 @@ from .consumer import RabbitMQConsumer
 
 def start_rabbitmq_consumer():
     print('Starting RabbitMQ consumer thread...')
-    consumers = RabbitMQConsumer(amqp_url='amqp://guest:guest@rabbitmq:5672/%2F', queue_name='mail-service')
+    amqp_url = "amqp://guest:guest@rabbitmq:5672/%2F"
+    consumers = RabbitMQConsumer(amqp_url, queue_name='mail-service')
     consumers.connect()
     consumers.start_consuming()
 

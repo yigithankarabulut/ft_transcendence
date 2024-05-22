@@ -6,7 +6,7 @@ let userUrl = 'http://localhost:8000/user/details';
 button.addEventListener('click', () => {
     let token = localStorage.getItem('token');
     if (!token) {
-        navigateTo('/login');
+        navigateTo('/game');
     }
     fetch(userUrl, {
         method: 'GET',
