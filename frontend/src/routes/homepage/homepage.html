@@ -1,14 +1,121 @@
-<nav id="nav-bar" class="navbar navbar-expand-lg bg-body-tertiary" style="display: none;">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">ft_transcendence</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .container {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .notifications-container {
+    width: 1fr;
+    height: 100%;
+    background-color: #222;
+    border-radius: 10px;
+    padding: 15px;
+  }
+
+  .main-container {
+    width: 3fr;
+    height: 100%;
+    background-color: #222;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 0 10px;
+  }
+
+  .friends-container {
+    width: 1fr;
+    height: 100%;
+    background-color: #222;
+    border-radius: 10px;
+    padding: 15px;
+  }
+
+  .btn-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+
+  .notifications {
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .notifications:hover {
+    background-color: #444;
+  }
+
+  #notifications-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+
+  .btn {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+  }
+
+  .btn:hover {
+    background-color: #444;
+  }
+
+  h2 {
+    color: #fff;
+    margin-bottom: 15px;
+  }
+</style>
+
+<div class="container">
+    <div class="header">
+      <a href="/">Home</a>
+      <h1>ft_transcendence</h1>
+      <div class="search">
+        <input type="text" placeholder="Search" />
+        <button type="submit">
+          <i class="fa fa-search"></i>
+        </button>
+      </div>
+      <a href="/profile">Profile</a>
+    </div>
+    <div class="sidebar">
+      <div class="section">
+        <h3>Notifications</h3>
+        <a href="/notifications/friends">Friends</a>
+        <a href="/notifications/quickplay">Quickplay</a>
+      </div>
+      <div class="section">
+        <h3>Friends</h3>
+      </div>
+    </div>
+    <div class="content">
+      {/* Content goes here */}
+    </div>
+    <div class="sidebar">
+      <div class="section">
+        <a href="/games">Games</a>
+      </div>
+      <div class="section">
+        <a href="/tournaments">Tournament</a>
+      </div>
+    </div>
   </div>
-</div>
-</nav>  
-  
-<div class="container d-flex align-items-center justify-content-center text-center">
-  <img src="/public/images/R8la.gif" type="image/gif" alt="gif" width="650px" height="400px">
-</div>
