@@ -1,18 +1,16 @@
-import { navigateTo } from "../../utils/route.js";
+import { navigateTo } from "../../utils/navTo.js";
 import { toggleHidden, insertIntoElement } from "../../utils/utils.js";
 
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 
-document.addEventListener("DOMContentLoaded", async () => {
-    await fetchUserDetails();
-});
-
-async function fetchUserDetails() {
-    const token = localStorage.getItem("token");
+export async function fetchUserDetails() {
+    console.log("Fetching user details")
+    const token = localStorage.getItem("access_token");
     if (!token) {
         navigateTo("/login");
         return;
     }
+    console.log("Token: ", token);
     try {
         const response = await fetch(userDetailUrl, {
             method: "GET",
@@ -29,6 +27,7 @@ async function fetchUserDetails() {
 
         const data = await response.json();
         const user = data[0].data[0];
+        console.log("User: ", user)
 
         // Bilgileri sayfaya ekleme
         const profileImageUrl = '../../../public/images/ykarabul.ico';
@@ -50,3 +49,8 @@ async function fetchUserDetails() {
         }
     }
 }
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await fetchUserDetails();
+});
+

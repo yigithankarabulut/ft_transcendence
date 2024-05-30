@@ -8,31 +8,40 @@ from django.conf import settings
 import requests
 
 
-def generate_token(user_id):
+def generate_access_token(user_id):
     payload = {
         'user_id': user_id,
-        'exp': datetime.utcnow() + timedelta(days=1),
+        'exp': datetime.utcnow() + timedelta(minutes=15),  # Access token expiration
         'iat': datetime.utcnow()
     }
-    token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
-    return token
+    access_token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+    return access_token
+
+
+def generate_refresh_token(user_id):
+    payload = {
+        'user_id': user_id,
+        'exp': datetime.utcnow() + timedelta(days=7),  # Refresh token expiration
+        'iat': datetime.utcnow()
+    }
+    refresh_token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+    return refresh_token
 
 
 class AuthHandler(viewsets.ViewSet):
     SECRET_KEY = settings.SECRET_KEY
 
-    def generate_token(self, request):
-        req= GenerateTokenSerializer(data=request.query_params)
+    def generate_tokens(self, request):
+        req = GenerateTokenSerializer(data=request.query_params)
         if not req.is_valid():
             return Response(req.errors, status=400)
         user_id = req.validated_data['user_id']
-        payload = {
-            'user_id': user_id,
-            'exp': datetime.utcnow() + timedelta(days=1),
-            'iat': datetime.utcnow()
-        }
-        token = jwt.encode(payload, self.SECRET_KEY, algorithm='HS256')
-        return Response({'token': token}, status=status.HTTP_200_OK)
+        access_token = generate_access_token(user_id)
+        refresh_token = generate_refresh_token(user_id)
+        return Response({
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }, status=status.HTTP_200_OK)
 
     def validate_token(self, request):
         token = request.headers.get('Authorization')
@@ -54,15 +63,13 @@ class AuthHandler(viewsets.ViewSet):
         try:
             token = token.split(' ')[1]
             decoded_token = jwt.decode(token, self.SECRET_KEY, algorithms=['HS256'])
-            payload = {
-                'user_id': decoded_token['user_id'],
-                'exp': datetime.utcnow() + timedelta(days=1),
-                'iat': datetime.utcnow()
-            }
-            new_token = jwt.encode(payload, self.SECRET_KEY, algorithm='HS256')
-            return Response({'token': new_token}, status=status.HTTP_200_OK)
+            if 'exp' in decoded_token:
+                if decoded_token['exp'] < datetime.utcnow():
+                    return Response({'error': 'Refresh token has expired'}, status=status.HTTP_401_UNAUTHORIZED)
+            new_access_token = generate_access_token(decoded_token['user_id'])
+            return Response({'access_token': new_access_token}, status=status.HTTP_200_OK)
         except jwt.ExpiredSignatureError:
-            return Response({'error': 'Token has expired'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'Refresh token has expired'}, status=status.HTTP_401_UNAUTHORIZED)
         except jwt.InvalidTokenError:
             return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -90,7 +97,7 @@ class AuthHandler(viewsets.ViewSet):
             return Response(user_creation_response.json(), status=user_creation_response.status_code)
         response_data = user_creation_response.json().get('data')
         user_id = response_data[0].get('id')
-        token = generate_token(user_id)
+        token = generate_access_token(user_id)
         res = {
             'message': user_creation_response.json().get('message'),
             'data': [{'token': token, 'user_id': user_id}]

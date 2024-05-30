@@ -4,9 +4,9 @@ let button = document.getElementById('connect');
 let userUrl = 'http://localhost:8000/user/details';
 
 button.addEventListener('click', () => {
-    let token = localStorage.getItem('token');
+    let token = localStorage.getItem('access_token');
     if (!token) {
-        navigateTo('/game');
+        navigateTo('/login');
     }
     fetch(userUrl, {
         method: 'GET',

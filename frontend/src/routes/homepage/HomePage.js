@@ -1,11 +1,11 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { toggleHidden,  insertIntoElement } from "../../utils/utils.js";
 
-const userDetailUrl = "http://127.0.0.1:8000/user/home";
+const userDetailUrl = "http://127.0.0.1:8000/user/details";
 document.getElementById('nav-bar').style.display = 'flex';
 export async function fetchUserDetails() {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    const access_token = localStorage.getItem("access_token");
+    if (!access_token) {
         navigateTo("/login");
         return;
     }
@@ -15,7 +15,7 @@ export async function fetchUserDetails() {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
+                "Authorization": `Bearer ${access_token}`,
             }
         });
 

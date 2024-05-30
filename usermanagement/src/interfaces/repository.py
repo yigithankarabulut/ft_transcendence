@@ -29,6 +29,10 @@ class IUserManagementRepository(ABC):
         pass
 
     @abstractmethod
+    def search(self, key: str) -> list:
+        pass
+
+    @abstractmethod
     def delete(self, id: int) -> bool:
         pass
 

@@ -1,14 +1,73 @@
-<nav id="nav-bar" class="navbar navbar-expand-lg bg-body-tertiary" style="display: none;">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">ft_transcendence</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  </div>
-</div>
-</nav>  
-  
-<div class="container d-flex align-items-center justify-content-center text-center">
-  <img src="/public/images/R8la.gif" type="image/gif" alt="gif" width="650px" height="400px">
+<style>
+    .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        height: 100vh;
+        padding: 10px;
+    }
+    .notifications-container {
+        border: 2px solid #000;
+        padding: 13px;
+        width: 20%;
+        margin-top: 40px; /* Notifications container'ını aşağıya almak için eklendi */
+    }
+    .friends-container {
+        border: 2px solid #000;
+        padding: 33px;
+        width: 20%;
+        margin-top: 40px; /* Friends container'ını aşağıya almak için eklendi */
+    }
+    .notifications-container {
+        margin-right: auto;
+    }
+    .friends-container {
+        margin-left: auto;
+        max-height: 100vh;
+        overflow-y: auto;
+    }
+    .main-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        width: 50%;
+        height: 100vh;
+        margin-top: 300px; /* Main container'ı aşağıya almak için eklendi */
+    }
+    .button-container {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+        margin-top: 40px; /* Butonların yukarıda olmasını sağlamak için eklendi */
+    }
+    .button-container a {
+        width: 45%;
+        padding: 40px 0;
+        text-align: center;
+        font-size: 24px;
+        background-color: blue;
+        color: white;
+        border-radius: 10px;
+    }
+</style>
+
+<div class="container">
+    <div class="notifications-container">
+        <h2 style="text-align:center;">Notifications</h2>
+        <button id="friends-notifications" class="btn btn-secondary" style="width: 46%;">Friends</button>
+        <button id="games-notifications" class="btn btn-secondary" style="width: 46%;">Games</button>
+    </div>
+    <div class="main-container">
+        <div class="button-container">
+            <a href="/quickplay" class="btn btn-primary" data-nav>Quick Play</a>
+            <a href="/quickplay" class="btn btn-primary" data-nav>Tournament</a>
+        </div>
+    </div>
+    <div class="friends-container">
+        <h2 style="text-align:center;">Friends</h2>
+        <ul id="friends-list" class="list-group">
+            <!-- Friends populated here -->
+        </ul>
+    </div>
 </div>

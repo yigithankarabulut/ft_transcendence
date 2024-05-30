@@ -5349,13 +5349,13 @@
       "updated": 1710090197690,
       "link": null,
       "locked": false,
-      "text": "'tournament/'",
+      "text": "'quickplay/'",
       "fontSize": 26.392967609384982,
       "fontFamily": 1,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "'tournament/'",
+      "originalText": "'quickplay/'",
       "lineHeight": 1.25
     },
     {
