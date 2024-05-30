@@ -1,7 +1,8 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { toggleHidden, insertIntoElement } from "../../utils/utils.js";
-
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
+
+fetchUserDetails();
 
 export async function fetchUserDetails() {
     console.log("Fetching user details")
@@ -30,14 +31,15 @@ export async function fetchUserDetails() {
         console.log("User: ", user)
 
         // Bilgileri sayfaya ekleme
-        const profileImageUrl = '../../../public/images/ykarabul.ico';
-        document.getElementById('profile-image').src = profileImageUrl;
         insertIntoElement('username', user.username);
         insertIntoElement('first_name', user.first_name);
         insertIntoElement('last_name', user.last_name);
         insertIntoElement('email', user.email);
 
-        toggleHidden('user-details');
+        // Sayfayı göster
+        toggleHidden('profile-item');
+
+
     } catch (err) {
         console.log(err);
         if (err.message === "Unauthorized" || err.message === "Token has expired") {
@@ -49,8 +51,3 @@ export async function fetchUserDetails() {
         }
     }
 }
-
-document.addEventListener("DOMContentLoaded", async () => {
-    await fetchUserDetails();
-});
-
