@@ -1,68 +1,113 @@
 <style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:weight@100;200;300;400;500;600;700;800&display=swap");
+
+    body {
+        background-color: #545454;
+        font-family: "Poppins", sans-serif;
+        font-weight: 300;
+    }
+
     .container {
-        display: flex;
-        justify-content: space-around;
-        align-items: flex-start;
         height: 100vh;
-        padding: 20px;
     }
-    .matches-container,
-    .profile-container {
-        border: 4px solid #000;
-        padding: 20px;
-        width: 45%;
+
+    .card {
+        width: 380px;
+        border: none;
+        border-radius: 15px;
+        padding: 8px;
+        background-color: #fff;
+        position: relative;
+        height: 460px; /* Yüksekliği artırıldı */
     }
-    .profile-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
+
+    .upper {
+        height: 100px;
     }
-    .profile-image {
+
+    .upper img {
+        width: 100%;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .user {
+        position: relative;
+    }
+
+    .profile img {
+        height: 80px;
+        width: 80px;
+        margin-top: 2px;
+    }
+
+    .profile {
+        position: absolute;
+        top: -50px;
+        left: 38%;
+        height: 90px;
+        width: 90px;
+        border: 3px solid #fff;
         border-radius: 50%;
-        width: 150px;
-        height: 150px;
-        object-fit: cover;
     }
-    .profile-title {
-        margin-left: 20px;
-        font-size: 24px;
+
+    .follow {
+        border-radius: 15px;
+        padding-left: 20px;
+        padding-right: 20px;
+        height: 35px;
     }
-    .profile-item {
-        margin: 10px 0;
+
+    .stats span {
+        font-size: 29px;
     }
-    .matches-container {
-        max-height: 100vh;
-        overflow-y: auto; /*match history slide bar*/
+
+    .edit-buttons {
+        display: none;
+        margin-top: 10px;
     }
 </style>
-<div class="container">
-    <div class="profile-container" id="profile-container">
-        <div class="profile-header">
-            <img id="profile-image" class="profile-image" src="../../../public/images/ykarabul.ico" alt="Profile Image">
-            <h2 class="profile-title">Profile</h2>
+
+<div class="container d-flex justify-content-center align-items-center">
+    <div class="card">
+        <div class="upper">
+            <img src="https://i.imgur.com/Qtrsrk5.jpg" class="img-fluid" id="cover-img">
         </div>
-        <div class="profile-item">
-            <label for="username" class="form-label">Username: </label>
-            <span id="username" class="form-control"></span>
+        <div class="user text-center">
+            <div class="profile">
+                <img src="https://i.imgur.com/JgYD2nQ.jpg" class="rounded-circle" width="80" id="profile-img">
+            </div>
         </div>
-        <div class="profile-item">
-            <label for="first_name" class="form-label">First Name: </label>
-            <span id="first_name" class="form-control"></span>
+        <div class="mt-5 text-center">
+            <h4 class="mb-0" id="user-name">Benjamin Tims</h4>
+            <input type="text" id="edit-first-name" class="d-none" />
+            <span class="text-muted d-block mb-2" id="user-location">Los Angles</span>
+            <input type="text" id="edit-last-name" class="d-none" />
+            <span class="text-muted d-block mb-2" id="user-username">bentims</span>
+            <input type="text" id="edit-username" class="d-none" />
+            <span class="text-muted d-block mb-2" id="user-phone">123-456-7890</span>
+            <input type="text" id="edit-phone" class="d-none" />
+            <button class="btn btn-primary btn-sm follow" onclick="enableEditMode()">Düzenle</button>
+            <div class="edit-buttons">
+                <button class="btn btn-success btn-sm" onclick="updateProfile()">Onayla</button>
+                <button class="btn btn-danger btn-sm" onclick="cancelEdit()">Reddet</button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-4 px-4">
+                <div class="stats">
+                    <h6 class="mb-0">Followers</h6>
+                    <span id="followers-count">8,797</span>
+                </div>
+                <div class="stats">
+                    <h6 class="mb-0">Projects</h6>
+                    <span id="projects-count">142</span>
+                </div>
+                <div class="stats">
+                    <h6 class="mb-0">Ranks</h6>
+                    <span id="ranks-count">129</span>
+                </div>
+            </div>
         </div>
-        <div class="profile-item">
-            <label for="last_name" class="form-label">Last Name: </label>
-            <span id="last_name" class="form-control"></span>
-        </div>
-        <div class="profile-item">
-            <label for="email" class="form-label">Email: </label>
-            <span id="email" class="form-control"></span>
-        </div>
-        <div class="profile-item">
-            <button id="settings" class="btn btn-primary">Settings</button>
-        </div>
-    </div>
-    <div class="matches-container">
-        <h2>Matches</h2>
-        <!-- match history -->
     </div>
 </div>
+
+
