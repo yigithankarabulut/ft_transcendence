@@ -4,9 +4,15 @@ import { toggleHidden,  insertIntoElement } from "../../utils/utils.js";
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 document.getElementById('nav-bar').style.display = 'flex';
 export async function fetchUserDetails() {
+<<<<<<< HEAD
     const access_token = localStorage.getItem("access_token");
     if (!access_token) {
         navigateTo("/login");
+=======
+    const token = true;
+    if (!token) {
+        navigateTo("/home");
+>>>>>>> 59b054ba26e225d7bf23f3293763f09b791dd1a7
         return;
     }
     toggleHidden('home-spinner');
