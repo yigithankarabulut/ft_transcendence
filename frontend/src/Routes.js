@@ -2,14 +2,7 @@ import LoginComponent from "./components/LoginComponent.js"
 import RegisterComponent from "./components/RegisterComponent.js"
 import TwoFAComponent from "./components/TwoFAComponent.js"
 import HomePageComponent from "./components/HomePageComponent.js"
-<<<<<<< HEAD
 import ProfileComponent from "./components/ProfileComponent.js"
-import SearchComponent     from "./components/SearchComponent.js"
-import QuickplayComponent from "./components/QuickplayComponent.js"
-=======
-import FriendsComponent from "./components/FriendsComponent.js"
-//import ProfileComponent from "./components/ProfileComponent.js"
->>>>>>> 59b054ba26e225d7bf23f3293763f09b791dd1a7
 //import GameComponent from "./components/GameComponent.js"
 //import TournamentComponent from "./components/TournamentComponent.js"
 
@@ -40,32 +33,11 @@ export const routes = [
         component: RegisterComponent,
     },
     {
-<<<<<<< HEAD
         path:"/profile",
         htmlPath: "./src/routes/profile/profile.html",
         js: "/src/routes/profile/Profile.js",
         component: ProfileComponent,
-    },
-    {
-        path: "/search",
-        htmlPath: "./src/routes/search/search.html",
-        js: "/src/routes/search/Search.js",
-        component: SearchComponent,
-    },
-    {
-        path: "/quickplay",
-        htmlPath: "./src/routes/quickplay/quickplay.html",
-        js: "/src/routes/quickplay/Quickplay.js",
-        component: QuickplayComponent,
-=======
-        path:"/friends",
-        htmlPath: "./src/routes/friends/friends.html",
-        js: "/src/routes/friends/Friends.js",
-        component: FriendsComponent,
->>>>>>> 59b054ba26e225d7bf23f3293763f09b791dd1a7
     }
-
-
     //{
     //    path:"/game",
     //    htmlPath: "./src/routes/game/game.html",

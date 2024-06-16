@@ -125,4 +125,3 @@ window.updateProfile = async function updateProfile() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", fetchProfile);
