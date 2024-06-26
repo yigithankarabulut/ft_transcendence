@@ -3,8 +3,6 @@ import RegisterComponent from "./components/RegisterComponent.js"
 import TwoFAComponent from "./components/TwoFAComponent.js"
 import HomePageComponent from "./components/HomePageComponent.js"
 import ProfileComponent from "./components/ProfileComponent.js"
-import SearchComponent     from "./components/SearchComponent.js"
-import QuickplayComponent from "./components/QuickplayComponent.js"
 //import GameComponent from "./components/GameComponent.js"
 //import TournamentComponent from "./components/TournamentComponent.js"
 
@@ -39,18 +37,6 @@ export const routes = [
         htmlPath: "./src/routes/profile/profile.html",
         js: "/src/routes/profile/Profile.js",
         component: ProfileComponent,
-    },
-    {
-        path: "/search",
-        htmlPath: "./src/routes/search/search.html",
-        js: "/src/routes/search/Search.js",
-        component: SearchComponent,
-    },
-    {
-        path: "/quickplay",
-        htmlPath: "./src/routes/quickplay/quickplay.html",
-        js: "/src/routes/quickplay/Quickplay.js",
-        component: QuickplayComponent,
     }
     //{
     //    path:"/game",

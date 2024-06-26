@@ -71,3 +71,132 @@
         </ul>
     </div>
 </div>
+=======
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .container {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .notifications-container {
+    width: 1fr;
+    height: 100%;
+    background-color: #222;
+    border-radius: 10px;
+    padding: 15px;
+  }
+
+  .main-container {
+    width: 3fr;
+    height: 100%;
+    background-color: #222;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 0 10px;
+  }
+
+  .friends-container {
+    width: 1fr;
+    height: 100%;
+    background-color: #222;
+    border-radius: 10px;
+    padding: 15px;
+  }
+
+  .btn-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+
+  .notifications {
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .notifications:hover {
+    background-color: #444;
+  }
+
+  #notifications-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+
+  .btn {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+  }
+
+  .btn:hover {
+    background-color: #444;
+  }
+
+  h2 {
+    color: #fff;
+    margin-bottom: 15px;
+  }
+</style>
+
+<div class="container">
+    <div class="header">
+      <a href="/">Home</a>
+      <h1>ft_transcendence</h1>
+      <div class="search">
+        <input type="text" placeholder="Search" />
+        <button type="submit">
+          <i class="fa fa-search"></i>
+        </button>
+      </div>
+      <a href="/profile">Profile</a>
+    </div>
+    <div class="sidebar">
+      <div class="section">
+        <h3>Notifications</h3>
+        <a href="/notifications/friends">Friends</a>
+        <a href="/notifications/quickplay">Quickplay</a>
+      </div>
+      <div class="section">
+        <h3>Friends</h3>
+      </div>
+    </div>
+    <div class="content">
+      {/* Content goes here */}
+    </div>
+    <div class="sidebar">
+      <div class="section">
+        <a href="/games">Games</a>
+      </div>
+      <div class="section">
+        <a href="/tournaments">Tournament</a>
+      </div>
+    </div>
+  </div>
+
+<!--
+play
+2-4
+| |
+v > tournaments
+quickplay
+-->

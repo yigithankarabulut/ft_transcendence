@@ -49,9 +49,6 @@ form.addEventListener("submit", (e) => {
         return res.json();
     })
     .then(data => {
-        insertIntoElement('fields-success', "Registration successful! Please check your mailbox.");/*test*/
-        document.getElementById('fields-success').style.display = 'block';/*test*/
-
         setTimeout(() => {
             navigateTo("/login");
         }, 2000);
