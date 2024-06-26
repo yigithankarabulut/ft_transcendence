@@ -70,6 +70,28 @@ class UserManagementService(IUserManagementService):
         }
         return BaseResponse(False, "Users found", res, paginate_data).res()
 
+    def search(self, key, page, limit) -> BaseResponse:
+        users = self.repository.search(key)
+        if not users:
+            return BaseResponse(True, "No users found", None).res()
+        paginator = Paginator(users, limit)
+        try:
+            pagineted_users = paginator.page(page)
+        except EmptyPage:
+            return BaseResponse(True, "There is no data on this page", None).res()
+
+        if not pagineted_users:
+            return BaseResponse(False, "No users found", None).res()
+
+        res = ManagementSerializer().response(pagineted_users)
+        paginate_data = {
+            "current_page": page,
+            "page_size": limit,
+            "total_pages": paginator.num_pages,
+            "total_records": paginator.count
+        }
+        return BaseResponse(False, "Users found", res, paginate_data).res()
+
     def delete(self, id: int)-> BaseResponse:
         user = self.repository.get(id)
         if not user:
@@ -180,10 +202,10 @@ class UserManagementService(IUserManagementService):
         if now().timestamp() - float(code_timestamp) > 100:
             return BaseResponse(True, "2FA code expired", None).res()
 
-        token = req_to_auth_service_for_generate_token(user.id)
-        if token == "error":
+        access_token, refresh_token = req_to_auth_service_for_generate_token(user.id)
+        if not access_token or not refresh_token:
             return BaseResponse(True, "Token generation failed", None).res()
-        return BaseResponse(False, "Login successful", {"token": token}).res()
+        return BaseResponse(False, "Login successful", {"access_token": access_token, "refresh_token": refresh_token}).res()
 
     def forgot_password(self, email) -> BaseResponse:
         user = self.repository.get_by_email(email)
@@ -312,12 +334,12 @@ class UserManagementService(IUserManagementService):
                     raise Exception("OAuth user creation failed")
 
                 # Request to matchmaking service for create user
-                try:
-                    response = requests.post(f"{SERVICE_ROUTES['/match']}/match/user/create", data={"user_id": user.id})
-                except Exception as e:
-                    raise Exception("Matchmaking service request sending failed")
-                if response.status_code != 201:
-                    raise Exception("Matchmaking service not created user")
+                # try:
+                #     response = requests.post(f"{SERVICE_ROUTES['/match']}/match/user/create", data={"user_id": user.id})
+                # except Exception as e:
+                #     raise Exception("Matchmaking service request sending failed")
+                # if response.status_code != 201:
+                #     raise Exception("Matchmaking service not created user")
                 res = ManagementSerializer().response([user_management])
         except Exception as e:
             err = str(e)

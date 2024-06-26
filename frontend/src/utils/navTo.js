@@ -21,7 +21,13 @@ export const router = async () => {
     try {
         const html = await component.render();
         root.innerHTML = html;
-        import(match.route.js);
+        const module = await import(match.route.js);
+
+        // Eğer profil sayfasıysa ve fetchProfile fonksiyonu varsa çağır
+        if (location.pathname === "/profile" && module.fetchProfile) {
+            module.fetchProfile(); // Profil sayfasıysa fetchProfile fonksiyonunu çağır
+        }
+
     } catch (err) {
         console.log("An error occurred while rendering the component.");
     }
@@ -31,3 +37,7 @@ export const navigateTo = (url) => {
     history.pushState(null, null, url);
     router();
 }
+
+// Sayfa ilk yüklendiğinde router fonksiyonunu çağır
+window.addEventListener('popstate', router);
+window.addEventListener('DOMContentLoaded', router);

@@ -4,7 +4,7 @@ from .service import UserManagementService
 from .repository import UserManagementRepository, OAuthUserRepository
 from .serializers import RegisterSerializer, OauthCreateSerializer, ResetPasswordSerializer
 from .serializers import LoginSerializer, ChangePasswordSerializer, ForgotPasswordSerializer
-from .serializers import CreateManagementSerializer, GetUserByIdSerializer, PaginationSerializer
+from .serializers import CreateManagementSerializer, GetUserByIdSerializer, PaginationSerializer, SearchUserToPaginationSerializer
 from .serializers import TwoFactorAuthSerializer
 import logging
 
@@ -35,6 +35,13 @@ class UserManagementHandler(viewsets.ViewSet):
         if not req.is_valid():
             return Response(req.errors, status=400)
         res = self.service.list(req.validated_data['page'], req.validated_data['limit'])
+        return Response(res, status=200)
+
+    def search_user(self, request):
+        req = SearchUserToPaginationSerializer(data=request.query_params)
+        if not req.is_valid():
+            return Response(req.errors, status=400)
+        res = self.service.search(req.validated_data['key'], req.validated_data['page'], req.validated_data['limit'])
         return Response(res, status=200)
 
     def delete_user(self, request):

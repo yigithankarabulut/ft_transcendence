@@ -45,6 +45,13 @@ class UserManagementRepository(IUserManagementRepository):
     def list(self) -> list:
         return UserManagement.objects.all()
 
+    def search(self, key: str) -> list:
+        try:
+            model = UserManagement.objects.filter(first_name__contains=key).all()
+            return model
+        except Exception as e:
+            return None
+
     def delete(self, id: int) -> bool:
         try:
             model = UserManagement.objects.filter(id=id).first()

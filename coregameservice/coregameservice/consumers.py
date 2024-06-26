@@ -24,7 +24,6 @@ padd_right = {
 
 
 class Pong(AsyncWebsocketConsumer):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.room_id = None
