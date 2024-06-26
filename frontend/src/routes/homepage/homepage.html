@@ -1,196 +1,61 @@
 <style>
-<<<<<<< HEAD
-    .container {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        height: 100vh;
-        padding: 10px;
-    }
-    .notifications-container {
-        border: 2px solid #000;
-        padding: 13px;
-        width: 20%;
-        margin-top: 40px; /* Notifications container'ını aşağıya almak için eklendi */
-    }
-    .friends-container {
-        border: 2px solid #000;
-        padding: 33px;
-        width: 20%;
-        margin-top: 40px; /* Friends container'ını aşağıya almak için eklendi */
-    }
-    .notifications-container {
-        margin-right: auto;
-    }
-    .friends-container {
-        margin-left: auto;
-        max-height: 100vh;
-        overflow-y: auto;
-    }
-    .main-container {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        width: 50%;
-        height: 100vh;
-        margin-top: 300px; /* Main container'ı aşağıya almak için eklendi */
-    }
-    .button-container {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        width: 100%;
-        margin-top: 40px; /* Butonların yukarıda olmasını sağlamak için eklendi */
-    }
-    .button-container a {
-        width: 45%;
-        padding: 40px 0;
-        text-align: center;
-        font-size: 24px;
-        background-color: blue;
-        color: white;
-        border-radius: 10px;
-    }
-</style>
-
-<div class="container">
-    <div class="notifications-container">
-        <h2 style="text-align:center;">Notifications</h2>
-        <button id="friends-notifications" class="btn btn-secondary" style="width: 46%;">Friends</button>
-        <button id="games-notifications" class="btn btn-secondary" style="width: 46%;">Games</button>
-    </div>
-    <div class="main-container">
-        <div class="button-container">
-            <a href="/quickplay" class="btn btn-primary" data-nav>Quick Play</a>
-            <a href="/quickplay" class="btn btn-primary" data-nav>Tournament</a>
-        </div>
-    </div>
-    <div class="friends-container">
-        <h2 style="text-align:center;">Friends</h2>
-        <ul id="friends-list" class="list-group">
-            <!-- Friends populated here -->
-        </ul>
-    </div>
-</div>
-=======
-  body {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
   .container {
-    width: 100%;
-    padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      height: 100vh;
+      padding: 10px;
   }
-
-  .notifications-container {
-    width: 1fr;
-    height: 100%;
-    background-color: #222;
-    border-radius: 10px;
-    padding: 15px;
+  .notifications-container, .friends-container {
+      border: 2px solid #000;
+      padding: 13px;
+      width: 20%;
+      margin-top: 40px;
   }
-
   .main-container {
-    width: 3fr;
-    height: 100%;
-    background-color: #222;
-    border-radius: 10px;
-    padding: 15px;
-    margin: 0 10px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      width: 50%;
+      height: 100vh;
+      margin-top: 300px;
   }
-
-  .friends-container {
-    width: 1fr;
-    height: 100%;
-    background-color: #222;
-    border-radius: 10px;
-    padding: 15px;
-  }
-
-  .btn-group {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-  }
-
-  .notifications {
-    background-color: #333;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-
-  .notifications:hover {
-    background-color: #444;
-  }
-
-  #notifications-list {
-    list-style: none;
-    padding: 0;
-  }
-
   .button-container {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      width: 100%;
+      margin-top: 40px;
   }
-
-  .btn {
-    background-color: #333;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    text-decoration: none;
-  }
-
-  .btn:hover {
-    background-color: #444;
-  }
-
-  h2 {
-    color: #fff;
-    margin-bottom: 15px;
+  .button-container button {
+      width: 45%;
+      padding: 40px 0;
+      text-align: center;
+      font-size: 24px;
+      background-color: blue;
+      color: white;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
   }
 </style>
 
 <div class="container">
-    <div class="header">
-      <a href="/">Home</a>
-      <h1>ft_transcendence</h1>
-      <div class="search">
-        <input type="text" placeholder="Search" />
-        <button type="submit">
-          <i class="fa fa-search"></i>
-        </button>
-      </div>
-      <a href="/profile">Profile</a>
-    </div>
-    <div class="sidebar">
-      <div class="section">
-        <h3>Notifications</h3>
-        <a href="/notifications/friends">Friends</a>
-        <a href="/notifications/quickplay">Quickplay</a>
-      </div>
-      <div class="section">
-        <h3>Friends</h3>
-      </div>
-    </div>
-    <div class="content">
-      {/* Content goes here */}
-    </div>
-    <div class="sidebar">
-      <div class="section">
-        <a href="/games">Games</a>
-      </div>
-      <div class="section">
-        <a href="/tournaments">Tournament</a>
-      </div>
-    </div>
+  <div class="notifications-container">
+      <h2 style="text-align:center;">Notifications</h2>
+      <button id="friends-notifications" class="btn btn-secondary" style="width: 46%;">Friends</button>
+      <button id="games-notifications" class="btn btn-secondary" style="width: 46%;">Games</button>
   </div>
->>>>>>> 59b054ba26e225d7bf23f3293763f09b791dd1a7
+  <div class="main-container">
+      <div class="button-container" id="game-button-container">
+          <button id="quickplay-btn" class="btn btn-primary">GAME</button>
+      </div>
+  </div>
+  <div class="friends-container">
+      <h2 style="text-align:center;">Friends</h2>
+      <ul id="friends-list" class="list-group">
+          <!-- Friends populated here -->
+      </ul>
+  </div>
+</div>
+
