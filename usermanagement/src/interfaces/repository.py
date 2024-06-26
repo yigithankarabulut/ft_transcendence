@@ -3,6 +3,7 @@ from ..models import UserManagement, OAuthUser
 
 
 class IUserManagementRepository(ABC):
+
     @abstractmethod
     def get(self, id: int) -> UserManagement:
         pass
@@ -33,6 +34,7 @@ class IUserManagementRepository(ABC):
 
 
 class IOAuthUserRepository(ABC):
+
     @abstractmethod
     def oauth_user_create(self, req: OAuthUser) -> OAuthUser:
         pass

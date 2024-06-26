@@ -1,6 +1,9 @@
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
 from django.utils.timezone import now
+from usermanagement.settings import SERVICE_ROUTES
+import requests
+import random
 
 
 class BaseResponse:
@@ -35,3 +38,20 @@ def check_token_validity(token):
     if now().timestamp() - float(timestamp) > 21600:  # 6 hours in seconds
         return "Token expired"
     return None
+
+
+def req_to_auth_service_for_generate_token(user_id) -> str:
+    try:
+        response = requests.post(f"{SERVICE_ROUTES['/auth']}/auth/token", params={"user_id": user_id})
+        if response.status_code != 200:
+            raise Exception("error")
+        token = response.json().get('token')
+    except Exception as e:
+        return str(e)
+    return token
+
+
+def generate_2fa_code():
+    code = random.randint(100000, 999999)
+    db_code = str(code) + "-" + str(now().timestamp())
+    return code, db_code

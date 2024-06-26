@@ -1,16 +1,16 @@
-# coregameservice/asgi.py
-
 import os
 
-from django.core.asgi import get_asgi_application
+from .routing import websocket_urlpatterns
 from channels.routing import ProtocolTypeRouter, URLRouter
-from . import routing
+from django.core.asgi import get_asgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'coregameservice.settings')
 
-application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
-    "websocket": URLRouter(
-            routing.websocket_urlpatterns
+application = ProtocolTypeRouter(
+    {
+        "http": get_asgi_application(),
+        "websocket": (
+            URLRouter(websocket_urlpatterns)
         )
-})
+    }
+)

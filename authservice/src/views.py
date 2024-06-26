@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 import requests
 
+
 def generate_token(user_id):
     payload = {
         'user_id': user_id,

@@ -3,6 +3,21 @@ import json
 from .service import MailService
 
 
+def send_reset_password_email(payload, mail_service):
+    mail_service.send_email('yigithannkarabulutt@gmail.com', payload['body']['email'], payload['subject'],
+                            f"Please click the link to reset your password. Link: {payload['body']['reset_url']}")
+    print(" [x] Done")
+
+def send_email_verification_email(payload, mail_service):
+    mail_service.send_email('yigithannkarabulutt@gmail.com', payload['body']['email'], payload['subject'],
+                            f"Please click the link to verify your email. Link: {payload['body']['verify_url']}")
+    print(" [x] Done")
+
+def send_2fa_email(payload, mail_service):
+    mail_service.send_email('yigithannkarabulutt@gmail.com', payload['body']['email'], payload['subject'],
+                            f"Your 2FA code is: {payload['body']['code']}")
+    print(" [x] Done")
+
 class RabbitMQConsumer:
     def __init__(self, amqp_url, queue_name):
         self._amqp_url = amqp_url
@@ -19,12 +34,15 @@ class RabbitMQConsumer:
         print(" [x] Received message:", body)
         payload = json.loads(body)
         mail_service = MailService()
-        if payload['type'] != 'forgot_password':
-            print("Invalid message type")
+        if payload['type'] == 'forgot_password':
+            send_reset_password_email(payload, mail_service)
+        elif payload['type'] == 'email_verify':
+            send_email_verification_email(payload, mail_service)
+        elif payload['type'] == '2fa_code':
+            send_2fa_email(payload, mail_service)
+        else:
+            print(" [x] Unknown message type")
             return
-        mail_service.send_email('yigithannkarabulutt@gmail.com', payload['body']['email'], payload['subject'],
-                                f"Please click the link to reset your password. Link: {payload['body']['reset_url']}")
-        print(" [x] Done")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def start_consuming(self):

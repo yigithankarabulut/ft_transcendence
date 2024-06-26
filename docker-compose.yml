@@ -1,58 +1,50 @@
-version: '3'
+version: '3.8'
 
 services:
-  apigateway:
-    build: ./apigateway
+  frontend:
+    container_name: frontend
+    image: nginx
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+      - ./frontend/nginx.conf:/etc/nginx/nginx.conf
     ports:
-      - "8080:8080"
-    networks:
-      - my_network
+      - "808:80"
+     
+  apigateway:
+    container_name: apigateway
+    build: ./apigateway
     depends_on:
       - authservice
-      # - coregameservice
-      # - friends
-      # - mailservice
-      # - matchmaking
+      - mailservice
       - usermanagement
+    ports:
+      - "8000:8000"
 
   authservice:
+    container_name: authservice
     build: ./authservice
-    networks:
-      - my_network
 
-  # coregameservice:
-  #   build: ./coregameservice
-  #   networks:
-  #     - my_network
-
-  # friends:
-  #   build: ./friends
-  #   networks:
-  #     - my_network
-
-  # mailservice:
-  #   build: ./mailservice
-  #   networks:
-  #     - my_network
-
-  # matchmaking:
-  #   build: ./matchmaking
-  #   networks:
-  #     - my_network
+  mailservice:
+    container_name: mailservice
+    build: ./mailservice
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
 
   usermanagement:
+    container_name: usermanagement
     build: ./usermanagement
-    networks:
-      - my_network
+    ports:
+      - "8004:8004"
 
   rabbitmq:
-    image: rabbitmq:3.8
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    networks:
-      - my_network
-
-networks:
-  my_network:
-    driver: bridge
+      container_name: rabbitmq
+      image: rabbitmq:3.8.17-management
+      ports:
+        - "5672:5672"
+        - "15672:15672"
+      healthcheck:
+        test: ["CMD", "rabbitmqctl", "node_health_check"]
+        interval: 30s
+        timeout: 10s
+        retries: 5

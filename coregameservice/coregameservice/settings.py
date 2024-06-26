@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#q(me!(r%dmtms7xksu&(v$bv1rmixh0sob$(o(bnrk1eq+1l$'
+SECRET_KEY = 'django-insecure-ij^$(vb*564=$3ef31chp8l*wi40@23im6kq1!3fy5om%n)1b_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -40,13 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'channels',
 ]
-
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    },
-}
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -77,8 +70,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'coregameservice.wsgi.application'
-ASGI_APPLICATION = 'coregameservice.asgi.application'
+ASGI_APPLICATION = "coregameservice.asgi.application"
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 
 # Database
