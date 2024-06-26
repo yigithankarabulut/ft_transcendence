@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'gameservice',
         'USER': 'yigit',
         'PASSWORD': 'yigit',
-        'HOST': 'gameservicepostgres',
+        'HOST': 'localhost',
         'PORT': '5433',
     }
 }
