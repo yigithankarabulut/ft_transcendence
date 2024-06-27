@@ -1,57 +1,34 @@
-let button = document.getElementById('connect');
-let userUrl = 'http://localhost:8000/user/details';
-let acceptButton = document.getElementById('accept-button');
-let token = localStorage.getItem('access_token');
+import { navigateTo } from './navTo.js';
 
-if (!token) {
-    navigateTo('/login');
-}
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector(".requires-validation");
 
-fetch(userUrl, {
-    method: 'GET',
-    headers: {"Authorization": `Bearer ${token}`}
-}).then(res => {
-    if (!res.ok) {
-        throw new Error('Error');
-    }
-    return res.json();
-}).then(data => {
-    console.log(data[0].message);
-    if (data[0].message === "User found") {
-        let ws = new WebSocket('ws://localhost:8008/ws/quickplay/' + token + '/');
-        ws.onopen = () => {
-            console.log('connected');
-        }
-        ws.onmessage = (e) => {
-            console.log(e.data);
-            let data = JSON.parse(e.data);
-            if (data == "match found") {
-                console.log("Match found");
-                acceptButton.style.display = 'block';
-                acceptButton.onclick = () => {
-                    ws.send("accept");
-                    acceptButton.style.display = 'none';
-                }
-            } else if (data == "start game") {
-                // Burada oyun WebSocket bağlantısını başlatabilirsiniz
-                startGameWebSocket(token);
-            }
-        }
-        ws.onclose = () => {
-            console.log('disconnected');
-        }
-        ws.onerror = (e) => {
-            console.log(e);
-        }
-    } else {
-        console.log("User not found");
-        return;
-    }
-}).catch(err => {
-    console.log(err);
-    return ;
-})
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
 
-function startGameWebSocket(token) {
-    console.log("Starting game...");
-}
+        if (form.checkValidity()) {
+            const roomLimit = document.querySelector('input[name="room_limit"]').value;
+            const gameScore = document.querySelector('input[name="game_score"]').value;
+            const players = document.querySelector('input[name="players"]').value.split(',').map(player => player.trim());
+
+            const data = {
+                room_limit: parseInt(roomLimit, 10),
+                game_score: parseInt(gameScore, 10),
+                players: players
+            };
+
+            // JSON verisini console'da görüntüleyin
+            console.log(JSON.stringify(data));
+
+            // Veriyi localStorage'e kaydedin
+            localStorage.setItem("gameData", JSON.stringify(data));
+
+            // `game.js` dosyasına yönlendirin
+            navigateTo("/game");
+        }
+
+        form.classList.add('was-validated');
+    }, false);
+});
+

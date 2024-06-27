@@ -18,7 +18,7 @@
         padding: 8px;
         background-color: #fff;
         position: relative;
-        height: 460px; /* Increased height */
+        height: 460px; /* Yüksekliği artırıldı */
     }
 
     .upper {
@@ -79,18 +79,18 @@
             </div>
         </div>
         <div class="mt-5 text-center">
-            <h4 class="mb-0" id="user-name">John Doe</h4>
+            <h4 class="mb-0" id="user-name">Benjamin Tims</h4>
             <input type="text" id="edit-first-name" class="d-none" />
-            <span class="text-muted d-block mb-2" id="user-location">Los Angeles</span>
+            <span class="text-muted d-block mb-2" id="user-location">Los Angles</span>
             <input type="text" id="edit-last-name" class="d-none" />
-            <span class="text-muted d-block mb-2" id="user-username">jdoe</span>
+            <span class="text-muted d-block mb-2" id="user-username">bentims</span>
             <input type="text" id="edit-username" class="d-none" />
             <span class="text-muted d-block mb-2" id="user-phone">123-456-7890</span>
             <input type="text" id="edit-phone" class="d-none" />
-            <button class="btn btn-primary btn-sm follow" onclick="enableEditMode()">Edit</button>
+            <button class="btn btn-primary btn-sm follow" onclick="enableEditMode()">Düzenle</button>
             <div class="edit-buttons">
-                <button class="btn btn-success btn-sm" onclick="updateProfile()">Confirm</button>
-                <button class="btn btn-danger btn-sm" onclick="cancelEdit()">Cancel</button>
+                <button class="btn btn-success btn-sm" onclick="updateProfile()">Onayla</button>
+                <button class="btn btn-danger btn-sm" onclick="cancelEdit()">Reddet</button>
             </div>
             <div class="d-flex justify-content-between align-items-center mt-4 px-4">
                 <div class="stats">
@@ -110,22 +110,4 @@
     </div>
 </div>
 
-<!--
-<script>
-    function enableEditMode() {
-        document.getElementById('edit-first-name').classList.remove('d-none');
-        document.getElementById('edit-last-name').classList.remove('d-none');
-        document.getElementById('edit-username').classList.remove('d-none');
-        document.getElementById('edit-phone').classList.remove('d-none');
-        document.querySelector('.edit-buttons').style.display = 'block';
-    }
 
-    function updateProfile() {
-        // Update profile logic
-    }
-
-    function cancelEdit() {
-        // Cancel edit logic
-    }
-</script>
--->

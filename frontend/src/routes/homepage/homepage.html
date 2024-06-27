@@ -1,32 +1,29 @@
 <style>
     .container {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: flex-start;
         height: 100vh;
         padding: 10px;
-        position: relative;
     }
     .main-container {
         display: flex;
-        flex-direction: column;
         justify-content: center;
-        align-items: center;
-        width: 100%;
-        position: absolute;
-        top: 25%; /* Position at 25% of the viewport height */
-        transform: translateY(-25%);
+        align-items: flex-start;
+        width: 50%;
+        height: 100vh;
+        margin-top: 100px; /* Adjusted margin-top for better positioning */
     }
     .button-container {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
+        flex-direction: column; /* Changed to column for vertical alignment */
+        justify-content: space-around; /* Adjusted to space around for button spacing */
         align-items: center;
         width: 100%;
-        margin-top: 20px; /* Space between buttons */
+        margin-top: 40px;
     }
     .button-container a, .button-container button {
-        width: 55%; /* Increased width */
+        width: 70%; /* Adjusted width for buttons */
         padding: 20px 0; /* Decreased padding for smaller buttons */
         margin: 10px 0; /* Space between buttons */
         text-align: center;
@@ -40,19 +37,12 @@
     .button-container button:hover, .button-container a:hover {
         background-color: darkblue; /* Darker background on hover */
     }
-    .hidden {
-        display: none;
-    }
-  </style>
-  
-  <div class="container">
+</style>
+
+<div class="container">
     <div class="main-container">
         <div class="button-container">
-            <button id="options-button" class="btn btn-primary">Options</button>
-            <button id="two-player-button" class="btn btn-primary hidden">2 Player</button>
-            <button id="four-player-button" class="btn btn-primary hidden">4 Player</button>
-            <button id="quickplay-button" class="btn btn-primary hidden">Quickplay</button>
-            <button id="invite-button" class="btn btn-primary hidden">Invite</button>
+            <a href="quickplay" data-nav id="quickplay-btn" class="btn btn-primary">PLAY GAME</a>
         </div>
     </div>
-  </div>
+</div>
