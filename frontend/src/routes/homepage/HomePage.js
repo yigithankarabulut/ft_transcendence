@@ -1,31 +1,24 @@
 import { navigateTo } from "../../utils/navTo.js";
+import { toggleHidden } from "../../utils/utils";
 
-document.addEventListener("DOMContentLoaded", function() {
-    console.log("test1");
+document.getElementById('nav-bar').style.display = 'flex';
+
+const access_token = localStorage.getItem("access_token");
+if (!access_token) {
+    console.log("No access token found");
+    navigateTo("/login");
+} else {
+    console.log("Access token found");
+
+    toggleHidden('home-spinner');
+
+    const handleButtonClick = (event) => {
+        event.preventDefault();
+        console.log("Button clicked");
+    };
+
     const quickPlayButton = document.getElementById("quickplay-btn");
-    const gameButtonContainer = document.getElementById("game-button-container");
-
     if (quickPlayButton) {
-        quickPlayButton.addEventListener("click", function(event) {
-            event.preventDefault();  // Prevent the default button behavior
-            // Replace the GAME button with the game mode buttons
-            gameButtonContainer.innerHTML = `
-                <button id="two-player-btn" class="btn btn-primary">2 Players</button>
-                <button id="four-player-btn" class="btn btn-primary">4 Players</button>
-                <button id="eight-player-btn" class="btn btn-primary">8 Players</button>
-            `;
-
-            document.getElementById("two-player-btn").addEventListener("click", function() {
-                navigateTo("/game?mode=2");
-            });
-
-            document.getElementById("four-player-btn").addEventListener("click", function() {
-                navigateTo("/game?mode=4");
-            });
-
-            document.getElementById("eight-player-btn").addEventListener("click", function() {
-                navigateTo("/game?mode=8");
-            });
-        });
+        quickPlayButton.addEventListener("click", handleButtonClick);
     }
-});
+}

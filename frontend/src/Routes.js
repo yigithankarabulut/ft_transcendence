@@ -44,6 +44,12 @@ export const routes = [
        js: "/src/routes/game/Game.js",
        component: GameComponent,
     },
+    {
+        path:"/quickplay",
+        htmlPath: "./src/routes/quickplay/quickplay.html",
+        js: "/src/routes/quickplay/Quickplay.js",
+        component: GameComponent,
+     }
     //{
     //    path:"/tournament",
     //    htmlPath: "./src/routes/tournament/tournament.html",

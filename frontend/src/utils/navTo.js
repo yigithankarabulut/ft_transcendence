@@ -23,9 +23,8 @@ export const router = async () => {
         root.innerHTML = html;
         const module = await import(match.route.js);
 
-        // Eğer profil sayfasıysa ve fetchProfile fonksiyonu varsa çağır
         if (location.pathname === "/profile" && module.fetchProfile) {
-            module.fetchProfile(); // Profil sayfasıysa fetchProfile fonksiyonunu çağır
+            module.fetchProfile();
         }
 
     } catch (err) {
@@ -38,6 +37,5 @@ export const navigateTo = (url) => {
     router();
 }
 
-// Sayfa ilk yüklendiğinde router fonksiyonunu çağır
-window.addEventListener('popstate', router);
-window.addEventListener('DOMContentLoaded', router);
+window.addEventListener('popstate', router());
+window.addEventListener('DOMContentLoaded', router());
