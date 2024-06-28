@@ -1,7 +1,7 @@
 import { routes } from "../Routes.js";
 
 export const router = async () => {
-    console.log(location.pathname)
+    console.log("router calisti", location.pathname);
     const potentialMatches = routes.map(route => {
         return {
             route,
@@ -29,6 +29,7 @@ export const router = async () => {
 
     } catch (err) {
         console.log("An error occurred while rendering the component.");
+        console.log(err);
     }
 }
 
@@ -37,5 +38,5 @@ export const navigateTo = (url) => {
     router();
 }
 
-//window.addEventListener('popstate', router);
-//window.addEventListener('DOMContentLoaded', router);
+window.addEventListener('popstate', router);
+window.addEventListener('DOMContentLoaded', router);

@@ -9,8 +9,8 @@ export async function fetchProfile() {
         navigateTo("/login");
         return;
     }
-    console.log("Fetching user details");
     try {
+        console.log("Fetching user details");
         const response = await fetch(userDetailUrl, {
             method: "GET",
             headers: {
@@ -87,19 +87,19 @@ window.updateProfile = async function updateProfile() {
     const lastName = document.getElementById("edit-last-name").value;
     const username = document.getElementById("edit-username").value;
     const phone = document.getElementById("edit-phone").value;
-    const email = originalUserData.email;
+    const email = originalUserData.email; // Mevcut e-posta adresini kullan
 
     const updatedData = {
         first_name: firstName,
         last_name: lastName,
         username: username,
         phone: phone,
-        email: email
+        email: email // E-posta adresini güncelleme isteğine ekle
     };
 
     try {
         const response = await fetch(updateUserUrl, {
-            method: "PUT",
+            method: "PUT", // PUT isteği kullanıyoruz
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${access_token}`,
@@ -112,6 +112,7 @@ window.updateProfile = async function updateProfile() {
             throw new Error(errorData.error);
         }
 
+        // Successfully updated, now reflect the changes
         document.getElementById("user-name").textContent = firstName;
         document.getElementById("user-location").textContent = lastName;
         document.getElementById("user-username").textContent = username;

@@ -20,7 +20,7 @@ document.getElementById('load-friends').addEventListener("click", async () => {
 
 function displayFriends(friends, page) {
     const friendsList = document.getElementById('friends-list');
-    friendsList.innerHTML = '';
+    friendsList.innerHTML = ''; // Clear previous content
 
     const startIndex = (page - 1) * usersPerPage;
     const endIndex = startIndex + usersPerPage;
@@ -51,6 +51,7 @@ function displayFriends(friends, page) {
         const addFriendButton = friendCard.querySelector('.add-friend-btn');
         addFriendButton.addEventListener('click', () => {
             console.log('Friend information:', friend);
+            // İstediğiniz işlemleri burada yapabilirsiniz.
         });
 
         friendsList.appendChild(friendCard);
@@ -61,7 +62,7 @@ function displayFriends(friends, page) {
 
 function displayPagination(totalUsers, page) {
     const paginationContainer = document.getElementById('pagination');
-    paginationContainer.innerHTML = '';
+    paginationContainer.innerHTML = ''; // Clear previous content
 
     const totalPages = Math.ceil(totalUsers / usersPerPage);
 

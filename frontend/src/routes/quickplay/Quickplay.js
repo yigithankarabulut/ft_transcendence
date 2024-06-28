@@ -1,6 +1,9 @@
-import { navigateTo } from './navTo.js';
+import { navigateTo } from "../../utils/navTo.js";
+
+console.log("Quickplay.js");
 
 document.addEventListener("DOMContentLoaded", function () {
+    console.log("DOM loaded");
     const form = document.querySelector(".requires-validation");
 
     form.addEventListener("submit", function (event) {
@@ -17,11 +20,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 game_score: parseInt(gameScore, 10),
                 players: players
             };
-            
+
             // JSON verisini console'da görüntüleyin
             console.log(JSON.stringify(data));
+
             // Veriyi localStorage'e kaydedin
             localStorage.setItem("gameData", JSON.stringify(data));
+
             // `game.js` dosyasına yönlendirin
             navigateTo("/game");
         }
