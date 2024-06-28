@@ -1,6 +1,9 @@
-import { navigateTo } from './navTo.js';
+import { navigateTo } from "../../utils/navTo.js";
+
+console.log("Quickplay.js");
 
 document.addEventListener("DOMContentLoaded", function () {
+    console.log("DOM loaded");
     const form = document.querySelector(".requires-validation");
 
     form.addEventListener("submit", function (event) {

@@ -4,6 +4,7 @@ import TwoFAComponent from "./components/TwoFAComponent.js"
 import HomePageComponent from "./components/HomePageComponent.js"
 import ProfileComponent from "./components/ProfileComponent.js"
 import GameComponent from "./components/GameComponent.js"
+import QuickplayComponent from "./components/QuickplayComponent.js"
 //import TournamentComponent from "./components/TournamentComponent.js"
 
 
@@ -48,8 +49,8 @@ export const routes = [
         path:"/quickplay",
         htmlPath: "./src/routes/quickplay/quickplay.html",
         js: "/src/routes/quickplay/Quickplay.js",
-        component: GameComponent,
-     }
+        component: QuickplayComponent,
+     },
     //{
     //    path:"/tournament",
     //    htmlPath: "./src/routes/tournament/tournament.html",

@@ -9,8 +9,8 @@ export async function fetchProfile() {
         navigateTo("/login");
         return;
     }
-    console.log("Fetching user details");
     try {
+        console.log("Fetching user details");
         const response = await fetch(userDetailUrl, {
             method: "GET",
             headers: {
