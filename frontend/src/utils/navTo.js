@@ -37,6 +37,5 @@ export const navigateTo = (url) => {
     router();
 }
 
-window.addEventListener('popstate', router);
-window.addEventListener('DOMContentLoaded', router);
-
+//window.addEventListener('popstate', router);
+//window.addEventListener('DOMContentLoaded', router);
