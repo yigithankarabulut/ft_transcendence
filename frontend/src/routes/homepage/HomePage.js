@@ -1,5 +1,5 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { toggleHidden } from "../../utils/utils";
+import { toggleHidden } from "../../utils/utils.js";
 
 document.getElementById('nav-bar').style.display = 'flex';
 
