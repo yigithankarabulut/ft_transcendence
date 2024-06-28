@@ -52,7 +52,7 @@ window.sendMessage = function() {
     }
 
   }
-
+  
   ws.onclose = () => {
     console.log("Disconnected from server");
   }
@@ -66,7 +66,6 @@ window.sendMessage = function() {
         ws.send(keys[event.keyCode]);
     }
   });
-
 }
 
 const keys = {

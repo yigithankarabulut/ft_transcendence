@@ -17,13 +17,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 game_score: parseInt(gameScore, 10),
                 players: players
             };
-
+            
             // JSON verisini console'da görüntüleyin
             console.log(JSON.stringify(data));
-
             // Veriyi localStorage'e kaydedin
             localStorage.setItem("gameData", JSON.stringify(data));
-
             // `game.js` dosyasına yönlendirin
             navigateTo("/game");
         }
