@@ -1,28 +1,28 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { toggleHidden } from "../../utils/utils.js";
 
-document.getElementById('nav-bar').style.display = 'flex';
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('nav-bar').style.display = 'flex';
 
-const access_token = localStorage.getItem("access_token");
-if (!access_token) {
-    console.log("No access token found");
-    navigateTo("/login");
-} else {
-    console.log("Access token found");
+    const access_token = localStorage.getItem("access_token");
+    if (!access_token) {
+        console.log("No access token found");
+        navigateTo("/login");
+    } else {
+        console.log("Access token found");
 
-    toggleHidden('home-spinner');
+        toggleHidden('home-spinner');
 
-    const handleButtonClick = (event) => {
-        event.preventDefault();
-        console.log("Button clicked");
-    };
+        const handleButtonClick = (event) => {
+            event.preventDefault();
+            console.log("Button clicked");
+        };
 
-    const quickPlayButton = document.getElementById("quickplay-btn");
-    if (quickPlayButton) {
-        quickPlayButton.addEventListener("click", handleButtonClick);
-    }
+        const quickPlayButton = document.getElementById("quickplay-btn");
+        if (quickPlayButton) {
+            quickPlayButton.addEventListener("click", handleButtonClick);
+        }
 
-    document.addEventListener("DOMContentLoaded", function () {
         const form = document.querySelector(".requires-validation");
 
         form.addEventListener("submit", function (event) {
@@ -50,5 +50,5 @@ if (!access_token) {
 
             form.classList.add('was-validated');
         }, false);
-    });
-}
+    }
+});
