@@ -16,5 +16,5 @@ document.addEventListener("DOMContentLoaded", () => {
             navigateTo(e.target.href);
         }
     })
-    router().catch(err => console.error("Router error:", err)); // Improved error handling
+    router();
 })

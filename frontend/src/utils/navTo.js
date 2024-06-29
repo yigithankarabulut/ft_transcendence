@@ -1,7 +1,7 @@
 import { routes } from "../Routes.js";
 
 export const router = async () => {
-    console.log("router calisti", location.pathname);
+    console.log(location.pathname)
     const potentialMatches = routes.map(route => {
         return {
             route,
@@ -21,15 +21,9 @@ export const router = async () => {
     try {
         const html = await component.render();
         root.innerHTML = html;
-        const module = await import(match.route.js);
-
-        if (location.pathname === "/profile" && module.fetchProfile) {
-            module.fetchProfile();
-        }
-
+        import(match.route.js);
     } catch (err) {
         console.log("An error occurred while rendering the component.");
-        console.log(err);
     }
 }
 
@@ -37,6 +31,3 @@ export const navigateTo = (url) => {
     history.pushState(null, null, url);
     router();
 }
-
-window.addEventListener('popstate', router);
-window.addEventListener('DOMContentLoaded', router);

@@ -1,23 +1,23 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
 
-const url = "http://localhost:8000/user/register";
+const url = "http://127.0.0.1:8000/user/register";
 const form = document.getElementById("register");
 
 form.addEventListener("submit", (e) => {
 
     e.preventDefault();
     const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
     const email = document.getElementById("email").value;
-    const firstname = document.getElementById("first_name").value;
-    const lastname = document.getElementById("last_name").value;
+    const password = document.getElementById("password").value;
+    const firstname = document.getElementById("firstname").value;
+    const lastname = document.getElementById("lastname").value;
     const phone = document.getElementById("phone").value;
     const fields_warning = document.getElementById('fields-warning');
     const fields_success = document.getElementById('fields-success');
 
     
-    if (!username || !email  || !password || !firstname || !lastname || !phone)
+    if (!username || !email  || !password || !firstname || !lastname)
     {
         insertIntoElement('fields-warning', "fields shouldn't be empty");
         return;

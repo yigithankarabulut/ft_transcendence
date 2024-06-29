@@ -2,6 +2,8 @@ class LoginComponent {
     constructor(path) {
         this.path = path;
     }
+
+
     async render() {
         return fetch(this.path)
             .then(res => {
@@ -11,4 +13,5 @@ class LoginComponent {
             })
     }
 }
+
 export default LoginComponent;

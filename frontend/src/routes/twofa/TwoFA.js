@@ -37,13 +37,8 @@ form.addEventListener("submit", (e) => {
         document.getElementById('nav-bar').style.display = 'flex';
         return res.json();
     })
-    .then(data => {
-        localStorage.setItem("access_token", data.data.access_token);
-        localStorage.setItem("refresh_token", data.data.refresh_token);
-        console.log(data.data.access_token);
-        console.log(data.data.refresh_token);
-        console.log(data.data);
-        console.log(data);
+    .then(token => {
+        localStorage.setItem("token", token.data.token);
         navigateTo("/");
     })
     .catch((err) => {
