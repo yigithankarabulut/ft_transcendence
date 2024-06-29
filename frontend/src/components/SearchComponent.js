@@ -1,9 +1,8 @@
-class TournamentComponent {
+class SearchComponent {
     constructor(path) {
         this.path = path;
     }
     async render() {
-        
         return fetch(this.path)
             .then(res => {
                 if (!res.ok)
@@ -13,4 +12,4 @@ class TournamentComponent {
     }
 }
 
-export default TournamentComponent;
+export default SearchComponent;

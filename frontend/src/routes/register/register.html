@@ -1,129 +1,67 @@
-<!-- <div class="container position-absolute top-50 start-50 translate-middle">
-    <div class="row">
-        <div class="col-lg-6 align-self-center mb-5">
-            <h1>ft_transcendence</h1>
-        </div>
-        <div class="col-lg-6 d-flex">
-            <div class="vr d-none d-lg-block"></div>
-            <div class="container-fluid" >
-                <div class="d-flex justify-content-center m-5 d-none" id="register-spinner">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-                <form class="mb-4 block" id="register">
+    <style>
+        .register-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    </style>
+        <div class="container">
+            <div class="row register-container ">
+            <div class="col-sm-6 border border-black border-4">
+                <h2 class="text-center mb-3">Register</h2>
+                <form id="register">
+
                     <div class="mb-3">
                         <label for="firstname" class="form-label">First Name</label>
-                        <input type="text" class="form-control" id="firstname" name="firstname">
-                        <div id="firstnameHelp" class="form-text">Enter your first name</div>
+                        <input type="text" class="form-control" id="first_name" name="first_name">
                     </div>
+
                     <div class="mb-3">
                         <label for="lastname" class="form-label">Last Name</label>
-                        <input type="text" class="form-control" id="lastname" name="lastname">
-                        <div id="lastnameHelp" class="form-text">Enter your last name</div>
+                        <input type="text" class="form-control" id="last_name" name="last_name">
                     </div>
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username">
-                        <div id="usernameHelp" class="form-text">Choose a unique username</div>
-                    </div>
+
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" name="email">
-                        <div id="emailHelp" class="form-text">We'll never share your email with anyone else</div>
                     </div>
+                
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username">
+                    </div>
+
+                    <div class="mb-3 d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary text-white">Register</button>
+                        <p class="text-danger mt-2 visible" id="fields-warning"></p>
+                    </div>
+                    
                     <div class="mb-3">
                         <label for="phone" class="form-label">Phone</label>
                         <input type="text" class="form-control" id="phone" name="phone">
                         <div id="phoneHelp" class="form-text">Enter a valid phone number</div>
                     </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password">
-                        <div id="passwordHelp" class="form-text">Choose a strong password</div>
-                    </div>
-                    <button type="submit" class="btn btn-primary text-white">Register</button>
-                    <p class="text-danger mt-2 visible" id="fields-warning"></p>
+
+                    <p>Already have an account? <a href="/login" data-nav>Login</a></p>
                 </form>
-                <div class="row justify-content-center align-items-center mb-3">
-                    <div class="col-5"><hr></div>
-                    <div class="col-2 text-center">Or</div>
-                    <div class="col-5"><hr></div>
-                </div>
-                <div class="btn-group bg-primary text-white p-2 rounded-3 text-center mb-3 w-100 justify-content-center">
-                    <a class="text-white text-decoration-none text-center" href="#">Register with <img src="public/images/42_Logo.svg.png" style="width:30px;"></a>
-                </div>
-                <p>Already have an account? <a href="/login" data-nav>login here</a></p>
+            </div>
+            <div class="col-sm-4 text-center">
+                <h2 > Welcome to ft_transcendance a.k.a Mighty Pong</h2>
+                    <img src="/public/images/Ekran Resmi 2024-03-07 03.44.57.png" alt="Image" class="img-fluid rounded">
+            </div>
             </div>
         </div>
-    </div>
-</div> -->
 
-
-<style>
-    .register-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-</style>
-    <div class="container">
-        <div class="row register-container ">
-          <div class="col-sm-6 border border-black border-4">
-            <h2 class="text-center mb-3">Register</h2>
-            <form id="register">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username">
-                    <div id="usernameHelp" class="form-text">Choose a unique username</div>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password">
-                    <div id="passwordHelp" class="form-text">Choose a strong password</div>
-                </div>
-                <div class="mb-3">
-                    <label for="firstname" class="form-label">First Name</label>
-                    <input type="text" class="form-control" id="firstname" name="firstname">
-                    <div id="firstnameHelp" class="form-text">Enter your first name</div>
-                </div>
-                <div class="mb-3">
-                    <label for="lastname" class="form-label">Last Name</label>
-                    <input type="text" class="form-control" id="lastname" name="lastname">
-                    <div id="lastnameHelp" class="form-text">Enter your last name</div>
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email">
-                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else</div>
-                </div>
-                <div class="mb-3">
-                    <label for="phone" class="form-label">Phone</label>
-                    <input type="text" class="form-control" id="phone" name="phone">
-                    <div id="phoneHelp" class="form-text">Enter a valid phone number</div>
-                </div>
-              <div class="mb-3 d-flex justify-content-center">
-                    <button type="submit" class="btn btn-primary text-white">Register</button>
-                    <p class="text-danger mt-2 visible" id="fields-warning"></p>
-                </div>
-                <p>Already have an account? <a href="/login" data-nav>Login</a></p>
-            </form>
-          </div>
-          <div class="col-sm-4 text-center">
-            <h2 > Welcome to Ft_Transcendance</h2>
-                <img src="/public/images/Ekran Resmi 2024-03-07 03.44.57.png" alt="Image" class="img-fluid rounded">
-          </div>
-        </div>
-      </div>
-
-
-
-<!-- {
-"username" : "umuttakkan",
-"password" : "123456Gs",
-"first_name" : "Umut",
-"last_name" : "Akkan",
-"email" : "umutakkan.321@outlook.com",
-"phone" : "5358138767"
-} -->
+    <!-- {
+    "username" : "reepNao",
+    "password" : "013Mintaka",
+    "first_name" : "Recep",
+    "last_name" : "BATTAL",
+    "email" : "recep.buss@gmail.com",
+    } -->

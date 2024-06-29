@@ -2,8 +2,6 @@ class GameComponent {
     constructor(path) {
         this.path = path;
     }
-
-
     async render() {
         return fetch(this.path)
             .then(res => {

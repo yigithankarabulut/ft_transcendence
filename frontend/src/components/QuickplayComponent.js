@@ -1,9 +1,8 @@
-class TournamentComponent {
+class QuickplayComponent {
     constructor(path) {
         this.path = path;
     }
     async render() {
-        
         return fetch(this.path)
             .then(res => {
                 if (!res.ok)
@@ -12,5 +11,4 @@ class TournamentComponent {
             })
     }
 }
-
-export default TournamentComponent;
+export default QuickplayComponent;
