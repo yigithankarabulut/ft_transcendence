@@ -1,5 +1,4 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { toggleHidden } from "../../utils/utils.js";
 
 document.getElementById('nav-bar').style.display = 'flex';
 
@@ -10,3 +9,8 @@ if (!access_token) {
 } else {
     console.log("Access token found");
 }
+
+// PLAY GAME butonuna click event listener ekleyin
+document.getElementById('quickplay-btn').addEventListener('click', function() {
+    navigateTo("/quickplay");
+});
