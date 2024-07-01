@@ -10,7 +10,6 @@ if (!access_token) {
     console.log("Access token found");
 }
 
-// PLAY GAME butonuna click event listener ekleyin
 document.getElementById('quickplay-btn').addEventListener('click', function() {
     navigateTo("/quickplay");
 });
