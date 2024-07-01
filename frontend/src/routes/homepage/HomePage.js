@@ -14,3 +14,4 @@ if (!access_token) {
 document.getElementById('quickplay-btn').addEventListener('click', function() {
     navigateTo("/quickplay");
 });
+
