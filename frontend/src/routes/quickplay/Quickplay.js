@@ -1,26 +1,9 @@
 import { navigateTo } from "../../utils/navTo.js";
 
 export async function fetchQuickplay() {
+
     console.log("fetchingquickplay");
     const form = document.querySelector(".requires-validation");
-    const form2 = document.querySelector(".requires-validation2");
-
-    form2.addEventListener("submit", function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (form2.checkValidity()) {
-            const roomId = document.querySelector('input[name="room_id2"]').value;
-            const data = {
-                roomId: roomId
-            };
-            // backende room id varmi odaya giris yapabilir mi diye sor mesela oda doluysa oda olusturulmadiysa hata mesajlarini yazdiracak
-            localStorage.setItem("room_id", roomId);
-            navigateTo("/game");
-        }
-        form2.classList.add('was-validated');
-    }
-    );
 
     form.addEventListener("submit", function (event) {
         event.preventDefault();
@@ -45,8 +28,25 @@ export async function fetchQuickplay() {
             // room id backende gonderilir ve oda olusturulur
             navigateTo("/game");
         }
-
         form.classList.add('was-validated');
+    }, false);
+
+    const form2 = document.querySelector(".requires-validation2");
+
+    form2.addEventListener("submit", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (form2.checkValidity()) {
+            const roomId = document.querySelector('input[name="room_id2"]').value;
+            const data = {
+                roomId: roomId
+            };
+            // backende room id varmi odaya giris yapabilir mi diye sor mesela oda doluysa oda olusturulmadiysa hata mesajlarini yazdiracak
+            localStorage.setItem("room_id", roomId);
+            navigateTo("/game");
+        }
+        form2.classList.add('was-validated');
     }, false);
 }
 
