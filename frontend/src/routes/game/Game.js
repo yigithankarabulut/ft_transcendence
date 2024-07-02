@@ -5,7 +5,7 @@ const ctx = canvas.getContext("2d");
 export async function fetchGame() {
 
 console.log("fetchinggame");
-const roomId = localStorage.getItem("roomId");
+const roomId = localStorage.getItem("room_id");
 console.log(roomId);
 
 var connection = "ws://localhost:8010/ws/game/" + "?room=" + roomId;
