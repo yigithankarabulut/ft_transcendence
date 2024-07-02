@@ -1,9 +1,7 @@
 import { navigateTo } from "../../utils/navTo.js";
 
-console.log("Quickplay.js");
-
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("DOM loaded");
+export async function fetchQuickplay() {
+    console.log("fetchingquickplay");
     const form = document.querySelector(".requires-validation");
 
     form.addEventListener("submit", function (event) {
@@ -33,5 +31,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
         form.classList.add('was-validated');
     }, false);
-});
+}
 

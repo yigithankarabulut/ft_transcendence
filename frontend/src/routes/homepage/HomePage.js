@@ -1,7 +1,8 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { toggleHidden } from "../../utils/utils.js";
 
-document.getElementById('nav-bar').style.display = 'flex';
+
+export async function fetchHomePage() {
 
 const access_token = localStorage.getItem("access_token");
 if (!access_token) {
@@ -9,4 +10,6 @@ if (!access_token) {
     navigateTo("/login");
 } else {
     console.log("Access token found");
+}
+
 }
