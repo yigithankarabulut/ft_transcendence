@@ -4,6 +4,7 @@ const route = {
     "/profile": "fetchProfile",
     "/quickplay": "fetchQuickplay",
     "/": "fetchHomePage",
+    "/game": "fetchGame",
     // diğer yolları buraya ekleyin
 };
 
@@ -34,6 +35,7 @@ export const router = async () => {
         if (routeFunction && module[routeFunction]) {
             module[routeFunction]();
         }
+
     } catch (err) {
         console.log("An error occurred while rendering the component.");
         console.log(err);

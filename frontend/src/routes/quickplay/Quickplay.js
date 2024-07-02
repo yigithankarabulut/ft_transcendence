@@ -3,7 +3,24 @@ import { navigateTo } from "../../utils/navTo.js";
 export async function fetchQuickplay() {
     console.log("fetchingquickplay");
     const form = document.querySelector(".requires-validation");
+    const form2 = document.querySelector(".requires-validation2");
 
+    form2.addEventListener("submit", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (form2.checkValidity()) {
+            const roomId = document.querySelector('input[name="roomId"]').value;
+            const data = {
+                roomId: roomId
+            };
+            localStorage.setItem("roomId", roomId);
+            navigateTo("/game");
+        }
+        form2.classList.add('was-validated');
+    }
+    );
+    
     form.addEventListener("submit", function (event) {
         event.preventDefault();
         event.stopPropagation();
@@ -11,12 +28,12 @@ export async function fetchQuickplay() {
         if (form.checkValidity()) {
             const roomLimit = document.querySelector('input[name="room_limit"]').value;
             const gameScore = document.querySelector('input[name="game_score"]').value;
-            const players = document.querySelector('input[name="players"]').value.split(',').map(player => player.trim());
+            const roomId = document.querySelector('input[name="roomId"]').value;
 
             const data = {
                 room_limit: parseInt(roomLimit, 10),
                 game_score: parseInt(gameScore, 10),
-                players: players
+                roomId: roomId
             };
 
             // JSON verisini console'da görüntüleyin
@@ -24,6 +41,8 @@ export async function fetchQuickplay() {
 
             // Veriyi localStorage'e kaydedin
             localStorage.setItem("gameData", JSON.stringify(data));
+            // room idyi local storage ekle ve backende bildir
+            localStorage.setItem("roomId", roomId);
 
             // `game.js` dosyasına yönlendirin
             navigateTo("/game");
