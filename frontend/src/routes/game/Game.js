@@ -1,4 +1,4 @@
-
+const userDetailUrl = "http://127.0.0.1:8000/user/details";
 
 export async function fetchGame() {
 console.log("fetchGame");
@@ -7,7 +7,24 @@ const ctx = canvas.getContext("2d");
 const roomId = localStorage.getItem("room_id");
 console.log(roomId);
 
-var connection = "ws://localhost:8010/ws/game/" + "?room=" + roomId;
+//buraya bir sorgu at kullanici bilgisini getir
+const access_token = localStorage.getItem("access_token");
+const response = await fetch(userDetailUrl, {
+  method: "GET",
+  headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${access_token}`,
+  }
+});
+if (!response.ok) {
+  const errorData = await response.json();
+  throw new Error(errorData.error);
+}
+
+const data = await response.json();
+const user = data[0].data[0];
+
+var connection = "ws://localhost:8010/ws/game/" + "?room=" + roomId + "?player_name=" + user.username;
 let ws = new WebSocket(connection);
 
 
@@ -15,17 +32,19 @@ ws.onopen = () => {
   console.log("Connected to server");
 }
 
-function drawPaddles(paddLeft, paddRight) {
-        ctx.fillStyle = "white";
-        ctx.fillRect(paddLeft.positionX, paddLeft.positionY, paddLeft.sizeX, paddLeft.sizeY);
+function drawPaddles(paddLeft, paddRight, paddLeftUsername, paddRightUsername) {
+  ctx.fillStyle = "white";
+  ctx.fillRect(paddLeft.positionX, paddLeft.positionY, paddLeft.sizeX, paddLeft.sizeY);
 
-        ctx.fillStyle = "white";
-        ctx.fillRect(paddRight.positionX, paddRight.positionY, paddRight.sizeX, paddRight.sizeY);
+  ctx.fillStyle = "white";
+  ctx.fillRect(paddRight.positionX, paddRight.positionY, paddRight.sizeX, paddRight.sizeY);
 
-        ctx.font = '30px Arial';
-        ctx.fillText(paddRight.score, 50, 50);
-        ctx.fillText(paddLeft.score, canvas.width - 50, 50);
-    }
+  ctx.font = '30px Arial';
+  ctx.fillText(paddRight.score, 50, 50);
+  ctx.fillText(paddLeft.score, canvas.width - 50, 50);
+  ctx.fillText(paddLeftUsername, canvas.width - 150, 50);
+  ctx.fillText(paddRightUsername, 75, 50);
+}
 
     function drawBall(ball) {
         ctx.beginPath();
@@ -35,10 +54,10 @@ function drawPaddles(paddLeft, paddRight) {
         ctx.closePath();
     }
 
-ws.onmessage = (message) => {
-  let items = JSON.parse(message.data);
-  console.log(items);
-  if (items.message === "game_over" && items.winner) {
+  ws.onmessage = (message) => {
+    let items = JSON.parse(message.data);
+    console.log(items);
+    if (items.message === "game_over" && items.winner) {
       ctx.font = '30px Arial';
       ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2);
       var winner = "Player " + items.winner + " wins!";
@@ -47,13 +66,10 @@ ws.onmessage = (message) => {
       return;
     } else if (items.message === "game_run") {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // ctx.fillStyle = "white";
-      // ctx.fillRect(canvas.width / 2, 0, 1, canvas.height);
-      drawPaddles(items.padd_left, items.padd_right);
+      drawPaddles(items.padd_left, items.padd_right, items.padd_left_username, items.padd_right_username);
       drawBall(items.ball);
+    }
   }
-
-}
 
 ws.onclose = () => {
   console.log("Disconnected from server");

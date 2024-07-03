@@ -31,8 +31,15 @@ class Pong(AsyncWebsocketConsumer):
 
     async def connect(self):
         await self.accept()
+        # burada oda idsi aliniyor url den yaninda kullanici adi alinacak sonuc olarak statlar frontende donulecek
         query_params = self.scope['query_string'].decode('utf-8')
-        tmp_room_id = query_params.split('=')[1]
+        params = query_params.split('?')
+
+        tmp_room_id = params[0].split('=')[1]
+        tmp_player_name = params[1].split('=')[1]
+
+        print('Room: ', tmp_room_id)
+        print('Player Name: ', tmp_player_name)
         if tmp_room_id in rooms and 'padd_left' in rooms[tmp_room_id] and 'padd_right' in rooms[tmp_room_id]:
             await self.close()
         else:
@@ -46,14 +53,16 @@ class Pong(AsyncWebsocketConsumer):
                 rooms[self.room_id] = {
                     'padd_left': {
                         'player': self.channel_name,
-                        'info': padd_left.copy()
+                        'info': padd_left.copy(),
+                        'username': tmp_player_name
                     }
                 }
                 print(rooms[self.room_id])
             elif len(rooms[self.room_id]) == 1:
                 rooms[self.room_id]['padd_right'] = {
                     'player': self.channel_name,
-                    'info': padd_right.copy()
+                    'info': padd_right.copy(),
+                    'username': tmp_player_name
                 }
                 print('Starting game for: ', self.room_id)
                 await self.start_game(self.room_id)
@@ -83,7 +92,9 @@ class Pong(AsyncWebsocketConsumer):
             'message': event['message'],
             'padd_left': rooms[self.room_id]['padd_left']['info'],
             'padd_right': rooms[self.room_id]['padd_right']['info'],
-            'ball': rooms[self.room_id]['ball']
+            'ball': rooms[self.room_id]['ball'],
+            'padd_left_username': rooms[self.room_id]['padd_left']['username'],
+            'padd_right_username': rooms[self.room_id]['padd_right']['username']
         }))
 
     async def start_game(self, room_id):
