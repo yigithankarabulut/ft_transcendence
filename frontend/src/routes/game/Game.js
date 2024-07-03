@@ -1,10 +1,9 @@
-const canvas = document.getElementById("canvas-pong");
-const ctx = canvas.getContext("2d");
 
 
 export async function fetchGame() {
-
-console.log("fetchinggame");
+console.log("fetchGame");
+const canvas = document.getElementById("canvas-pong");
+const ctx = canvas.getContext("2d");
 const roomId = localStorage.getItem("room_id");
 console.log(roomId);
 

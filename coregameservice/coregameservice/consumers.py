@@ -4,22 +4,22 @@ import asyncio
 
 rooms = {}
 game_data = {str: dict}
-width, height = 800, 400
-canvas_width = 1200
-canvas_height = 600
+width, height = 640, 320
+canvas_width = 960
+canvas_height = 480
 padd_left = {
     'speed': 35,
     'positionX': 60,
     'positionY': canvas_height / 2 - 100,
-    'sizeX': 30,
-    'sizeY': 200,
+    'sizeX': 24,
+    'sizeY': 160,
 }
 padd_right = {
     'speed': 35,
     'positionX': canvas_width - 100,
     'positionY': canvas_height / 2 - 100,
-    'sizeX': 30,
-    'sizeY': 200,
+    'sizeX': 24,
+    'sizeY': 160,
 }
 
 
@@ -77,7 +77,7 @@ class Pong(AsyncWebsocketConsumer):
                 winner = "Right"
             await self.send(text_data=json.dumps({
                 'message': 'game_over',
-                'winner': winner    
+                'winner': winner
                 }))
         await self.send(text_data=json.dumps({
             'message': event['message'],
@@ -165,7 +165,7 @@ class Pong(AsyncWebsocketConsumer):
         rooms[room_id]['padd_left']['info']['positionY'] = canvas_height / 2 - 100
         rooms[room_id]['padd_right']['info']['positionX'] = canvas_width - 100
         rooms[room_id]['padd_right']['info']['positionY'] = canvas_height / 2 - 100
-        
+
 
 
     def BallCollision(self, room_id):
