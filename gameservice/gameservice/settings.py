@@ -42,8 +42,9 @@ INSTALLED_APPS = [
 ]
 
 SERVICE_ROUTES = {
-    # '/auth': 'http://authservice:8001',
-    '/user': 'http://localhost:8004',
+    '/auth': 'http://authservice:8001',
+    '/user': 'http://usermanagement:8004',
+    # '/user': 'http://localhost:8004',
     # '/friend': 'http://friend:8002',
     # '/friend': 'http://localhost:8002',
     # '/match': 'http://localhost:8008',
@@ -86,11 +87,11 @@ WSGI_APPLICATION = 'gameservice.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'gameservice',
+        'NAME': 'gamepostgres',
         'USER': 'yigit',
         'PASSWORD': 'yigit',
-        'HOST': 'localhost',
-        'PORT': '5433',
+        'HOST': 'gamepostgres',
+        'PORT': '5432',
     }
 }
 

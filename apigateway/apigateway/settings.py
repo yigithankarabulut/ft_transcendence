@@ -60,12 +60,13 @@ CORS_ALLOW_ALL_HEADERS = True
 EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/2fa', '/user/pwd/forgot', '/auth/intra', '/auth/intra/callback']
 
 SERVICE_ROUTES = {
-    # '/auth': 'http://authservice:8001',
-    # '/friend': 'http://friend:8002',
+    '/auth': 'http://authservice:8001',
+    '/friend': 'http://friend:8002',
+    '/game': 'http://gameservice:8010',
     # '/user': 'http://usermanagement:8004',
-    '/auth': 'http://localhost:8001',
-    '/user': 'http://localhost:8004',
-    '/game': 'http://localhost:8010',
+    # '/auth': 'http://localhost:8001',
+    # '/user': 'http://localhost:8004',
+    # '/game': 'http://localhost:8010',
     # '/friend': 'http://localhost:8002',
 }
 

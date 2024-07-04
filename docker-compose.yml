@@ -41,13 +41,13 @@ services:
     ports:
       - "5432:5432"
 
-  gameservicepostgres:
-    container_name: gameservice
+  gamepostgres:
+    container_name: gamepostgres
     image: postgres:13
     environment:
       POSTGRES_USER: yigit
       POSTGRES_PASSWORD: yigit
-      POSTGRES_DB: gameservice
+      POSTGRES_DB: gamepostgres
     ports:
         - "5433:5432"
 
@@ -63,9 +63,9 @@ services:
     container_name: gameservice
     build: ./gameservice
     depends_on:
-      - gameservicepostgres
+      - gamepostgres
     ports:
-      - "8005:8010"
+      - "8010:8010"
 
   rabbitmq:
       container_name: rabbitmq
