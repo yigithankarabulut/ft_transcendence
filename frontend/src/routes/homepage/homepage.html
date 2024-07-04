@@ -1,31 +1,29 @@
 <style>
     .container {
         display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
+        justify-content: center;
+        align-items: center;
         height: 100vh;
         padding: 10px;
     }
     .main-container {
         display: flex;
         justify-content: center;
-        align-items: flex-start;
+        align-items: center;
         width: 50%;
-        height: 100vh;
-        margin-top: 100px;
+        height: 100%;
     }
     .button-container {
         display: flex;
-        flex-direction: column;
-        justify-content: space-around;
+        justify-content: center;
         align-items: center;
         width: 100%;
         margin-top: 40px;
     }
     .button-container a, .button-container button {
-        width: 70%;
+        width: 40%;
         padding: 20px 0;
-        margin: 10px 0;
+        margin: 0 10px;
         text-align: center;
         font-size: 24px;
         background-color: blue;
@@ -37,12 +35,13 @@
     .button-container button:hover, .button-container a:hover {
         background-color: darkblue;
     }
-  </style>
+</style>
 
 <div class="container">
     <div class="main-container">
         <div class="button-container">
-            <a data-nav id="quickplay-btn" href="/quickplay" class="btn btn-primary">PLAY GAME</a>
+            <a data-nav id="quickplay-btn" href="/quickplay" class="btn btn-primary">CREATE GAME</a>
+            <a data-nav id="quickplay-btn" href="/join" class="btn btn-primary">JOIN GAME</a>
         </div>
     </div>
 </div>

@@ -5,6 +5,7 @@ const route = {
     "/quickplay": "fetchQuickplay",
     "/": "fetchHomePage",
     "/game": "fetchGame",
+    "/join": "fetchJoin",
     // diğer yolları buraya ekleyin
 };
 
