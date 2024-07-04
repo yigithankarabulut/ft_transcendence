@@ -73,8 +73,6 @@ class GameService(IGameService):
         if room.deleted_at:
             return BaseResponse(True, 'Room not found', None).res()
         players = Player.objects.filter(room=room)
-        if len(players) >= room.room_limit:
-            return BaseResponse(True, 'Room is full', None).res()
         flag = False
         for player in players:
             if player.user_id == user_id:
@@ -94,17 +92,24 @@ class GameService(IGameService):
 
     def list_invite(self, user_id) -> BaseResponse:
         games = Game.objects.filter(player2=user_id, status=0)
-        res = []
+        resp = []
         for game in games:
             room = Room.objects.get(id=game.room_id)
             players = Player.objects.filter(room=room)
             player1 = players[0].user_id
-            res.append({
-                "game_id": game.id,
-                "player1": player1,
+            try:
+                response = requests.get(f"{SERVICE_ROUTES['/user']}/user/get/id?id={player1}")
+            except Exception as e:
+                return BaseResponse(True, str(e), None).res()
+            if response.status_code != 200:
+                return BaseResponse(True, response.json()['error'], None).res()
+            res = response.json()
+            user = res['data'][0]
+            resp.append({
+                "player1": user['username'],
                 "room_id": room.id,
             })
-        return BaseResponse(False, 'List of invites', res).res()
+        return BaseResponse(False, 'List of invites', resp).res()
 
     def update_game(self, request) -> BaseResponse:
         game_id = request['game_id']

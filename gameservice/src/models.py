@@ -6,7 +6,6 @@ class Room(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
-    room_name = models.CharField(max_length=100)  # room_name
     room_limit = models.IntegerField(default=2)  # room_limit
 
 

@@ -1,6 +1,7 @@
 import { navigateTo } from "../../utils/navTo.js";
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 const gameDetailUrl = "http://127.0.0.1:8000/game/list";
+const joinUrl = "http://127.0.0.1:8000/game/join";
 
 export async function fetchJoin() {
     const access_token = localStorage.getItem("access_token");
@@ -55,9 +56,23 @@ export async function fetchJoin() {
         tbody.appendChild(row);
 
         button.addEventListener("click", async () => {
-            console.log(invite);
-            localStorage.setItem("game_id", invite.game_id);
-            navigateTo("/game");
+            const response = await fetch(joinUrl + "?room=" + invite.room_id, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${access_token}`,
+                }
+            });
+            response.json().then((data) => {
+                if (!response.ok) {
+                    alert(data.error);
+                } else {
+                    alert("Joined game successfully");
+                    //set local storage
+                    localStorage.setItem("game_id", data.data.game_id);
+                    navigateTo("/game");
+                }
+            });
         });
     });
 }

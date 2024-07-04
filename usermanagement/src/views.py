@@ -31,6 +31,15 @@ class UserManagementHandler(viewsets.ViewSet):
             return Response(res, status=400)
         return Response(res, status=200)
 
+    def get_user_by_id(self, request):
+        id = request.query_params.get('id')
+        if not id:
+            return Response({'error': 'Id is required'}, status=400)
+        res, err = self.service.get_by_id(id)
+        if err:
+            return Response(res, status=400)
+        return Response(res, status=200)
+
     def update_user(self, request):
         req = CreateManagementSerializer(data=request.data)
         if not req.is_valid():

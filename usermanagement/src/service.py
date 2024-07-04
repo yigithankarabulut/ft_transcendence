@@ -77,6 +77,13 @@ class UserManagementService(IUserManagementService):
         res = ManagementSerializer().response([user])
         return BaseResponse(False, "User found", res).res()
 
+    def get_by_id(self, id: str) -> BaseResponse:
+        user = self.repository.get_by_id(id)
+        if not user:
+            return BaseResponse(True, "User not found", None).res()
+        res = ManagementSerializer().response([user])
+        return BaseResponse(False, "User found", res).res()
+
     def search(self, key, page, limit) -> BaseResponse:
         users = self.repository.search(key)
         if not users:

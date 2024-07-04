@@ -51,8 +51,7 @@ export async function fetchQuickplay() {
         event.stopPropagation();
 
         if (form2.checkValidity()) {
-            // const user5 = document.querySelector('input[name="user5"]').value;
-            const user5 = "vahdt"
+            const user5 = document.querySelector('input[name="user5"]').value;
             const data = {
                 room_limit: 2,
                 players: [
@@ -73,7 +72,8 @@ export async function fetchQuickplay() {
                 return response.json();
             }
             ).then((data) => {
-                console.log(data);
+                localStorage.setItem("game_id", data.data.game_id);
+                navigateTo("/game");
             }).catch((error) => {
                 console.error(error);
             })
