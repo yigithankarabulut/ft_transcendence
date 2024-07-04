@@ -59,6 +59,14 @@ services:
     ports:
       - "8004:8004"
 
+  gameservice:
+    container_name: gameservice
+    build: ./gameservice
+    depends_on:
+      - gameservicepostgres
+    ports:
+      - "8005:8010"
+
   rabbitmq:
       container_name: rabbitmq
       image: rabbitmq:3.8.17-management

@@ -25,6 +25,13 @@ class UserManagementRepository(IUserManagementRepository):
         except:
             return None
 
+    def get_by_username(self, username: str) -> UserManagement:
+        try:
+            model = UserManagement.objects.filter(username=username).first()
+            return model
+        except:
+            return None
+
     def create(self, user: UserManagement) -> UserManagement:
         try:
             user.save()

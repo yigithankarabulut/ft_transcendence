@@ -33,8 +33,8 @@ INTRA_SECRET = 's-s4t2ud-814502feb1df866e903eb128c31b9838b33028a001dda396ad90c02
 INTRA_API_URL = "https://api.intra.42.fr"
 INTRA_CALLBACK_URL = "http://authservice:8001/auth/intra/callback"
 
-USER_MANAGEMENT_URL = "http://usermanagement:8004"
-# USER_MANAGEMENT_URL = "http://localhost:8004"
+# USER_MANAGEMENT_URL = "http://usermanagement:8004"
+USER_MANAGEMENT_URL = "http://localhost:8004"
 
 # Application definition
 

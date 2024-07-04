@@ -4,7 +4,7 @@ import json
 class PublisherBase:
     def __init__(self, queue_name):
         self.queue_name = queue_name
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
         self.channel = self.connection.channel()
         self.channel.queue_declare(queue=queue_name)
 

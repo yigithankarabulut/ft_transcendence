@@ -41,6 +41,14 @@ INSTALLED_APPS = [
     'src',
 ]
 
+SERVICE_ROUTES = {
+    # '/auth': 'http://authservice:8001',
+    '/user': 'http://localhost:8004',
+    # '/friend': 'http://friend:8002',
+    # '/friend': 'http://localhost:8002',
+    # '/match': 'http://localhost:8008',
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
