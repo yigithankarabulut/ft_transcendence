@@ -6,6 +6,7 @@ const route = {
     "/": "fetchHomePage",
     "/game": "fetchGame",
     "/join": "fetchJoin",
+    "/edit": "fetchEdit",
     // diğer yolları buraya ekleyin
 };
 

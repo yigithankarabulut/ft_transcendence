@@ -1,113 +1,138 @@
 <style>
-    @import url("https://fonts.googleapis.com/css2?family=Poppins:weight@100;200;300;400;500;600;700;800&display=swap");
-
-    body {
-        background-color: #545454;
-        font-family: "Poppins", sans-serif;
-        font-weight: 300;
+    body{
+        margin-top:20px;
+        color: #1a202c;
+        text-align: left;
+        background-color: #e2e8f0;
     }
-
-    .container {
-        height: 100vh;
+    .main-body {
+        padding: 15px;
     }
-
     .card {
-        width: 380px;
-        border: none;
-        border-radius: 15px;
-        padding: 8px;
+        box-shadow: 0 1px 3px 0 rgba(0,0,0,.1), 0 1px 2px 0 rgba(0,0,0,.06);
+    }
+    .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
         background-color: #fff;
-        position: relative;
-        height: 460px; /* Yüksekliği artırıldı */
+        background-clip: border-box;
+        border: 0 solid rgba(0,0,0,.125);
+        border-radius: .25rem;
     }
-
-    .upper {
-        height: 100px;
+    .card-body {
+        flex: 1 1 auto;
+        min-height: 1px;
+        padding: 1rem;
     }
-
-    .upper img {
-        width: 100%;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
+    .gutters-sm {
+        margin-right: -8px;
+        margin-left: -8px;
     }
-
-    .user {
-        position: relative;
+    .gutters-sm>.col, .gutters-sm>[class*=col-] {
+        padding-right: 8px;
+        padding-left: 8px;
     }
-
-    .profile img {
-        height: 80px;
-        width: 80px;
-        margin-top: 2px;
+    .mb-3, .my-3 {
+        margin-bottom: 1rem!important;
     }
-
-    .profile {
-        position: absolute;
-        top: -50px;
-        left: 38%;
-        height: 90px;
-        width: 90px;
-        border: 3px solid #fff;
-        border-radius: 50%;
+    .bg-gray-300 {
+        background-color: #e2e8f0;
     }
-
-    .follow {
-        border-radius: 15px;
-        padding-left: 20px;
-        padding-right: 20px;
-        height: 35px;
+    .h-100 {
+        height: 100%!important;
     }
-
-    .stats span {
-        font-size: 29px;
-    }
-
-    .edit-buttons {
-        display: none;
-        margin-top: 10px;
+    .shadow-none {
+        box-shadow: none!important;
     }
 </style>
-
-<div class="container d-flex justify-content-center align-items-center">
-    <div class="card">
-        <div class="upper">
-            <img src="https://i.imgur.com/Qtrsrk5.jpg" class="img-fluid" id="cover-img">
-        </div>
-        <div class="user text-center">
-            <div class="profile">
-                <img src="https://i.imgur.com/JgYD2nQ.jpg" class="rounded-circle" width="80" id="profile-img">
-            </div>
-        </div>
-        <div class="mt-5 text-center">
-            <h4 class="mb-0" id="user-name">Benjamin Tims</h4>
-            <input type="text" id="edit-first-name" class="d-none" />
-            <span class="text-muted d-block mb-2" id="user-location">Los Angles</span>
-            <input type="text" id="edit-last-name" class="d-none" />
-            <span class="text-muted d-block mb-2" id="user-username">bentims</span>
-            <input type="text" id="edit-username" class="d-none" />
-            <span class="text-muted d-block mb-2" id="user-phone">123-456-7890</span>
-            <input type="text" id="edit-phone" class="d-none" />
-            <button class="btn btn-primary btn-sm follow" onclick="enableEditMode()">Düzenle</button>
-            <div class="edit-buttons">
-                <button class="btn btn-success btn-sm" onclick="updateProfile()">Onayla</button>
-                <button class="btn btn-danger btn-sm" onclick="cancelEdit()">Reddet</button>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mt-4 px-4">
-                <div class="stats">
-                    <h6 class="mb-0">Followers</h6>
-                    <span id="followers-count">8,797</span>
+<div class="container">
+    <div class="main-body">
+        <div class="row gutters-sm">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-column align-items-center text-center">
+                            <img id="profile-pic" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150">
+                            <div class="mt-3">
+                                <h4 id="full-name">John Doe</h4>
+                                <h6 id="user-name">Dosafd</h6>
+                                <button class="btn btn-primary">Add Friend</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="stats">
-                    <h6 class="mb-0">Projects</h6>
-                    <span id="projects-count">142</span>
-                </div>
-                <div class="stats">
-                    <h6 class="mb-0">Ranks</h6>
-                    <span id="ranks-count">129</span>
+                <div class="card mt-3">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                            <h6 class="mb-0" style="font-weight: bold; font-size: 1.2em;">Match History</h6>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                            <h6 class="mb-0">Github</h6>
+                            <span class="text-secondary">bootdey</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-
+            <div class="col-md-8">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">First Name</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary" id="profile-first-name">
+                                Kenneth
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Last Name</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary" id="profile-last-name">
+                                Valdez
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Phone</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary" id="profile-phone">
+                                (239) 816-9029
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <a href="/edit" data-nav class="btn btn-primary btn-sm follow">Edit</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gutters-sm">
+                    <div class="col-sm-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>Stats</h6>
+                                <small>Total Matches</small>
+                                    <div>
+                                        <span id = "total-matches" class="text-secondary">60</span>
+                                    </div>
+                                <!--<div class="progress mb-3" style="height: 5px">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>-->
+                                <small>Win Number</small>
+                                    <div>
+                                        <span id = "total-matches" class="text-secondary">32</span>
+                                    </div>
+                                <small>Lose Number</small>
+                                    <div>
+                                        <span id = "total-matches" class="text-secondary">28</span>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
