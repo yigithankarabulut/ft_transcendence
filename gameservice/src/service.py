@@ -30,7 +30,7 @@ class GameService(IGameService):
 
     def create_room(self, request, user_id) -> BaseResponse:
         users = []
-        users.append({'id', user_id})
+        users.append({'id': user_id})
         players = request['players']
         for player in players:
             try:

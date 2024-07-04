@@ -26,7 +26,7 @@ export async function fetchJoin() {
     const invites = invites_res.data
     console.log(invites);
     const tbody = document.querySelector(".table tbody");
-    tbody.innerHTML = ""; // Clear existing rows
+    tbody.innerHTML = ""; //Clear existing rows
 
     invites.forEach((game, index) => {
         const row = document.createElement("tr");
