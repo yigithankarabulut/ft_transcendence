@@ -1,5 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
+const gameDetailUrl = "http://127.0.0.1:8000/game/list";
 
 export async function fetchJoin() {
     const access_token = localStorage.getItem("access_token");
@@ -8,24 +9,26 @@ export async function fetchJoin() {
         return;
     }
     console.log("Fetching user details");
-    const response = await fetch(userDetailUrl, {
+    const response = await fetch(gameDetailUrl, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${access_token}`,
         }
     });
+
     if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error);
     }
-    const data = await response.json();
-    const users = data[0].data; // Assuming this is an array of users
 
+    const invites_res = await response.json();
+    const invites = invites_res.data
+    console.log(invites);
     const tbody = document.querySelector(".table tbody");
     tbody.innerHTML = ""; // Clear existing rows
 
-    users.forEach((user, index) => {
+    invites.forEach((game, index) => {
         const row = document.createElement("tr");
 
         const th = document.createElement("th");
@@ -51,11 +54,10 @@ export async function fetchJoin() {
 
         tbody.appendChild(row);
 
-		button.addEventListener("click", async () => {
-			// Perform join logic here
-			console.log(`Joining user: ${user.first_name} ${user.last_name}`);
-			localStorage.setItem("room_id", JSON.stringify(user.first_name));
-			navigateTo("/game");
-		});
+        button.addEventListener("click", async () => {
+            // Perform join logic here
+            console.log(invites);
+            navigateTo("/game");
+        });
     });
 }

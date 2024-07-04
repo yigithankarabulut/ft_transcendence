@@ -1,0 +1,9 @@
+requests
+django
+django-core
+djangorestframework
+django-cors-headers
+pika
+psycopg2-binary
+psycopg2
+psycopg

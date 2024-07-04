@@ -22,6 +22,10 @@ class IUserManagementService(ABC):
         pass
 
     @abstractmethod
+    def get_by_username(self, username: str) -> BaseResponse:
+        pass
+
+    @abstractmethod
     def delete(self, id: int) -> BaseResponse:
         pass
 

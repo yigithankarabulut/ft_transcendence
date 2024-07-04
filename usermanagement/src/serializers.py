@@ -29,6 +29,9 @@ class SearchUserToPaginationSerializer(serializers.Serializer):
     key = serializers.CharField(required=True, min_length=1, max_length=100)
 
 
+class GetUserByUsernameSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True, min_length=3, max_length=20)
+
 class ManagementSerializer(serializers.Serializer):
     def single_representation(self, instance):
         return {

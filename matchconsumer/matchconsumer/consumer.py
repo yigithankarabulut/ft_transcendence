@@ -1,6 +1,5 @@
 import pika
 import json
-
 from requests import request
 
 

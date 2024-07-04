@@ -1,5 +1,5 @@
 import { navigateTo } from "../../utils/navTo.js";
-
+const gameCreateUrl = "http://127.0.0.1:8000/game/room";
 export async function fetchQuickplay() {
 
     console.log("fetchingquickplay");
@@ -13,7 +13,6 @@ export async function fetchQuickplay() {
             const user3 = document.querySelector('input[name="user3"]').value;
             const user4 = document.querySelector('input[name="user4"]').value;
 
-
             const data = {
                 room_limit: 4,
                 players: [
@@ -23,10 +22,24 @@ export async function fetchQuickplay() {
                 ]
             };
             // JSON verisini console'da görüntüleyin
-            console.log(JSON.stringify(data));
-            // data backe gidecek backten donene gore navto calisir
-
-            // navigateTo("/game");
+            fetch(gameCreateUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization": "Bearer " + localStorage.getItem("access_token"),
+                },
+                body: JSON.stringify(data),
+            }).then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to create game room");
+                }
+                return response.json();
+            }
+            ).then((data) => {
+                console.log(data);
+            }).catch((error) => {
+                console.error(error);
+            })
         }
         form.classList.add('was-validated');
     }, false);
@@ -38,16 +51,32 @@ export async function fetchQuickplay() {
         event.stopPropagation();
 
         if (form2.checkValidity()) {
-            const user5 = document.querySelector('input[name="user5"]').value;
+            // const user5 = document.querySelector('input[name="user5"]').value;
+            const user5 = "vahdt"
             const data = {
                 room_limit: 2,
                 players: [
                     user5
                 ]
             };
-            console.log(JSON.stringify(data));
-            //yigite gonderilecek
-            // navigateTo("/game");
+            fetch(gameCreateUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + localStorage.getItem("access_token"),
+                },
+                body: JSON.stringify(data),
+            }).then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to create game room");
+                }
+                return response.json();
+            }
+            ).then((data) => {
+                console.log(data);
+            }).catch((error) => {
+                console.error(error);
+            })
         }
         form2.classList.add('was-validated');
     }, false);

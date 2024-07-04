@@ -17,6 +17,10 @@ class IUserManagementRepository(ABC):
         pass
 
     @abstractmethod
+    def get_by_username(self, username: str) -> UserManagement:
+        pass
+
+    @abstractmethod
     def create(self, user: UserManagement) -> UserManagement:
         pass
 
