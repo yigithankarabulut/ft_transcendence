@@ -6,7 +6,7 @@ from .models import Game, Room, Player
 
 class CreateRoomSerializer(serializers.Serializer):
     room_limit = serializers.IntegerField(required=True, min_value=2, max_value=4)
-    players = serializers.ListField(child=serializers.CharField(), required=True, min_length=2, max_length=4)
+    players = serializers.ListField(child=serializers.CharField(), required=True, min_length=1, max_length=3)
 
 
 class UpdateGameSerializer(serializers.Serializer):

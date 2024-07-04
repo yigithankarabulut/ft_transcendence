@@ -1,3 +1,17 @@
-<div class="container d-flex align-items-center justify-content-center text-center">
-        <button type="button" class="btn btn-primary" name="connect" id="connect">Connect</button>
-</div>
+<style>
+        body {
+                margin: 200px;
+                overflow: hidden;
+                background-color: black;
+        }
+        canvas {
+                display: block;
+                margin: auto;
+                border: 2px solid white;
+        }
+</style>
+<input type="text" id="userInput" placeholder="Enter the room name">
+<button onclick="sendMessage()">Send</button>
+<canvas id="canvas-pong" width="960" height="480"></canvas>
+
+

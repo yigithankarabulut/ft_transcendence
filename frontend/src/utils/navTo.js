@@ -1,7 +1,17 @@
 import { routes } from "../Routes.js";
 
+const route = {
+    "/profile": "fetchProfile",
+    "/quickplay": "fetchQuickplay",
+    "/": "fetchHomePage",
+    "/game": "fetchGame",
+    "/join": "fetchJoin",
+    "/edit": "fetchEdit",
+    // diğer yolları buraya ekleyin
+};
+
 export const router = async () => {
-    console.log(location.pathname)
+    console.log("router calisti", location.pathname);
     const potentialMatches = routes.map(route => {
         return {
             route,
@@ -23,13 +33,14 @@ export const router = async () => {
         root.innerHTML = html;
         const module = await import(match.route.js);
 
-        // Eğer profil sayfasıysa ve fetchProfile fonksiyonu varsa çağır
-        if (location.pathname === "/profile" && module.fetchProfile) {
-            module.fetchProfile(); // Profil sayfasıysa fetchProfile fonksiyonunu çağır
+        const routeFunction = route[location.pathname];
+        if (routeFunction && module[routeFunction]) {
+            module[routeFunction]();
         }
 
     } catch (err) {
         console.log("An error occurred while rendering the component.");
+        console.log(err);
     }
 }
 
@@ -38,6 +49,5 @@ export const navigateTo = (url) => {
     router();
 }
 
-// Sayfa ilk yüklendiğinde router fonksiyonunu çağır
 window.addEventListener('popstate', router);
 window.addEventListener('DOMContentLoaded', router);

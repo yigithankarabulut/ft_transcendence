@@ -63,7 +63,7 @@ SERVICE_ROUTES = {
     '/auth': 'http://authservice:8001',
     '/friend': 'http://friend:8002',
     '/game': 'http://gameservice:8010',
-    # '/user': 'http://usermanagement:8004',
+    '/user': 'http://usermanagement:8004',
     # '/auth': 'http://localhost:8001',
     # '/user': 'http://localhost:8004',
     # '/game': 'http://localhost:8010',

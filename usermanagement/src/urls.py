@@ -6,6 +6,7 @@ urlpatterns = [
     path('update', UserManagementHandler.as_view({'put': 'update_user'})),
     # TODO: Create endpoint if intra login name is exist use this endpoint to update username
     path('get', UserManagementHandler.as_view({'get': 'get_user_by_username'})),
+    path('get/id', UserManagementHandler.as_view({'get': 'get_user_by_id'})),
     path('delete', UserManagementHandler.as_view({'delete': 'delete_user'})),
     path('list', UserManagementHandler.as_view({'get': 'list_user'})),
     path('search', UserManagementHandler.as_view({'get': 'search_user'})),
