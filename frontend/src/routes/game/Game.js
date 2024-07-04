@@ -1,3 +1,4 @@
+import { navigateTo } from "../../utils/navTo.js";
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 
 export async function fetchGame() {
@@ -46,30 +47,57 @@ function drawPaddles(paddLeft, paddRight, paddLeftUsername, paddRightUsername) {
   ctx.fillText(paddRightUsername, 75, 50);
 }
 
-    function drawBall(ball) {
-        ctx.beginPath();
-        ctx.arc(ball.positionX, ball.positionY, ball.size, 0, Math.PI * 2);
-        ctx.fillStyle = "white";
-        ctx.fill();
-        ctx.closePath();
-    }
+function drawBall(ball) {
+    ctx.beginPath();
+    ctx.arc(ball.positionX, ball.positionY, ball.size, 0, Math.PI * 2);
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.closePath();
+}
 
-  ws.onmessage = (message) => {
-    let items = JSON.parse(message.data);
-    console.log(items);
-    if (items.message === "game_over" && items.winner) {
-      ctx.font = '30px Arial';
-      ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2);
-      var winner = "Player " + items.winner + " wins!";
-      console.log("winner: ", winner);
-      ctx.fillText(winner, canvas.width / 2 - 100, canvas.height / 2 + 50);
-      return;
-    } else if (items.message === "game_run") {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawPaddles(items.padd_left, items.padd_right, items.padd_left_username, items.padd_right_username);
-      drawBall(items.ball);
-    }
+ws.onmessage = (message) => {
+  let items = JSON.parse(message.data);
+  let a = 0;
+
+  if (items.message === "game_over") {
+    const requestBody = JSON.stringify(items);
+    const requestHeaders = {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${access_token}`
+    };
+    fetch("http://localhost:8000/game/save", {
+      method: "POST",
+      headers: requestHeaders,
+      body: requestBody,
+    }).then((response) => {
+      console.log("Sunucudan gelen yanıt:", response);
+      if (!response.ok) {
+        throw new Error("Error saving game");
+      }
+      return response.json();
+    }).then((data) => {
+      console.log("Sunucudan gelen veri:", data);
+    }).catch((error) => {
+      console.log(error);
+    });
+    navigateTo("/");
   }
+
+  console.log(items);
+
+  if (items.message === "game_over" && items.winner) {
+    ctx.font = '30px Arial';
+    ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2);
+    var winner = "Player " + items.winner + " wins!";
+    console.log("winner: ", winner);
+    ctx.fillText(winner, canvas.width / 2 - 100, canvas.height / 2 + 50);
+    return;
+  } else if (items.message === "game_run") {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawPaddles(items.padd_left, items.padd_right, items.padd_left_username, items.padd_right_username);
+    drawBall(items.ball);
+  }
+}
 
 ws.onclose = () => {
   console.log("Disconnected from server");

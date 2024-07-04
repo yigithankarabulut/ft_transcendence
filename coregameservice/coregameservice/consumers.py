@@ -81,9 +81,9 @@ class Pong(AsyncWebsocketConsumer):
 
     async def pong_message(self, event):
         if event['message'] == 'game_over':
-            winner = "Left"
+            winner = rooms[self.room_id]['padd_left']['username']
             if rooms[self.room_id]['padd_left']['info']['score'] == 5:
-                winner = "Right"
+                winner = rooms[self.room_id]['padd_right']['username']
             await self.send(text_data=json.dumps({
                 'message': 'game_over',
                 'winner': winner
@@ -94,7 +94,9 @@ class Pong(AsyncWebsocketConsumer):
             'padd_right': rooms[self.room_id]['padd_right']['info'],
             'ball': rooms[self.room_id]['ball'],
             'padd_left_username': rooms[self.room_id]['padd_left']['username'],
-            'padd_right_username': rooms[self.room_id]['padd_right']['username']
+            'padd_right_username': rooms[self.room_id]['padd_right']['username'],
+            'padd_left_score': rooms[self.room_id]['padd_left']['info']['score'],
+            'padd_right_score': rooms[self.room_id]['padd_right']['info']['score']
         }))
 
     async def start_game(self, room_id):
