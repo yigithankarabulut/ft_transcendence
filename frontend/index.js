@@ -1,3 +1,4 @@
+
 import { navigateTo, router } from "./src/utils/navTo.js";
 
 window.addEventListener("popstate", router);

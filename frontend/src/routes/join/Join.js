@@ -26,9 +26,9 @@ export async function fetchJoin() {
     const invites = invites_res.data
     console.log(invites);
     const tbody = document.querySelector(".table tbody");
-    tbody.innerHTML = ""; //Clear existing rows
+    tbody.innerHTML = ""; // Clear existing rows
 
-    invites.forEach((game, index) => {
+    invites.forEach((invite, index) => {
         const row = document.createElement("tr");
 
         const th = document.createElement("th");
@@ -36,13 +36,13 @@ export async function fetchJoin() {
         th.innerText = index + 1;
         row.appendChild(th);
 
-        const firstNameTd = document.createElement("td");
-        firstNameTd.innerText = user.first_name; // Adjust based on actual user object
-        row.appendChild(firstNameTd);
+        const player = document.createElement("td");
+        player.innerText = invite.player1; // Adjust based on actual user object
+        row.appendChild(player);
 
-        const lastNameTd = document.createElement("td");
-        lastNameTd.innerText = user.last_name; // Adjust based on actual user object
-        row.appendChild(lastNameTd);
+        const room_id = document.createElement("td");
+        room_id.innerText = invite.room_id; // Adjust based on actual user object
+        row.appendChild(room_id);
 
         const buttonTd = document.createElement("td");
         const button = document.createElement("button");
@@ -55,8 +55,8 @@ export async function fetchJoin() {
         tbody.appendChild(row);
 
         button.addEventListener("click", async () => {
-            // Perform join logic here
-            console.log(invites);
+            console.log(invite);
+            localStorage.setItem("game_id", invite.game_id);
             navigateTo("/game");
         });
     });
