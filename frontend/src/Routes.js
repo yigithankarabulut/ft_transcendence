@@ -7,6 +7,7 @@ import GameComponent from "./components/GameComponent.js"
 import QuickplayComponent from "./components/QuickplayComponent.js"
 import JoinComponent from "./components/JoinComponent.js"
 import EditComponent from "./components/EditComponent.js"
+import LocalgameComponent from "./components/LocalgameComponent.js"
 //import TournamentComponent from "./components/TournamentComponent.js"
 
 
@@ -64,6 +65,12 @@ export const routes = [
         htmlPath: "./src/routes/edit/edit.html",
         js: "/src/routes/edit/Edit.js",
         component: EditComponent,
+    },
+    {
+        path:"/localgame",
+        htmlPath: "./src/routes/localgame/localgame.html",
+        js: "/src/routes/localgame/Localgame.js",
+        component: LocalgameComponent,
     }
     //{
     //    path:"/tournament",
