@@ -1,4 +1,4 @@
-class FriendsComponent {
+class UsersComponent {
     constructor(path) {
         this.path = path;
     }
@@ -11,5 +11,4 @@ class FriendsComponent {
             })
     }
 }
-
-export default FriendsComponent;
+export default UsersComponent;

@@ -7,7 +7,8 @@ import GameComponent from "./components/GameComponent.js"
 import QuickplayComponent from "./components/QuickplayComponent.js"
 import JoinComponent from "./components/JoinComponent.js"
 import EditComponent from "./components/EditComponent.js"
-//import TournamentComponent from "./components/TournamentComponent.js"
+import FriendsComponent from "./components/FriendsComponent.js"
+import UsersComponent from "./components/UsersComponent.js"
 
 
 export const routes = [
@@ -64,11 +65,17 @@ export const routes = [
         htmlPath: "./src/routes/edit/edit.html",
         js: "/src/routes/edit/Edit.js",
         component: EditComponent,
+    },
+    {
+        path:"/friends",
+        htmlPath: "./src/routes/friends/friends.html",
+        js: "/src/routes/friends/Friends.js",
+        component: FriendsComponent,
+    },
+    {
+        path:"/users",
+        htmlPath: "./src/routes/users/users.html",
+        js: "/src/routes/users/Users.js",
+        component: UsersComponent,
     }
-    //{
-    //    path:"/tournament",
-    //    htmlPath: "./src/routes/tournament/tournament.html",
-    //    js: "/src/routes/tournament/Tournament.js",
-    //    component: TournamentComponent,
-    //},
 ]
