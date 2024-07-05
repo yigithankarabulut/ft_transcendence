@@ -20,7 +20,6 @@ export async function fetchUsers() {
             const data = await response.json();
             users = data.results;
             displayUsers(users, currentPage);
-
         function displayUsers(users, page) {
             const usersList = document.getElementById('users-list');
             usersList.innerHTML = ''; // Clear previous content
