@@ -1,3 +1,4 @@
+
 import { navigateTo, router } from "./src/utils/navTo.js";
 
 window.addEventListener("popstate", router);
@@ -14,7 +15,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target.matches("[data-nav]")) {
             e.preventDefault();
             navigateTo(e.target.href);
+        } else if (e.target.id === "logout-button") {
+            e.preventDefault();
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('email');
+            navigateTo('/login');
         }
-    })
+    });
     router().catch(err => console.error("Router error:", err)); // Improved error handling
-})
+});

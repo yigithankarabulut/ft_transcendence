@@ -1,5 +1,15 @@
 import { routes } from "../Routes.js";
 
+const route = {
+    "/profile": "fetchProfile",
+    "/quickplay": "fetchQuickplay",
+    "/": "fetchHomePage",
+    "/game": "fetchGame",
+    "/join": "fetchJoin",
+    "/edit": "fetchEdit",
+    // diğer yolları buraya ekleyin
+};
+
 export const router = async () => {
     console.log("router calisti", location.pathname);
     const potentialMatches = routes.map(route => {
@@ -23,8 +33,9 @@ export const router = async () => {
         root.innerHTML = html;
         const module = await import(match.route.js);
 
-        if (location.pathname === "/profile" && module.fetchProfile) {
-            module.fetchProfile();
+        const routeFunction = route[location.pathname];
+        if (routeFunction && module[routeFunction]) {
+            module[routeFunction]();
         }
 
     } catch (err) {

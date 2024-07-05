@@ -5,6 +5,8 @@ import HomePageComponent from "./components/HomePageComponent.js"
 import ProfileComponent from "./components/ProfileComponent.js"
 import GameComponent from "./components/GameComponent.js"
 import QuickplayComponent from "./components/QuickplayComponent.js"
+import JoinComponent from "./components/JoinComponent.js"
+import EditComponent from "./components/EditComponent.js"
 //import TournamentComponent from "./components/TournamentComponent.js"
 
 
@@ -50,7 +52,19 @@ export const routes = [
         htmlPath: "./src/routes/quickplay/quickplay.html",
         js: "/src/routes/quickplay/Quickplay.js",
         component: QuickplayComponent,
-     },
+    },
+    {
+        path:"/join",
+        htmlPath: "./src/routes/join/join.html",
+        js: "/src/routes/join/Join.js",
+        component: JoinComponent,
+    },
+    {
+        path:"/edit",
+        htmlPath: "./src/routes/edit/edit.html",
+        js: "/src/routes/edit/Edit.js",
+        component: EditComponent,
+    }
     //{
     //    path:"/tournament",
     //    htmlPath: "./src/routes/tournament/tournament.html",

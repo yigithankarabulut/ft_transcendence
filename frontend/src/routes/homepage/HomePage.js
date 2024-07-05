@@ -1,6 +1,8 @@
 import { navigateTo } from "../../utils/navTo.js";
+import { toggleHidden } from "../../utils/utils.js";
 
-document.getElementById('nav-bar').style.display = 'flex';
+
+export async function fetchHomePage() {
 
 const access_token = localStorage.getItem("access_token");
 if (!access_token) {
@@ -10,7 +12,4 @@ if (!access_token) {
     console.log("Access token found");
 }
 
-document.getElementById('quickplay-btn').addEventListener('click', function() {
-    navigateTo("/quickplay");
-});
-
+}

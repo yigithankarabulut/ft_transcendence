@@ -120,4 +120,3 @@ class Tournament(AsyncWebsocketConsumer):
                 user2 = users.pop()
                 matches.append([user1, user2])
                 usercount -= 2
-                

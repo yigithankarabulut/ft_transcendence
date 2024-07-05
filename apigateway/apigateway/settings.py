@@ -61,11 +61,13 @@ EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/2fa', '/user/pwd/forg
 
 SERVICE_ROUTES = {
     '/auth': 'http://authservice:8001',
-    # '/friend': 'http://friend:8002',
+    '/friend': 'http://friend:8002',
+    '/game': 'http://gameservice:8010',
     '/user': 'http://usermanagement:8004',
     # '/auth': 'http://localhost:8001',
-    # '/friend': 'http://localhost:8002',
     # '/user': 'http://localhost:8004',
+    # '/game': 'http://localhost:8010',
+    # '/friend': 'http://localhost:8002',
 }
 
 ROOT_URLCONF = 'apigateway.urls'

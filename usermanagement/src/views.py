@@ -5,7 +5,7 @@ from .repository import UserManagementRepository, OAuthUserRepository
 from .serializers import RegisterSerializer, OauthCreateSerializer, ResetPasswordSerializer
 from .serializers import LoginSerializer, ChangePasswordSerializer, ForgotPasswordSerializer
 from .serializers import CreateManagementSerializer, GetUserByIdSerializer, PaginationSerializer, SearchUserToPaginationSerializer
-from .serializers import TwoFactorAuthSerializer
+from .serializers import TwoFactorAuthSerializer, GetUserByUsernameSerializer
 import logging
 
 
@@ -20,6 +20,24 @@ class UserManagementHandler(viewsets.ViewSet):
         if not user_id:
             return Response({'error': 'User id is required'}, status=400)
         res = self.service.get(user_id)
+        return Response(res, status=200)
+
+    def get_user_by_username(self, request):
+        username = request.query_params.get('username')
+        if not username:
+            return Response({'error': 'Username is required'}, status=400)
+        res, err = self.service.get_by_username(username)
+        if err:
+            return Response(res, status=400)
+        return Response(res, status=200)
+
+    def get_user_by_id(self, request):
+        id = request.query_params.get('id')
+        if not id:
+            return Response({'error': 'Id is required'}, status=400)
+        res, err = self.service.get_by_id(id)
+        if err:
+            return Response(res, status=400)
         return Response(res, status=200)
 
     def update_user(self, request):

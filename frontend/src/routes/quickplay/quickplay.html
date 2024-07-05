@@ -104,32 +104,46 @@
         <div class="form-holder">
             <div class="form-content">
                 <div class="form-items">
-                    <h3>Game Settings</h3>
-                    <p>Fill in the data below.</p>
-                    <form class="requires-validation" novalidate action="/game">
+                    <div class="form-items">
+                        <h3>Create Game</h3>
+                        <p>Enter the Username below to join a game.</p>
+                        <form class="requires-validation" novalidate action="/join">
 
-                        <div class="col-md-12">
-                            <input class="form-control" type="number" name="room_limit" placeholder="Room Limit" value="4" required>
-                            <div class="valid-feedback">Room limit is valid!</div>
-                            <div class="invalid-feedback">Room limit cannot be blank!</div>
-                        </div>
+                            <div class="col-md-12">
+                                <input class="form-control" type="text" name="user5" placeholder="Enter Username" required>
+                                <div class="valid-feedback">Enter User!</div>
+                                <div class="invalid-feedback">Room ID cannot be blank!</div>
+                            </div>
+                            <div class="form-button mt-3">
+                                <button type="submit" class="btn btn-primary">Create Game</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="form-items">
+                        <h3>Create Tournament</h3>
+                        <p>Enter the Username below to join a game.</p>
+                        <form class="requires-validation2" novalidate action="/join">
 
-                        <div class="col-md-12">
-                            <input class="form-control" type="number" name="game_score" placeholder="Game Score" value="10" required>
-                            <div class="valid-feedback">Game score is valid!</div>
-                            <div class="invalid-feedback">Game score cannot be blank!</div>
-                        </div>
-
-                        <div class="col-md-12">
-                            <input class="form-control" type="text" name="players" placeholder="Player IDs (comma-separated)" required>
-                            <div class="valid-feedback">Player Usernames are valid!</div>
-                            <div class="invalid-feedback">Player Usernames cannot be blank!</div>
-                        </div>
-
-                        <div class="form-button mt-3">
-                            <button type="submit" class="btn btn-primary">Start Game</button>
-                        </div>
-
+                            <div class="col-md-12">
+                                <input class="form-control" type="text" name="user2" placeholder="Enter Username" required>
+                                <div class="valid-feedback">Enter User!</div>
+                                <div class="invalid-feedback">Room ID cannot be blank!</div>
+                            </div>
+                            <div class="col-md-12">
+                                <input class="form-control" type="text" name="user3" placeholder="Enter Username" required>
+                                <div class="valid-feedback">Enter User!</div>
+                                <div class="invalid-feedback">Room ID cannot be blank!</div>
+                            </div>
+                            <div class="col-md-12">
+                                <input class="form-control" type="text" name="user4" placeholder="Enter Username" required>
+                                <div class="valid-feedback">Enter User!</div>
+                                <div class="invalid-feedback">Room ID cannot be blank!</div>
+                            </div>
+                            <div class="form-button mt-3">
+                                <button type="submit" class="btn btn-primary">Create Tournament</button>
+                            </div>
+                        </form>
+                    </div>
                     </form>
                 </div>
             </div>

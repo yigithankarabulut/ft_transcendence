@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 
 function sendMessage() {
   var message = document.getElementById("userInput").value;
-  
+
   var connection = "ws://localhost:8010/ws/game/" + "?room=" + message;
   let ws = new WebSocket(connection);
 
@@ -47,8 +47,6 @@ function sendMessage() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         // ctx.fillStyle = "white";
         // ctx.fillRect(canvas.width / 2, 0, 1, canvas.height);
-  
-  
         drawPaddles(items.padd_left, items.padd_right);
         drawBall(items.ball);
     }
