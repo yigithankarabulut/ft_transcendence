@@ -16,28 +16,12 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             navigateTo(e.target.href);
         } else if (e.target.id === "logout-button") {
-            logout();
-        }
-    });
-    router().catch(err => console.error("Router error:", err)); // Improved error handling
-});
-
-function logout() {
-    fetch('/logout', {
-        method: 'POST',
-        credentials: 'include'
-    })
-    .then(response => {
-        if (response.ok) {
+            e.preventDefault();
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             localStorage.removeItem('email');
             navigateTo('/login');
-        } else {
-            console.error('Logout failed');
         }
-    })
-    .catch(error => {
-        console.error('Error during logout:', error);
     });
-}
+    router().catch(err => console.error("Router error:", err)); // Improved error handling
+});
