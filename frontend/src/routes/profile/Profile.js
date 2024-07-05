@@ -30,7 +30,35 @@ export async function fetchProfile() {
         console.log(user);
         const firstNameDiv = document.getElementById("full-name").textContent = `${user.first_name} ${user.last_name}`;
 
+        setupwebSocket();//eklenen kısım
+
     } catch (err) {
         console.log(err);
     }
 }
+
+//buradan sonrası da eklenen kısımlardan
+function setupWebSocket() {
+    //start the WebSocket connection
+    socket = new WebSocket(socketUrl);
+    socket.onopen = function() {
+        console.log("WebSocket connection opened");
+        document.getElementById("profile-status").textContent = "Online";
+    };
+
+    socket.onclose = function() {
+        console.log("WebSocket connection closed");
+        document.getElementById("profile-status").textContent = "Offline";
+    };
+
+    socket.onerror = function(error) {
+        console.error("WebSocket error:", error);
+        document.getElementById("profile-status").textContent = "Offline";
+    };
+}
+
+window.addEventListener("beforeunload", () => {
+    if (socket) {
+        socket.close();
+    }
+});
