@@ -69,6 +69,7 @@ export async function onlineStatus() {
 
             socket.onopen = function (event) {
                 console.log('Connected to WebSocket');
+                localStorage.setItem('status', 'Online');
             };
 
             socket.onmessage = function (event) {
@@ -85,6 +86,7 @@ export async function onlineStatus() {
             };
 
             window.addEventListener('beforeunload', function () {
+                localStorage.setItem('status', 'Offline');
                 socket.close();
             });
 
@@ -95,6 +97,7 @@ export async function onlineStatus() {
             });
 
             window.addEventListener('offline', function () {
+                localStorage.setItem('status', 'Offline');
                 socket.close();
             });
         }
