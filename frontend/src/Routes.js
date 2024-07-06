@@ -9,7 +9,7 @@ import JoinComponent from "./components/JoinComponent.js"
 import EditComponent from "./components/EditComponent.js"
 import FriendsComponent from "./components/FriendsComponent.js"
 import UsersComponent from "./components/UsersComponent.js"
-import LocalgameComponent from "./components/LocalgameComponent.js"
+import LocalgameComponent from "./components/EditComponent copy.js"
 
 
 export const routes = [
