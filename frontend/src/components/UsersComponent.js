@@ -1,4 +1,4 @@
-class LocalgameComponent {
+class UsersComponent {
     constructor(path) {
         this.path = path;
     }
@@ -11,5 +11,4 @@ class LocalgameComponent {
             })
     }
 }
-
-export default LocalgameComponent;
+export default UsersComponent;

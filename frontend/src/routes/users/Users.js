@@ -4,9 +4,9 @@ const randomUserApiUrl = "https://randomuser.me/api/?results=20";
 
 let currentPage = 1;
 const usersPerPage = 4;
-let friends = [];
+let users = [];
 
-export async function fetchFriends() {
+export async function fetchUsers() {
 
     const access_token = localStorage.getItem("access_token");
     if (!access_token) {
@@ -18,18 +18,17 @@ export async function fetchFriends() {
                 throw new Error("Failed to fetch random users");
             }
             const data = await response.json();
-            friends = data.results;
-            displayFriends(friends, currentPage);
-
-        function displayFriends(friends, page) {
-            const friendsList = document.getElementById('friends-list');
-            friendsList.innerHTML = ''; // Clear previous content
+            users = data.results;
+            displayUsers(users, currentPage);
+        function displayUsers(users, page) {
+            const usersList = document.getElementById('users-list');
+            usersList.innerHTML = ''; // Clear previous content
 
             const startIndex = (page - 1) * usersPerPage;
             const endIndex = startIndex + usersPerPage;
-            const friendsToDisplay = friends.slice(startIndex, endIndex);
+            const usersToDisplay = users.slice(startIndex, endIndex);
 
-            friendsToDisplay.forEach(friend => {
+            usersToDisplay.forEach(friend => {
                 const friendCard = document.createElement('div');
                 friendCard.className = 'col-md-4 mb-3';
                 friendCard.innerHTML = `
@@ -45,7 +44,7 @@ export async function fetchFriends() {
                                 <p class="text-muted">${friend.location.city}, ${friend.location.country}</p>
                             </div>
                             <div class="col-md-3 col-sm-3">
-                                <button class="btn btn-primary delete-btn pull-right add-friend-btn">Delete</button>
+                                <button class="btn btn-primary delete-btn pull-right add-friend-btn">Add Friend</button>
                             </div>
                         </div>
                     </div>
@@ -57,10 +56,10 @@ export async function fetchFriends() {
                     // İstediğiniz işlemleri burada yapabilirsiniz.
                 });
 
-                friendsList.appendChild(friendCard);
+                usersList.appendChild(friendCard);
             });
 
-            displayPagination(friends.length, page);
+            displayPagination(users.length, page);
         }
 
         function displayPagination(totalUsers, page) {
@@ -75,7 +74,7 @@ export async function fetchFriends() {
                 prevButton.innerText = 'Previous';
                 prevButton.addEventListener('click', () => {
                     currentPage--;
-                    displayFriends(friends, currentPage);
+                    displayUsers(users, currentPage);
                 });
                 paginationContainer.appendChild(prevButton);
             }
@@ -86,7 +85,7 @@ export async function fetchFriends() {
                 nextButton.innerText = 'Next';
                 nextButton.addEventListener('click', () => {
                     currentPage++;
-                    displayFriends(friends, currentPage);
+                    displayUsers(users, currentPage);
                 });
                 paginationContainer.appendChild(nextButton);
             }
