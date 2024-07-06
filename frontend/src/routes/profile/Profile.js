@@ -28,7 +28,10 @@ export async function fetchProfile() {
         const data = await response.json();
         const user = data[0].data[0];
         console.log(user);
-        const firstNameDiv = document.getElementById("full-name").textContent = `${user.first_name} ${user.last_name}`;
+        document.getElementById("full-name").textContent = `${user.first_name} ${user.last_name}`;
+        if (localStorage.getItem("status")) {
+            document.getElementById("profile-status").textContent = localStorage.getItem("status");
+        }
 
     } catch (err) {
         console.log(err);
