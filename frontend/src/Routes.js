@@ -10,6 +10,7 @@ import EditComponent from "./components/EditComponent.js"
 import FriendsComponent from "./components/FriendsComponent.js"
 import UsersComponent from "./components/UsersComponent.js"
 import LocalgameComponent from "./components/LocalgameComponent.js"
+import AiComponent from "./components/AiComponent.js"
 
 
 export const routes = [
@@ -84,5 +85,11 @@ export const routes = [
         htmlPath: "./src/routes/localgame/localgame.html",
         js: "/src/routes/localgame/Localgame.js",
         component: LocalgameComponent,
+    },
+    {
+        path:"/ai",
+        htmlPath: "./src/routes/ai/ai.html",
+        js: "/src/routes/ai/Ai.js",
+        component: AiComponent,
     }
 ]
