@@ -9,6 +9,7 @@ import JoinComponent from "./components/JoinComponent.js"
 import EditComponent from "./components/EditComponent.js"
 import FriendsComponent from "./components/FriendsComponent.js"
 import UsersComponent from "./components/UsersComponent.js"
+import LocalgameComponent from "./components/LocalgameComponent.js"
 
 
 export const routes = [
@@ -77,5 +78,11 @@ export const routes = [
         htmlPath: "./src/routes/users/users.html",
         js: "/src/routes/users/Users.js",
         component: UsersComponent,
+    },
+    {
+        path:"/localgame",
+        htmlPath: "./src/routes/localgame/localgame.html",
+        js: "/src/routes/localgame/Localgame.js",
+        component: LocalgameComponent,
     }
 ]
