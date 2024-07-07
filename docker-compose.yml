@@ -9,7 +9,7 @@ services:
       - ./frontend/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - "808:80"
-     
+
   apigateway:
     container_name: apigateway
     build: ./apigateway
@@ -17,12 +17,16 @@ services:
       - authservice
       - mailservice
       - usermanagement
+    volumes:
+      - ./apigateway:/app
     ports:
       - "8000:8000"
 
   authservice:
     container_name: authservice
     build: ./authservice
+    volumes:
+      - ./authservice:/app
 
   mailservice:
     container_name: mailservice
@@ -30,12 +34,48 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+    volumes:
+      - ./mailservice:/app
+
+  userpostgres:
+    container_name: userpostgres
+    image: postgres:13
+    environment:
+      POSTGRES_USER: yigit
+      POSTGRES_PASSWORD: yigit
+      POSTGRES_DB: usermanagement
+    ports:
+      - "5432:5432"
+
+  gamepostgres:
+    container_name: gamepostgres
+    image: postgres:13
+    environment:
+      POSTGRES_USER: yigit
+      POSTGRES_PASSWORD: yigit
+      POSTGRES_DB: gamepostgres
+    ports:
+        - "5433:5432"
 
   usermanagement:
     container_name: usermanagement
     build: ./usermanagement
+    depends_on:
+      - userpostgres
+    volumes:
+      - ./usermanagement:/app
     ports:
       - "8004:8004"
+
+  gameservice:
+    container_name: gameservice
+    build: ./gameservice
+    depends_on:
+      - gamepostgres
+    volumes:
+      - ./gameservice:/app
+    ports:
+      - "8010:8010" 
 
   rabbitmq:
       container_name: rabbitmq

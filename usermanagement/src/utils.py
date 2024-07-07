@@ -40,15 +40,16 @@ def check_token_validity(token):
     return None
 
 
-def req_to_auth_service_for_generate_token(user_id) -> str:
+def req_to_auth_service_for_generate_token(user_id):
     try:
         response = requests.post(f"{SERVICE_ROUTES['/auth']}/auth/token", params={"user_id": user_id})
         if response.status_code != 200:
             raise Exception("error")
-        token = response.json().get('token')
+        access_token = response.json().get("access_token")
+        refresh_token = response.json().get("refresh_token")
     except Exception as e:
-        return str(e)
-    return token
+        return None, None
+    return access_token, refresh_token
 
 
 def generate_2fa_code():

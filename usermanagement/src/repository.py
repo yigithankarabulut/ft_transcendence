@@ -25,6 +25,20 @@ class UserManagementRepository(IUserManagementRepository):
         except:
             return None
 
+    def get_by_username(self, username: str) -> UserManagement:
+        try:
+            model = UserManagement.objects.filter(username=username).first()
+            return model
+        except:
+            return None
+
+    def get_by_id(self, id: str) -> UserManagement:
+        try:
+            model = UserManagement.objects.filter(id=id).first()
+            return model
+        except:
+            return None
+
     def create(self, user: UserManagement) -> UserManagement:
         try:
             user.save()
@@ -44,6 +58,13 @@ class UserManagementRepository(IUserManagementRepository):
 
     def list(self) -> list:
         return UserManagement.objects.all()
+
+    def search(self, key: str) -> list:
+        try:
+            model = UserManagement.objects.filter(first_name__contains=key).all()
+            return model
+        except Exception as e:
+            return None
 
     def delete(self, id: int) -> bool:
         try:

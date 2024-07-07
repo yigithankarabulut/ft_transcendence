@@ -4,8 +4,8 @@ from .service import UserManagementService
 from .repository import UserManagementRepository, OAuthUserRepository
 from .serializers import RegisterSerializer, OauthCreateSerializer, ResetPasswordSerializer
 from .serializers import LoginSerializer, ChangePasswordSerializer, ForgotPasswordSerializer
-from .serializers import CreateManagementSerializer, GetUserByIdSerializer, PaginationSerializer
-from .serializers import TwoFactorAuthSerializer
+from .serializers import CreateManagementSerializer, GetUserByIdSerializer, PaginationSerializer, SearchUserToPaginationSerializer
+from .serializers import TwoFactorAuthSerializer, GetUserByUsernameSerializer
 import logging
 
 
@@ -22,6 +22,27 @@ class UserManagementHandler(viewsets.ViewSet):
         res = self.service.get(user_id)
         return Response(res, status=200)
 
+    def get_user_by_username(self, request):
+        username = request.query_params.get('username')
+        if not username:
+            return Response({'error': 'Username is required'}, status=400)
+        res, err = self.service.get_by_username(username)
+        if err:
+            return Response(res, status=400)
+        return Response(res, status=200)
+
+    def get_user_by_id(self, request):
+        id = request.query_params.get('id')
+        uid = request.headers.get('id')
+        if not id and not uid:
+            return Response({'error': 'Id is required'}, status=400)
+        if not id:
+            id = uid
+        res, err = self.service.get_by_id(id)
+        if err:
+            return Response(res, status=400)
+        return Response(res, status=200)
+
     def update_user(self, request):
         req = CreateManagementSerializer(data=request.data)
         if not req.is_valid():
@@ -35,6 +56,13 @@ class UserManagementHandler(viewsets.ViewSet):
         if not req.is_valid():
             return Response(req.errors, status=400)
         res = self.service.list(req.validated_data['page'], req.validated_data['limit'])
+        return Response(res, status=200)
+
+    def search_user(self, request):
+        req = SearchUserToPaginationSerializer(data=request.query_params)
+        if not req.is_valid():
+            return Response(req.errors, status=400)
+        res = self.service.search(req.validated_data['key'], req.validated_data['page'], req.validated_data['limit'])
         return Response(res, status=200)
 
     def delete_user(self, request):

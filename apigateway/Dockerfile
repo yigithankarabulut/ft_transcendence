@@ -1,12 +1,13 @@
-FROM alpine:3.7
-
-RUN apk add --no-cache python3-dev \
-    && pip3 install --upgrade pip
+FROM python:3-slim
 
 COPY . /app
 
 WORKDIR /app
 
+RUN pip3 install --upgrade pip
+
 RUN pip3 install -r requirements.txt
 
-CMD [ "python3", "manage.py", "runserver", "0.0.0.0:8000"]
+EXPOSE 8000
+
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]

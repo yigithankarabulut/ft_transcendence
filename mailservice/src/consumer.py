@@ -1,4 +1,5 @@
-import pika, pika.exceptions
+import pika
+import pika.exceptions
 import json
 from .service import MailService
 
