@@ -29,6 +29,12 @@ export async function fetchProfile() {
         const user = data[0].data[0];
         console.log(user);
         document.getElementById("full-name").textContent = `${user.first_name} ${user.last_name}`;
+        document.getElementById("user-name").textContent = user.username;
+        document.getElementById("profile-first-name").textContent = user.first_name;
+        document.getElementById("profile-last-name").textContent = user.last_name;
+        document.getElementById("phone").textContent = user.phone;
+        document.getElementById("email").textContent = user.email;
+
         if (localStorage.getItem("status")) {
             document.getElementById("profile-status").textContent = localStorage.getItem("status");
         }
