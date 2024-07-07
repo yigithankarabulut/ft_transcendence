@@ -5,7 +5,7 @@ const ctx = canvas.getContext("2d");
 function sendMessage() {
   var message = document.getElementById("userInput").value;
 
-  var connection = "ws://localhost:8011/ws/game/" + "?room=" + message;
+  var connection = "ws://localhost:8010/ws/game/" + "?room=" + message;
   let ws = new WebSocket(connection);
 
 

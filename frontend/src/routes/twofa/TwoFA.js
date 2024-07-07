@@ -1,5 +1,5 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
+import { insertIntoElement, toggleHidden, onlineStatus } from "../../utils/utils.js";
 
 
 const url = "http://127.0.0.1:8000/user/2fa";
@@ -40,14 +40,12 @@ form.addEventListener("submit", (e) => {
     .then(data => {
         localStorage.setItem("access_token", data.data.access_token);
         localStorage.setItem("refresh_token", data.data.refresh_token);
-        console.log(data.data.access_token);
-        console.log(data.data.refresh_token);
-        console.log(data.data);
-        console.log(data);
         navigateTo("/");
     })
     .catch((err) => {
         toggleHidden('2fa-code');
         toggleHidden('login-spinner');
-    })
+    });
+
+    localStorage.removeItem("email");
 })

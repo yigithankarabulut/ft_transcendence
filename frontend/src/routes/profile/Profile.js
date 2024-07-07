@@ -37,7 +37,7 @@ export async function fetchProfile() {
         }
 
         // match history
-        renderMatchHistory(user.username);
+        await renderMatchHistory(user.username);
 
     } catch (err) {
         console.log(err);
@@ -112,7 +112,7 @@ async function renderMatchHistory(username) {
             matchTableBody.appendChild(row);
         }
 
-        renderPaginationControls();
+         await renderPaginationControls();
 
     } catch (err) {
         console.log(err);
@@ -120,7 +120,7 @@ async function renderMatchHistory(username) {
 }
 
 // Function to render pagination controls
-function renderPaginationControls() {
+async function renderPaginationControls() {
     const paginationContainer = document.getElementById("pagination");
     paginationContainer.innerHTML = "";
 
@@ -129,10 +129,10 @@ function renderPaginationControls() {
     // Create previous button
     const prevButton = document.createElement("li");
     prevButton.innerHTML = `<li class="page-item disabled"><a href="#" class="page-link">&laquo;</a></li>`;
-    prevButton.addEventListener("click", () => {
+    prevButton.addEventListener("click", async () => {
         if (currentPage > 1) {
             currentPage--;
-            renderMatchHistory();
+            await renderMatchHistory();
         }
     });
     paginationContainer.appendChild(prevButton);
@@ -141,9 +141,9 @@ function renderPaginationControls() {
     for (let i = 1; i <= totalPages; i++) {
         const pageButton = document.createElement("li");
         pageButton.innerHTML = `<li class="page-item ${i === currentPage ? "active" : ""}"><a href="#" class="page-link">${i}</a></li>`;
-        pageButton.addEventListener("click", () => {
+        pageButton.addEventListener("click", async () => {
             currentPage = i;
-            renderMatchHistory();
+            await renderMatchHistory();
         });
         paginationContainer.appendChild(pageButton);
     }
@@ -151,10 +151,10 @@ function renderPaginationControls() {
     // Create next button
     const nextButton = document.createElement("li");
     nextButton.innerHTML = `<li class="page-item disabled"><a href="#" class="page-link">&raquo;</a></li>`;
-    nextButton.addEventListener("click", () => {
+    nextButton.addEventListener("click", async () => {
         if (currentPage < totalPages) {
             currentPage++;
-            renderMatchHistory();
+            await renderMatchHistory();
         }
     });
     paginationContainer.appendChild(nextButton);

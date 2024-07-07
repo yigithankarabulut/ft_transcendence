@@ -1,4 +1,7 @@
+
 import { routes } from "../Routes.js";
+
+import { onlineStatus } from "./utils.js";
 
 const route = {
     "/profile": "fetchProfile",
@@ -11,11 +14,10 @@ const route = {
     "/users": "fetchUsers",
     "/localgame": "fetchLocalgame",
     "/ai": "fetchAi",
-    // diğer yolları buraya ekleyin
+    // add more routes here.
 };
 
 export const router = async () => {
-    console.log("router calisti", location.pathname);
     const potentialMatches = routes.map(route => {
         return {
             route,
@@ -29,12 +31,12 @@ export const router = async () => {
             isMatch: true
         }
     }
-    console.log(match);
+
+    await onlineStatus();
     const root = document.getElementById('root');
     const component = new match.route.component(match.route.htmlPath);
     try {
-        const html = await component.render();
-        root.innerHTML = html;
+        root.innerHTML = await component.render();
         const module = await import(match.route.js);
 
         const routeFunction = route[location.pathname];
@@ -42,15 +44,15 @@ export const router = async () => {
             module[routeFunction]();
         }
     } catch (err) {
-        console.log("An error occurred while rendering the component.");
-        console.log(err);
+        console.log("Error while render/routing component:", err);
     }
 }
 
 export const navigateTo = (url) => {
     history.pushState(null, null, url);
-    router();
+    router().then(() => console.log("Navigated to:", url));
 }
+
 
 window.addEventListener('popstate', router);
 window.addEventListener('DOMContentLoaded', router);

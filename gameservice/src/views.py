@@ -10,7 +10,6 @@ class GameHandler(viewsets.ViewSet):
         super().__init__(**kwargs)
         self.service = GameService()
 
-    # TODO: If user append yourself to the room, return 400
     def create_room(self, request):
         user_id = request.headers.get('id')
         if not user_id:
