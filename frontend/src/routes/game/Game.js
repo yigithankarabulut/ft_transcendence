@@ -5,8 +5,9 @@ export async function fetchGame() {
 console.log("fetchGame");
 const canvas = document.getElementById("canvas-pong");
 const ctx = canvas.getContext("2d");
-const roomId = localStorage.getItem("room_id");
-console.log(roomId);
+const game_id = localStorage.getItem("game_id");
+localStorage.removeItem("game_id");
+console.log(game_id);
 
 //buraya bir sorgu at kullanici bilgisini getir
 const access_token = localStorage.getItem("access_token");
@@ -25,7 +26,7 @@ if (!response.ok) {
 const data = await response.json();
 const user = data[0].data[0];
 
-var connection = "ws://localhost:8010/ws/game/" + "?room=" + roomId + "?player_name=" + user.username;
+var connection = "ws://localhost:8011/ws/game/" + "?room=" + game_id + "?player_name=" + user.username;
 let ws = new WebSocket(connection);
 
 

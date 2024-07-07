@@ -33,8 +33,11 @@ class UserManagementHandler(viewsets.ViewSet):
 
     def get_user_by_id(self, request):
         id = request.query_params.get('id')
-        if not id:
+        uid = request.headers.get('id')
+        if not id and not uid:
             return Response({'error': 'Id is required'}, status=400)
+        if not id:
+            id = uid
         res, err = self.service.get_by_id(id)
         if err:
             return Response(res, status=400)

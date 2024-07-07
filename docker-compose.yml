@@ -17,12 +17,16 @@ services:
       - authservice
       - mailservice
       - usermanagement
+    volumes:
+      - ./apigateway:/app
     ports:
       - "8000:8000"
 
   authservice:
     container_name: authservice
     build: ./authservice
+    volumes:
+      - ./authservice:/app
 
   mailservice:
     container_name: mailservice
@@ -30,6 +34,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+    volumes:
+      - ./mailservice:/app
 
   userpostgres:
     container_name: userpostgres
@@ -56,6 +62,8 @@ services:
     build: ./usermanagement
     depends_on:
       - userpostgres
+    volumes:
+      - ./usermanagement:/app
     ports:
       - "8004:8004"
 
@@ -64,8 +72,10 @@ services:
     build: ./gameservice
     depends_on:
       - gamepostgres
+    volumes:
+      - ./gameservice:/app
     ports:
-      - "8010:8010"
+      - "8010:8010" 
 
   rabbitmq:
       container_name: rabbitmq

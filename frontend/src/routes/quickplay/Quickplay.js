@@ -72,7 +72,8 @@ export async function fetchQuickplay() {
                 return response.json();
             }
             ).then((data) => {
-                console.log(data);
+                localStorage.setItem("game_id", data.data.game_id);
+                navigateTo("/game");
             }).catch((error) => {
                 console.error(error);
             })

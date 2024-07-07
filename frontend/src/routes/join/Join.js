@@ -1,6 +1,7 @@
 import { navigateTo } from "../../utils/navTo.js";
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 const gameDetailUrl = "http://127.0.0.1:8000/game/list";
+const joinUrl = "http://127.0.0.1:8000/game/join";
 
 export async function fetchJoin() {
     const access_token = localStorage.getItem("access_token");
@@ -28,7 +29,7 @@ export async function fetchJoin() {
     const tbody = document.querySelector(".table tbody");
     tbody.innerHTML = ""; // Clear existing rows
 
-    invites.forEach((game, index) => {
+    invites.forEach((invite, index) => {
         const row = document.createElement("tr");
 
         const th = document.createElement("th");
@@ -36,13 +37,13 @@ export async function fetchJoin() {
         th.innerText = index + 1;
         row.appendChild(th);
 
-        const firstNameTd = document.createElement("td");
-        firstNameTd.innerText = user.first_name; // Adjust based on actual user object
-        row.appendChild(firstNameTd);
+        const player = document.createElement("td");
+        player.innerText = invite.player1; // Adjust based on actual user object
+        row.appendChild(player);
 
-        const lastNameTd = document.createElement("td");
-        lastNameTd.innerText = user.last_name; // Adjust based on actual user object
-        row.appendChild(lastNameTd);
+        const room_id = document.createElement("td");
+        room_id.innerText = invite.room_id; // Adjust based on actual user object
+        row.appendChild(room_id);
 
         const buttonTd = document.createElement("td");
         const button = document.createElement("button");
@@ -55,9 +56,23 @@ export async function fetchJoin() {
         tbody.appendChild(row);
 
         button.addEventListener("click", async () => {
-            // Perform join logic here
-            console.log(invites);
-            navigateTo("/game");
+            const response = await fetch(joinUrl + "?room=" + invite.room_id, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${access_token}`,
+                }
+            });
+            response.json().then((data) => {
+                if (!response.ok) {
+                    alert(data.error);
+                } else {
+                    alert("Joined game successfully");
+                    //set local storage
+                    localStorage.setItem("game_id", data.data.game_id);
+                    navigateTo("/game");
+                }
+            });
         });
     });
 }
