@@ -1,5 +1,6 @@
 
 import { navigateTo, router } from "./src/utils/navTo.js";
+import { onlineStatus } from "./src/utils/utils.js";
 
 document.querySelector("link[rel~='icon']").href = "public/images/42_Logo.svg.png";
 
