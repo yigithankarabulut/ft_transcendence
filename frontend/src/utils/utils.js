@@ -84,7 +84,7 @@ export async function onlineStatus() {
     }
 
     if (!localStorage.getItem("access_token")) {
-        throw new Error("unauthorized");
+        return;
     }
     if (socket && socket.readyState === WebSocket.OPEN) {
         return;
