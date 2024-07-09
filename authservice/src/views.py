@@ -11,7 +11,7 @@ import requests
 def generate_access_token(user_id):
     payload = {
         'user_id': user_id,
-        'exp': datetime.utcnow() + timedelta(minutes=60),  # Access token expiration
+        'exp': datetime.utcnow() + timedelta(minutes=600),  # Access token expiration
         'iat': datetime.utcnow()
     }
     access_token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')

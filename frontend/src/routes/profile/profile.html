@@ -47,6 +47,29 @@
     .shadow-none {
         box-shadow: none!important;
     }
+    match-entry {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+    .match-entry {
+        /* ortaya yasla */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        gap: 10px;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+        text-align: center;
+        padding: 10px;
+        margin: 10px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
 </style>
 <div class="container">
     <div class="main-body">
@@ -69,8 +92,7 @@
                             <h6 class="mb-0" style="font-weight: bold; font-size: 1.2em;">Match History</h6>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                            <h6 class="mb-0">Github</h6>
-                            <div class="site-block-tab">
+                            <div class="site-block-tab nav-pills" id="pills-tab" role="tablist">
 
                                 <div class="tab-content" id="pills-tabContent">
                                   <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
@@ -78,41 +100,24 @@
                                     <div class="row align-items-center">
                                       <div class="col-md-12">
 
-
-                                        <div class="row bg-white align-items-center ml-0 mr-0 py-4 match-entry">
-                                          <div class="col-md-4 col-lg-4 mb-4 mb-lg-0">
-
-                                            <div class="text-center text-lg-left">
-                                              <div class="d-block d-lg-flex align-items-center">
-                                                <div class="text">
-                                                  <h3 class="h5 mb-0 text-black">Packers</h3>
-                                                  <span class="text-uppercase small country">Brazil</span>
-                                                </div>
-                                              </div>
-                                            </div>
-
-                                          </div>
-                                          <div class="col-md-4 col-lg-4 text-center mb-4 mb-lg-0">
-                                            <div class="d-inline-block">
-                                              <div class="bg-black py-2 px-4 mb-2 text-white d-inline-block rounded"><span class="h5">3:2</span></div>
-                                            </div>
-                                          </div>
-
-                                          <div class="col-md-4 col-lg-4 text-center text-lg-right">
-                                            <div class="">
-                                              <div class="d-block d-lg-flex align-items-center">
-
-                                                <div class="text order-1 w-100">
-                                                  <h3 class="h5 mb-0 text-black">Steelers</h3>
-                                                  <span class="text-uppercase small country">London</span>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
+                                        
+                                        
+                                        <div class="row bg-white align-items-center ml-4 mr-0 py-4 match-entry">
+                                            <table id="match-history-table">
+                                                <thead>
+                                                    <tr>
+                                                        <!--  -->
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- match history -->
+                                                </tbody>
+                                            </table>
                                         </div>
-
-
-
+                                        
+                                        <ul class="pagination" id="pagination">
+                                            <!-- pagination -->
+                                        </ul>
                                       </div>
 
                                     </div>
