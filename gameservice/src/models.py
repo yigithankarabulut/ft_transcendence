@@ -15,7 +15,7 @@ class Game(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
-    status = models.IntegerField(default=0)  # 0 = Waiting, 1 = Playing, 2 = Finished
+    status = models.IntegerField(default=0)  # 0 = Waiting, 1 = Playing, 2 = Finished, 3 = Cancelled
     player1 = models.CharField(max_length=100) # player1 (user_id)
     player2 = models.CharField(max_length=100) # player2 (user_id)
     player1_score = models.IntegerField(default=0) # player1_score

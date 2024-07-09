@@ -11,15 +11,10 @@ class CreateRoomSerializer(serializers.Serializer):
 
 class UpdateGameSerializer(serializers.Serializer):
     game_id = serializers.IntegerField(required=True)
+    status = serializers.IntegerField(required=True, min_value=0, max_value=3)
     player1_score = serializers.IntegerField(required=True)
     player2_score = serializers.IntegerField(required=True)
-    winner = serializers.CharField(required=True)
-    loser = serializers.CharField(required=True)
 
-
-class JoinRoomSerializer(serializers.Serializer):
-    room_id = serializers.IntegerField(required=True)
-
-
-class ListInviteSerializer(serializers.Serializer):
-    user_id = serializers.CharField(required=True)
+class PaginationSerializer(serializers.Serializer):
+    page = serializers.IntegerField(required=False, default=1, min_value=1, max_value=500)
+    limit = serializers.IntegerField(required=False, default=10, min_value=1, max_value=500)

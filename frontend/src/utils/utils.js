@@ -25,6 +25,7 @@ export const toggleHidden = (elementId) => {
     }
 }
 
+
 let socket = null;
 
 export async function onlineStatus() {
@@ -33,8 +34,6 @@ export async function onlineStatus() {
     async function getUserId() {
         const userDetailUrl = "http://127.0.0.1:8000/user/details";
         const access_token = localStorage.getItem("access_token");
-
-        console.log("Fetching user details");
         const response = await fetch(userDetailUrl, {
             method: "GET",
             headers: {
@@ -42,16 +41,12 @@ export async function onlineStatus() {
                 "Authorization": `Bearer ${access_token}`,
             }
         });
-
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.error);
         }
-
         const data = await response.json();
         const user = data[0].data[0];
-        console.log(user);
-
         userId = user.id;
     }
 
@@ -105,3 +100,4 @@ export async function onlineStatus() {
 
     await initializeWebSocket();
 }
+

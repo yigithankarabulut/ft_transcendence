@@ -3,7 +3,6 @@ import { toggleHidden } from "../../utils/utils.js";
 
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 const updateUserUrl = "http://127.0.0.1:8000/user/update";
-
 const matchHistoryUrl = "http://127.0.0.1:8000/game/history";
 const access_token = localStorage.getItem("access_token");
 const matchesPerPage = 3; // Number of matches per page
@@ -37,17 +36,20 @@ export async function fetchProfile() {
         document.getElementById("profile-first-name").textContent = user.first_name;
         document.getElementById("profile-last-name").textContent = user.last_name;
         document.getElementById("phone").textContent = user.phone;
-        // document.getElementById("email").textContent = user.email;
         if (localStorage.getItem("status")) {
             document.getElementById("profile-status").textContent = localStorage.getItem("status");
         }
+
+        // match history
         await renderMatchHistory(user.username);
 
     } catch (err) {
         console.log(err);
     }
+
 }
 
+// Function to render match history table
 async function renderMatchHistory(username) {
     try {
         console.log("Fetching match history");
@@ -161,4 +163,3 @@ async function renderPaginationControls() {
     });
     paginationContainer.appendChild(nextButton);
 }
-

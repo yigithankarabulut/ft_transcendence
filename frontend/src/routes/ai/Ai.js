@@ -40,13 +40,13 @@ export async function fetchAi() {
   function drawGame() {
     // Clear canvas
     drawRect(0, 0, canvas.width, canvas.height, '#000');
-  
+
     // Draw ball
     drawCircle(ballX, ballY, ballSize, '#fff');
-  
+
     // Draw net
     drawNet();
-  
+
     // Draw paddles
     drawRect(0, playerY, paddleWidth, paddleHeight, '#fff');
     drawRect(canvas.width - paddleWidth, aiY, paddleWidth, paddleHeight, '#fff');
@@ -64,12 +64,12 @@ export async function fetchAi() {
   function updateBall() {
     ballX += ballSpeedX;
     ballY += ballSpeedY;
-  
+
     // Top and bottom collision
     if (ballY < 0 || ballY > canvas.height) {
       ballSpeedY = -ballSpeedY;
     }
-  
+
     // Paddle collision
     if (ballX < paddleWidth) {
       if (ballY > playerY && ballY < playerY + paddleHeight) {
@@ -102,12 +102,12 @@ export async function fetchAi() {
 
   function updateGame() {
     if (!gameRunning) return;
-  
+
     moveAI();
     updateBall();
     drawGame();
     updateScore();
-  
+
     if (playerScore === 5 || aiScore === 5) {
       endGame();
     } else {

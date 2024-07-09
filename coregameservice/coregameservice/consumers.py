@@ -1,6 +1,8 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.utils import json
+import json
 import asyncio
+import requests
 
 rooms = {}
 game_data = {str: dict}
@@ -30,18 +32,47 @@ class Pong(AsyncWebsocketConsumer):
         self.room_id = None
 
     async def connect(self):
-        await self.accept()
         # burada oda idsi aliniyor url den yaninda kullanici adi alinacak sonuc olarak statlar frontende donulecek
         query_params = self.scope['query_string'].decode('utf-8')
         params = query_params.split('?')
 
         tmp_room_id = params[0].split('=')[1]
-        tmp_player_name = params[1].split('=')[1]
+        access_token = params[1].split('=')[1]
+        tmp_player_name = None
 
+        try:
+            response = requests.get("http://localhost:8000/user/get/id", headers = {'Authorization': f'Bearer {access_token}'})
+            if response.status_code == 200:
+                res = response.json()
+                user = res['data'][0]
+                tmp_player_name = user['username']
+        except Exception as e:
+            print(str(e))
+
+        if tmp_player_name == None:
+            await self.close()
+            return
+
+        try:
+            response = requests.get(f'http://localhost:8000/game/check?game_id={tmp_room_id}', headers = {'Authorization': f'Bearer {access_token}'})
+            if response.status_code != 200:
+                await self.close()
+                return
+            else:
+                res = response.json()
+                print(res)
+        except Exception as e:
+            print(str(e))
+
+        if tmp_room_id == "null":
+            await self.close()
+            return
+        await self.accept()
         print('Room: ', tmp_room_id)
         print('Player Name: ', tmp_player_name)
         if tmp_room_id in rooms and 'padd_left' in rooms[tmp_room_id] and 'padd_right' in rooms[tmp_room_id]:
             await self.close()
+            return
         else:
             self.room_id = tmp_room_id
             await self.channel_layer.group_add(
@@ -57,13 +88,20 @@ class Pong(AsyncWebsocketConsumer):
                         'username': tmp_player_name
                     }
                 }
+                self.username = tmp_player_name
+                #rooms[self.room_id]['user_count'] = 1
                 print(rooms[self.room_id])
             elif len(rooms[self.room_id]) == 1:
+                if tmp_player_name == rooms[self.room_id]['padd_left']['username']:
+                    await self.close()
+                    return
                 rooms[self.room_id]['padd_right'] = {
                     'player': self.channel_name,
                     'info': padd_right.copy(),
                     'username': tmp_player_name
                 }
+                self.username = tmp_player_name
+                #rooms[self.room_id]['user_count'] = 2
                 print('Starting game for: ', self.room_id)
                 await self.start_game(self.room_id)
 
@@ -78,16 +116,35 @@ class Pong(AsyncWebsocketConsumer):
         }
         rooms[room_id]['padd_left']['info']['score'] = 0
         rooms[room_id]['padd_right']['info']['score'] = 0
+        rooms[room_id]['game_status'] = 1
+        rooms[room_id]['user_count'] = 2
 
     async def pong_message(self, event):
         if event['message'] == 'game_over':
             winner = rooms[self.room_id]['padd_left']['username']
-            if rooms[self.room_id]['padd_left']['info']['score'] == 5:
+            if rooms[self.room_id]['padd_right']['info']['score'] == 5:
                 winner = rooms[self.room_id]['padd_right']['username']
-            await self.send(text_data=json.dumps({
-                'message': 'game_over',
-                'winner': winner
-                }))
+            if self.username == winner:
+                await self.send(text_data=json.dumps({
+                    'message': 'game_over',
+                    'winner': winner,
+                    'newGame': event['newGame'],
+                    }))
+            else:
+                await self.send(text_data=json.dumps({
+                    'message': 'game_over',
+                    'winner': winner,
+                    'newGame': "",
+                    }))
+
+            await self.channel_layer.group_discard(
+                self.room_id,
+                self.channel_name,
+            )
+            rooms[self.room_id]['user_count'] -= 1
+            await self.close()
+            return
+
         await self.send(text_data=json.dumps({
             'message': event['message'],
             'padd_left': rooms[self.room_id]['padd_left']['info'],
@@ -179,8 +236,6 @@ class Pong(AsyncWebsocketConsumer):
         rooms[room_id]['padd_right']['info']['positionX'] = canvas_width - 100
         rooms[room_id]['padd_right']['info']['positionY'] = canvas_height / 2 - 100
 
-
-
     def BallCollision(self, room_id):
         if ((rooms[room_id]['ball']['positionX'] +
              rooms[room_id]['ball']['size'] >= canvas_width) or
@@ -212,7 +267,27 @@ class Pong(AsyncWebsocketConsumer):
                 self.room_id,
                 self.channel_name,
             )
-            del rooms[self.room_id]
+            rooms[self.room_id]['disconnected_username'] = self.username
+            rooms[self.room_id]['game_status'] = 0
+            if self.room_id in rooms and 'user_count' in rooms[self.room_id]:
+                rooms[self.room_id]['user_count'] -= 1
+            else:
+                try:
+                    body = {
+                        'game_id': int(self.room_id),
+                        'status': 3,
+                        'player1_score': 0,
+                        'player2_score': 0,
+                    }
+                    response = requests.put(f"http://localhost:8010/game/update", data=json.dumps(body), headers={'Content-Type': 'application/json'})
+                    if response.status_code == 200:
+                        res = response.json()
+                        print(res)
+                        # data = res['data']
+                except Exception as e:
+                    print(str(e))
+                del rooms[self.room_id]
+        await self.close()
 
     async def receive(self, text_data=None, bytes_data=None):
         room_id = self.room_id
@@ -229,7 +304,7 @@ class Pong(AsyncWebsocketConsumer):
         self.paddleCollision(room_id)
 
     async def game_loop(self, room_id):
-        while True:
+        while rooms[room_id]['game_status']:
             if room_id not in rooms:
                 print('Game over for: ', room_id)
                 break
@@ -254,12 +329,84 @@ class Pong(AsyncWebsocketConsumer):
             else:
                 rooms[room_id]['ball']['speedY'] -= 0.01
             if rooms[room_id]['padd_left']['info']['score'] == 5 or rooms[room_id]['padd_right']['info']['score'] == 5:
+                newGameId = None
+                try:
+                    body = {
+                        'game_id': int(self.room_id),
+                        'status': 2,
+                        'player1_score': int(rooms[room_id]['padd_left']['info']['score']),
+                        'player2_score': int(rooms[room_id]['padd_right']['info']['score']),
+                    }
+                    response = requests.put(f"http://localhost:8010/game/update", data=json.dumps(body), headers={'Content-Type': 'application/json'})
+                    if response.status_code == 200:
+                        res = response.json()
+                        if res['data'] is not None and res['data']['game_id'] is not None:
+                            newGameId = res['data']['game_id']
+                except Exception as e:
+                    print(str(e))
                 await self.channel_layer.group_send(
                     room_id,
                     {
                         'type': 'pong_message',
                         'message': 'game_over',
+                        'newGame': newGameId,
                     }
                 )
                 break
             await asyncio.sleep(0.025)
+
+        if rooms[room_id]['game_status'] == 0:
+            try:
+                disuser = rooms[room_id]["disconnected_username"]
+                if disuser != rooms[room_id]["padd_left"]["username"]:
+                    rooms[room_id]['padd_left']['info']['score'] = 5
+                else:
+                    rooms[room_id]['padd_right']['info']['score'] = 5
+                body = {
+                    'game_id': int(self.room_id),
+                    'status': 2,
+                    'player1_score': int(rooms[room_id]['padd_left']['info']['score']),
+                    'player2_score': int(rooms[room_id]['padd_right']['info']['score']),
+                }
+                response = requests.put(f"http://localhost:8010/game/update", data=json.dumps(body), headers={'Content-Type': 'application/json'})
+                if response.status_code == 200:
+                    res = response.json()
+                    print(res)
+                    #data = res['data']
+            except Exception as e:
+                print(str(e))
+            await self.channel_layer.group_send(
+                room_id,
+                {
+                    'type': 'disconnect_message',
+                    'message': room_id,
+                }
+            )
+        else:
+            pass
+        while (1):
+            if rooms[room_id]['user_count'] <= 0:
+                del rooms[room_id]
+                break
+            await asyncio.sleep(0.025)
+    # status 0 waiting status 1 playing status 2 finished status 3 canceled
+    async def disconnect_message(self, event):
+        room_id = event['message']
+        disconnected_user = rooms[room_id]['disconnected_username']
+        winner = ""
+        if rooms[room_id]['padd_left']['username'] != disconnected_user:
+            winner = rooms[room_id]['padd_left']['username']
+        else:
+            winner = rooms[room_id]['padd_right']['username']
+        await self.send(text_data=json.dumps({
+            'message': 'game_over',
+            'winner': winner
+            }))
+        await self.channel_layer.group_discard(
+            room_id,
+            self.channel_name,
+        )
+        rooms[room_id]['user_count'] -= 1
+        await self.close()
+
+

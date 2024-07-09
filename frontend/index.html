@@ -32,10 +32,26 @@
             left: 50%;
             transform: translateX(-50%);
         }
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            background-color: #e2e8f0;
+        }
+        nav {
+            width: 100%;
+        }
+        #root {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
-    <nav id="nav-bar" class="navbar navbar-expand-lg bg-body-tertiary" style="display: flex; background-color: #e2e8f0;">
+    <nav id="nav-bar" class="navbar navbar-expand-lg bg-body-tertiary" style="display: flex;">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,7 +75,6 @@
                     <a class="nav-link" href="/ai" data-nav>VS AI</a>
                 </li>
             </ul>
-            <!-- <a class="navbar-brand" href="#">ft_transcendence</a> -->
             <ul class="nav nav-underline ms-auto">
                 <li class="nav-item">
                     <div class="search-container">
