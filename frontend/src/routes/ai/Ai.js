@@ -8,8 +8,8 @@ export async function fetchAi() {
   const paddleWidth = 10;
   const ballSize = 10;
 
-  let playerY = (canvas.height - paddleHeight) / 2;
-  let aiY = (canvas.height - paddleHeight) / 2;
+  let playerY = canvas.height / 2 - paddleHeight / 2;
+  let aiY = canvas.height / 2 - paddleHeight / 2;
   let ballX = canvas.width / 2;
   let ballY = canvas.height / 2;
   let ballSpeedX = 5;
@@ -18,8 +18,6 @@ export async function fetchAi() {
   let playerScore = 0;
   let aiScore = 0;
   let gameRunning = false;
-
-  const speedReductionFactor = 0.6;
 
   function drawRect(x, y, width, height, color) {
     ctx.fillStyle = color;
@@ -33,16 +31,25 @@ export async function fetchAi() {
     ctx.fill();
   }
 
+  function drawNet() {
+    for (let i = 0; i < canvas.height; i += 40) {
+      drawRect(canvas.width / 2 - 1, i, 2, 20, '#fff');
+    }
+  }
+
   function drawGame() {
     // Clear canvas
     drawRect(0, 0, canvas.width, canvas.height, '#000');
 
+    // Draw ball
+    drawCircle(ballX, ballY, ballSize, '#fff');
+
+    // Draw net
+    drawNet();
+
     // Draw paddles
     drawRect(0, playerY, paddleWidth, paddleHeight, '#fff');
     drawRect(canvas.width - paddleWidth, aiY, paddleWidth, paddleHeight, '#fff');
-
-    // Draw ball
-    drawCircle(ballX, ballY, ballSize, '#fff');
   }
 
   function moveAI() {
@@ -66,9 +73,9 @@ export async function fetchAi() {
     // Paddle collision
     if (ballX < paddleWidth) {
       if (ballY > playerY && ballY < playerY + paddleHeight) {
-        ballSpeedX = -ballSpeedX * speedReductionFactor;
+        ballSpeedX = -ballSpeedX;
         const deltaY = ballY - (playerY + paddleHeight / 2);
-        ballSpeedY = deltaY * 0.35 * speedReductionFactor;
+        ballSpeedY = deltaY * 0.35;
       } else if (ballX < 0) {
         aiScore++;
         resetBall();
@@ -76,9 +83,9 @@ export async function fetchAi() {
     }
     if (ballX > canvas.width - paddleWidth) {
       if (ballY > aiY && ballY < aiY + paddleHeight) {
-        ballSpeedX = -ballSpeedX * speedReductionFactor;
+        ballSpeedX = -ballSpeedX;
         const deltaY = ballY - (aiY + paddleHeight / 2);
-        ballSpeedY = deltaY * 0.35 * speedReductionFactor;
+        ballSpeedY = deltaY * 0.35;
       } else if (ballX > canvas.width) {
         playerScore++;
         resetBall();
@@ -140,3 +147,4 @@ export async function fetchAi() {
 
   drawGame();
 }
+fetchAi();

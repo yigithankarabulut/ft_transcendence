@@ -25,6 +25,7 @@ export const toggleHidden = (elementId) => {
     }
 }
 
+
 let socket = null;
 
 export async function onlineStatus() {
@@ -33,61 +34,70 @@ export async function onlineStatus() {
     async function getUserId() {
         const userDetailUrl = "http://127.0.0.1:8000/user/details";
         const access_token = localStorage.getItem("access_token");
-
-        await fetch(userDetailUrl, {
+        const response = await fetch(userDetailUrl, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${access_token}`,
             }
-        }).then(response => {
-            if (!response.ok) {
-                const errorData = response.json();
-                throw new Error(errorData.error);
-            }
-            return response.json();
-        }).then(data => {
-            const user = data[0].data[0];
-            userId = user.id;
-        }).catch(err => {
-            console.error(err);
         });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error);
+        }
+        const data = await response.json();
+        const user = data[0].data[0];
+        userId = user.id;
     }
 
     async function initializeWebSocket() {
-        await getUserId();
-        socket = new WebSocket(`ws://localhost:8020/ws/status/?user_id=${userId}`);
-        socket.onopen = function (event) {
-            console.log('WebSocket status connection opened');
-        };
-        socket.onmessage = function (event) {
-            const data = JSON.parse(event.data);
-            console.log('WebSocket status message received:', data);
-        };
-        socket.onclose = function (event) {
-            console.log('WebSocket status connection closed');
-        };
-        socket.onerror = function (error) {
-            console.error('WebSocket status error:', error);
-        };
-        window.addEventListener('beforeunload', function () {
-            socket.close();
-        });
-        window.addEventListener('online', function () {
-            if (socket.readyState === WebSocket.CLOSED) {
-                socket = new WebSocket(`ws://localhost:8020/ws/status/?user_id=${userId}`);
+        if (localStorage.getItem("access_token")) {
+            await getUserId();
+
+            // Eğer mevcut bir WebSocket bağlantısı varsa yeni bir bağlantı kurmayın
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                console.log('WebSocket connection already exists');
+                return;
             }
-        });
-        window.addEventListener('offline', function () {
-            socket.close();
-        });
+
+            socket = new WebSocket(`ws://localhost:8020/ws/status/?user_id=${userId}`);
+
+            socket.onopen = function (event) {
+                console.log('Connected to WebSocket');
+                localStorage.setItem('status', 'Online');
+            };
+
+            socket.onmessage = function (event) {
+                const data = JSON.parse(event.data);
+                console.log('Message from server: ', data);
+            };
+
+            socket.onclose = function (event) {
+                console.log('WebSocket connection closed');
+            };
+
+            socket.onerror = function (error) {
+                console.error('WebSocket error: ', error);
+            };
+
+            window.addEventListener('beforeunload', function () {
+                localStorage.setItem('status', 'Offline');
+                socket.close();
+            });
+
+            window.addEventListener('online', function () {
+                if (socket.readyState === WebSocket.CLOSED) {
+                    socket = new WebSocket(`ws://localhost:8020/ws/status/?user_id=${userId}`);
+                }
+            });
+
+            window.addEventListener('offline', function () {
+                localStorage.setItem('status', 'Offline');
+                socket.close();
+            });
+        }
     }
 
-    if (!localStorage.getItem("access_token")) {
-        return;
-    }
-    if (socket && socket.readyState === WebSocket.OPEN) {
-        return;
-    }
-    await initializeWebSocket()
+    await initializeWebSocket();
 }
+

@@ -43,6 +43,7 @@ export const router = async () => {
         if (routeFunction && module[routeFunction]) {
             module[routeFunction]();
         }
+        await onlineStatus().catch(err => console.error("WebSocket connection error:", err));
     } catch (err) {
         console.log("Error while render/routing component:", err);
     }
