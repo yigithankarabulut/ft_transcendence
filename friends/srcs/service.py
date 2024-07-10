@@ -3,6 +3,7 @@ from .repository import IFriendsRepository
 from django.core.paginator import Paginator
 from .serializers import FriendsSerializer
 
+
 class BaseResponse:
     def __init__(self, err: bool, msg: str, data, pagination=None):
         self.err = err

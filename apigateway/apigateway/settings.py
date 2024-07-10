@@ -61,7 +61,7 @@ EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/2fa', '/user/pwd/forg
 
 SERVICE_ROUTES = {
     '/auth': 'http://authservice:8001',
-    '/friend': 'http://friend:8002',
+    '/friends': 'http://friendservice:8012',
     '/game': 'http://gameservice:8010',
     '/user': 'http://usermanagement:8004',
     # '/auth': 'http://localhost:8001',
