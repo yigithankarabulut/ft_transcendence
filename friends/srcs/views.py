@@ -53,7 +53,14 @@ class FriendsHandler(viewsets.ViewSet):
         id = request.headers.get('id')
         if not id:
             return Response({"error": "User ID is required"}, status=400)
-        res, err = self.service.get_requests(id)
+        page = PaginationSerializer(data=request.query_params)
+        if not page.is_valid():
+            return Response(page.errors, status=400)
+        res, err = self.service.get_requests(
+            id,
+            page.validated_data.get('page'),
+            page.validated_data.get('limit'),
+        )
         if err:
             return Response(res, status=500)
         return Response(res, status=200)
