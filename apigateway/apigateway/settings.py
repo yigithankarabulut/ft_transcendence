@@ -57,7 +57,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_HEADERS = True
 
 
-EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/2fa', '/user/pwd/forgot', '/auth/intra', '/auth/intra/callback']
+EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/2fa', '/user/pwd/forgot', '/auth/intra', '/auth/intra/callback', '/favicon.ico']
 
 SERVICE_ROUTES = {
     '/auth': 'http://authservice:8001',

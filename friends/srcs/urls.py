@@ -9,3 +9,4 @@ urlpatterns = [
     path('list', FriendsHandler.as_view({'get': 'list'})),
     path('delete', FriendsHandler.as_view({'delete': 'delete'})),
 ]
+

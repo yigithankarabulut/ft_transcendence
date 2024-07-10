@@ -1,3 +1,5 @@
+import logging
+from django import http
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
@@ -95,15 +97,16 @@ class AuthHandler(viewsets.ViewSet):
         user_creation_response = self.create_user(oauth_token)
         if user_creation_response.status_code != 201:
             return Response(user_creation_response.json(), status=user_creation_response.status_code)
+
         response_data = user_creation_response.json().get('data')
         user_id = response_data[0].get('id')
         token = generate_access_token(user_id)
+        refresh_token = generate_refresh_token(user_id)
+        redirect_url = f"{settings.FRONTEND_URL}/auth?access_token={token}&refresh_token={refresh_token}"
         res = {
-            'message': user_creation_response.json().get('message'),
-            'data': [{'token': token, 'user_id': user_id}]
+            "redirect_url": redirect_url
         }
-        return Response(res, status=status.HTTP_201_CREATED)
-    
+        return Response(res, status=status.HTTP_200_OK)
 
     def create_user(self, oauth_token):
         user_info = self.get_user_info(oauth_token)
