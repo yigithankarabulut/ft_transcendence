@@ -27,12 +27,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['35.242.209.3', 'localhost', '127.0.0.1', '0.0.0.0', 'authservice']
 
-INTRA_REDIRECT_URL = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-3b2d21a8dedc530deaf675b608df969d808a866822cc57edba8db2a5f12213c7&redirect_uri=http%3A%2F%2Flocalhost%3A8001%2Fauth%2Fintra%2Fcallback&response_type=code'
-INTRA_UID = 'u-s4t2ud-3b2d21a8dedc530deaf675b608df969d808a866822cc57edba8db2a5f12213c7'
-INTRA_SECRET = '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'
+INTRA_REDIRECT_URL = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-dc37cfd139ab23e08bf900d921dfd5e1aaa6d5d5884b8f2d701707e575cc6b36&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fauth%2Fintra%2Fcallback&response_type=code'
+INTRA_UID = 'u-s4t2ud-dc37cfd139ab23e08bf900d921dfd5e1aaa6d5d5884b8f2d701707e575cc6b36'
+INTRA_SECRET = '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'
 INTRA_API_URL = "https://api.intra.42.fr"
-INTRA_CALLBACK_URL = "http://authservice:8001/auth/intra/callback"
+INTRA_CALLBACK_URL = "http://localhost:8000/auth/intra/callback"
 
+FRONTEND_URL = "http://127.0.0.1:808"
 USER_MANAGEMENT_URL = "http://usermanagement:8004"
 # USER_MANAGEMENT_URL = "http://localhost:8004"
 
@@ -54,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +66,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
+]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
 ]
 
 ROOT_URLCONF = 'authservice.urls'

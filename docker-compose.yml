@@ -57,6 +57,16 @@ services:
     ports:
         - "5433:5432"
 
+  friendspostgres:
+    container_name: friendspostgres
+    image: postgres:13
+    environment:
+      POSTGRES_USER: yigit
+      POSTGRES_PASSWORD: yigit
+      POSTGRES_DB: friendspostgres
+    ports:
+        - "5434:5432"
+
   usermanagement:
     container_name: usermanagement
     build: ./usermanagement
@@ -75,7 +85,17 @@ services:
     volumes:
       - ./gameservice:/app
     ports:
-      - "8010:8010" 
+      - "8010:8010"
+
+  friendservice:
+    container_name: friendservice
+    build: ./friends
+    depends_on:
+      - friendspostgres
+    volumes:
+      - ./friends:/app
+    ports:
+      - "8012:8012"
 
   rabbitmq:
       container_name: rabbitmq

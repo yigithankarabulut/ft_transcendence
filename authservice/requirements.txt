@@ -2,3 +2,4 @@ Django
 djangorestframework
 PyJWT
 requests
+django-cors-headers
