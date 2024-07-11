@@ -59,38 +59,30 @@ export async function onlineStatus() {
                 console.log('WebSocket connection already exists');
                 return;
             }
-
             socket = new WebSocket(`ws://localhost:8020/ws/status/?user_id=${userId}`);
-
             socket.onopen = function (event) {
                 console.log('Connected to WebSocket');
                 localStorage.setItem('status', 'Online');
             };
-
             socket.onmessage = function (event) {
                 const data = JSON.parse(event.data);
                 console.log('Message from server: ', data);
             };
-
             socket.onclose = function (event) {
                 console.log('WebSocket connection closed');
             };
-
             socket.onerror = function (error) {
                 console.error('WebSocket error: ', error);
             };
-
             window.addEventListener('beforeunload', function () {
                 localStorage.setItem('status', 'Offline');
                 socket.close();
             });
-
             window.addEventListener('online', function () {
                 if (socket.readyState === WebSocket.CLOSED) {
                     socket = new WebSocket(`ws://localhost:8020/ws/status/?user_id=${userId}`);
                 }
             });
-
             window.addEventListener('offline', function () {
                 localStorage.setItem('status', 'Offline');
                 socket.close();

@@ -2,12 +2,16 @@ from rest_framework import serializers
 
 
 class BaseSerializer(serializers.Serializer):
-    sender_id = serializers.IntegerField(min_value=1, required=True)
-    receiver_id = serializers.IntegerField(min_value=1, required=True)
+    sender_id = serializers.CharField(required=True)
+    receiver_id = serializers.CharField(required=True)
+
+
+class ReceiverSerializer(serializers.Serializer):
+    receiver_id = serializers.CharField(required=True)
 
 
 class GetByIdSerializer(serializers.Serializer):
-    id = serializers.IntegerField(min_value=1, required=True)
+    id = serializers.CharField(required=True)
 
 
 class PaginationSerializer(serializers.Serializer):
@@ -21,6 +25,7 @@ class FriendsSerializer(serializers.Serializer):
         return {
             "id": instance['receiver_id'],
         }
+
     @classmethod
     def response(self, instance):
         return [self.single_representation(i) for i in instance]

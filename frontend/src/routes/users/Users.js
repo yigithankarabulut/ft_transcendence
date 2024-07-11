@@ -1,10 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 
-const randomUserApiUrl = "https://randomuser.me/api/?results=20";
-
-let currentPage = 1;
-const usersPerPage = 4;
-let users = [];
+const searchUrl = "http://127.0.0.1:8000/user/search";
 
 export async function fetchUsers() {
 
@@ -13,83 +9,88 @@ export async function fetchUsers() {
         console.log("No access token found");
         navigateTo("/login");
     } else {
-            const response = await fetch(randomUserApiUrl);
-            if (!response.ok) {
-                throw new Error("Failed to fetch random users");
-            }
-            const data = await response.json();
-            users = data.results;
-            displayUsers(users, currentPage);
-        function displayUsers(users, page) {
-            const usersList = document.getElementById('users-list');
-            usersList.innerHTML = ''; // Clear previous content
+        
+        document.getElementById('search-form').addEventListener("submit", function(event) {
+            event.preventDefault();
+            document.getElementById("search-button").click();
+        });
 
-            const startIndex = (page - 1) * usersPerPage;
-            const endIndex = startIndex + usersPerPage;
-            const usersToDisplay = users.slice(startIndex, endIndex);
-
-            usersToDisplay.forEach(friend => {
-                const friendCard = document.createElement('div');
-                friendCard.className = 'col-md-4 mb-3';
-                friendCard.innerHTML = `
-                <div class="people-nearby">
-                    <div class="nearby-user">
-                        <div class="row">
-                            <div class="col-md-2 col-sm-2">
-                                <img src="${friend.picture.medium}" alt="user" class="profile-photo-lg">
-                            </div>
-                            <div class="col-md-7 col-sm-7">
-                                <h5><a href="#" class="profile-link">${friend.name.first} ${friend.name.last}</a></h5>
-                                <p>${friend.email}</p>
-                                <p class="text-muted">${friend.location.city}, ${friend.location.country}</p>
-                            </div>
-                            <div class="col-md-3 col-sm-3">
-                                <button class="btn btn-primary delete-btn pull-right add-friend-btn">Add Friend</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-
-                const addFriendButton = friendCard.querySelector('.add-friend-btn');
-                addFriendButton.addEventListener('click', () => {
-                    console.log('Friend information:', friend);
-                    // İstediğiniz işlemleri burada yapabilirsiniz.
-                });
-
-                usersList.appendChild(friendCard);
+        document.getElementById("search-button").addEventListener("click", async () => {
+            const searchValue = document.getElementById("search").value;
+            const response = await fetch(searchUrl + "?page=1" + "&limit=5" +"&key=" + searchValue, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${access_token}`,
+                }
             });
 
-            displayPagination(users.length, page);
+            const data = await response.json();
+            const users = data[0].data;
+            console.log(users);
+            // const tableBody = document.querySelector('.widget-26 tbody');
+            // tableBody.innerHTML = ''; // Clear previous content
+
+            // tableBody = document.querySelector('.widget-26 tbody');
+
+            // users.forEach(user => {
+            //     const userElement = document.createElement('tr');
+            //     userElement.innerHTML = `
+            //         <td>
+            //             <div class="widget-26-job-emp-img">
+            //                 <img src="${user.avatar}" alt="Company" />
+            //             </div>
+            //         </td>
+            //         <td>
+            //             <div class="widget-26-job-title">
+            //                 <a href="#">${user.job_title}</a>
+            //                 <p class="m-0"><a href="#" class="employer-name">${user.employer_name}</a> <span class="text-muted time">${user.time}</span></p>
+            //             </div>
+            //         </td>
+            //         <td>
+            //             <div class="widget-26-job-info">
+            //                 <p class="type m-0">${user.job_type}</p>
+            //                 <p class="text-muted m-0">in <span class="location">${user.location}</span></p>
+            //             </div>
+            //         </td>
+            //         <td>
+            //             <div class="widget-26-job-salary">${user.salary}</div>
+            //         </td>
+            //         <td>
+            //             <div class="widget-26-job-category bg-soft-danger">
+            //                 <i class="indicator bg-danger"></i>
+            //                 <span>${user.category}</span>
+            //             </div>
+            //         </td>
+            //         <td>
+            //             <div class="widget-26-job-starred">
+            //                 <a href="#">
+            //                     <svg
+            //                         xmlns="http://www.w3.org/2000/svg"
+            //                         width="24"
+            //                         height="24"
+            //                         viewBox="0 0 24 24"
+            //                         fill="none"
+            //                         stroke="currentColor"
+            //                         stroke-width="2"
+            //                         stroke-linecap="round"
+            //                         stroke-linejoin="round"
+            //                         class="feather feather-star"
+            //                     >
+            //                         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            //                     </svg>
+            //                 </a>
+            //             </div>
+            //         </td>
+            //     `;
+            //     tableBody.appendChild(userElement);
+            // });
         }
-
-        function displayPagination(totalUsers, page) {
-            const paginationContainer = document.getElementById('pagination');
-            paginationContainer.innerHTML = ''; // Clear previous content
-
-            const totalPages = Math.ceil(totalUsers / usersPerPage);
-
-            if (page > 1) {
-                const prevButton = document.createElement('button');
-                prevButton.className = 'btn btn-secondary';
-                prevButton.innerText = 'Previous';
-                prevButton.addEventListener('click', () => {
-                    currentPage--;
-                    displayUsers(users, currentPage);
-                });
-                paginationContainer.appendChild(prevButton);
-            }
-
-            if (page < totalPages) {
-                const nextButton = document.createElement('button');
-                nextButton.className = 'btn btn-secondary';
-                nextButton.innerText = 'Next';
-                nextButton.addEventListener('click', () => {
-                    currentPage++;
-                    displayUsers(users, currentPage);
-                });
-                paginationContainer.appendChild(nextButton);
-            }
-        }
-
+        );
     }
 }
+
+
+
+
+
