@@ -26,7 +26,9 @@ export const toggleHidden = (elementId) => {
 }
 
 
+
 let socket = null;
+export let userStatuses = {};
 
 export async function onlineStatus() {
     let userId = 0;
@@ -57,16 +59,22 @@ export async function onlineStatus() {
             // Eğer mevcut bir WebSocket bağlantısı varsa yeni bir bağlantı kurmayın
             if (socket && socket.readyState === WebSocket.OPEN) {
                 console.log('WebSocket connection already exists');
+
+                // Server'dan online_users listesini iste
+                socket.send(JSON.stringify({ type: 'getOnlineUsers' }));
                 return;
             }
             socket = new WebSocket(`ws://localhost:8020/ws/status/?user_id=${userId}`);
             socket.onopen = function (event) {
                 console.log('Connected to WebSocket');
                 localStorage.setItem('status', 'Online');
+
             };
             socket.onmessage = function (event) {
                 const data = JSON.parse(event.data);
                 console.log('Message from server: ', data);
+                userStatuses = data.online_users;
+                console.log('Online users: ', userStatuses);
             };
             socket.onclose = function (event) {
                 console.log('WebSocket connection closed');

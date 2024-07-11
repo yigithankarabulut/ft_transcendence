@@ -1,10 +1,12 @@
 import { navigateTo } from "../../utils/navTo.js";
+import { userStatuses } from "../../utils/utils.js";
 
-const randomUserApiUrl = "https://randomuser.me/api/?results=20";
 
-let currentPage = 1;
-const usersPerPage = 4;
-let friends = [];
+const friendList = "http://127.0.0.1:8000/friends/list";
+const friendDelete = "http://127.0.0.1:8000/friends/delete";
+const userDetailUrl = "http://127.0.0.1:8000/user/details";
+const singleUserDetailUrl = "http://127.0.0.1:8000/user/get/id";
+
 
 export async function fetchFriends() {
 
@@ -13,84 +15,117 @@ export async function fetchFriends() {
         console.log("No access token found");
         navigateTo("/login");
     } else {
-            const response = await fetch(randomUserApiUrl);
-            if (!response.ok) {
-                throw new Error("Failed to fetch random users");
+        const response_user = await fetch(userDetailUrl, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${access_token}`,
             }
-            const data = await response.json();
-            friends = data.results;
-            displayFriends(friends, currentPage);
+        });
+        if (!response_user.ok) {
+            const errorData = await response_user.json();
+            throw new Error(errorData.error);
+        }
+        const data_user = await response_user.json();
+        const currentUser = data_user[0].data[0];
+        const currentUserId = currentUser.id;
 
-        function displayFriends(friends, page) {
-            const friendsList = document.getElementById('friends-list');
-            friendsList.innerHTML = ''; // Clear previous content
+        const response = await fetch(friendList + "?page=1" + "&limit=10", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${access_token}`,
+            }
+        });
+        const data = await response.json();
 
-            const startIndex = (page - 1) * usersPerPage;
-            const endIndex = startIndex + usersPerPage;
-            const friendsToDisplay = friends.slice(startIndex, endIndex);
+        const users = data.data;
 
-            friendsToDisplay.forEach(friend => {
-                const friendCard = document.createElement('div');
-                friendCard.className = 'col-md-4 mb-3';
-                friendCard.innerHTML = `
-                <div class="people-nearby">
-                    <div class="nearby-user">
-                        <div class="row">
-                            <div class="col-md-2 col-sm-2">
-                                <img src="${friend.picture.medium}" alt="user" class="profile-photo-lg">
-                            </div>
-                            <div class="col-md-7 col-sm-7">
-                                <h5><a href="#" class="profile-link">${friend.name.first} ${friend.name.last}</a></h5>
-                                <p>${friend.email}</p>
-                                <p class="text-muted">${friend.location.city}, ${friend.location.country}</p>
-                            </div>
-                            <div class="col-md-3 col-sm-3">
-                                <button class="btn btn-primary delete-btn pull-right add-friend-btn">Delete</button>
-                            </div>
-                        </div>
+
+        const tableBody = document.querySelector('.widget-26 tbody');
+        tableBody.innerHTML = ''; // Clear previous content
+        users.forEach(user => {
+            let user_res = {};
+            fetch(singleUserDetailUrl + "?id=" + user.id, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${access_token}`,
+                }
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch user details");
+                }
+                return response.json();
+            }).then(data => {
+                user_res = data.data[0];
+
+            const userElement = document.createElement('tr');
+            let randomImage = "https://placeimg.com/640/480/people"; // Random image URL
+            const user_status = userStatuses.includes(user.id) ? true : false;
+            userElement.innerHTML = `
+                <td>
+                    <div class="widget-26-job-emp-img">
+                        <img src="${randomImage}" alt="User Image" />
                     </div>
-                </div>`;
+                </td>
+                <td>
+                    <div class="widget-26-job-title">
+                        <a data-nav href="/otherprofile?id=${user_res.id}">${user_res.username}</a>
+                        <p class="m-0"><a data-nav href="#" class="employer-name">${user_res.first_name} ${user_res.last_name}</a></p>
+                    </div>
+                </td>
+                <td>
+                    <div class="widget-26-job-info">
+                        <p class="type m-0">Email: ${user_res.email}</p>
+                        <p class="text-muted m-0">Phone: <span class="location">${user_res.phone}</span></p>
+                    </div>
+                </td>
+                <td>
+                    <div class="widget-26-job-salary">ID: ${user_res.id}</div>
+                </td>
+                <td>
+                <div class="widget-26-job-category ${user_status === false ?  'bg-soft-danger' : 'bg-soft-success' }">
+                        <i class="indicator ${user_status === false ?  ' bg-danger' : 'bg-success' }"></i>
+                        <span>${user_status === true ? 'Online' : 'Offline' }</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="widget-26-job-starred">
+                        <button id="delete-friend-button-${user_res.id}">Delete Friend</button>
+                    </div>
+                </td>
+            `;
 
-                const addFriendButton = friendCard.querySelector('.add-friend-btn');
-                addFriendButton.addEventListener('click', () => {
-                    console.log('Friend information:', friend);
-                    // İstediğiniz işlemleri burada yapabilirsiniz.
+            tableBody.appendChild(userElement);
+            document.getElementById(`delete-friend-button-${user_res.id}`).addEventListener("click", function(event) {
+                event.preventDefault();
+                fetch(friendDelete,{
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${access_token}`
+                    },
+                    body: JSON.stringify({
+                        receiver_id: user_res.id
+                    })
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to send friend request");
+                    }
+                    return response.json();
+                }
+                ).then(data => {
+                    console.log(`Sending friend delete request from user with ID: ${currentUserId} to user with ID: ${user_res.id}`);
                 });
-
-                friendsList.appendChild(friendCard);
             });
-
-            displayPagination(friends.length, page);
-        }
-
-        function displayPagination(totalUsers, page) {
-            const paginationContainer = document.getElementById('pagination');
-            paginationContainer.innerHTML = ''; // Clear previous content
-
-            const totalPages = Math.ceil(totalUsers / usersPerPage);
-
-            if (page > 1) {
-                const prevButton = document.createElement('button');
-                prevButton.className = 'btn btn-secondary';
-                prevButton.innerText = 'Previous';
-                prevButton.addEventListener('click', () => {
-                    currentPage--;
-                    displayFriends(friends, currentPage);
-                });
-                paginationContainer.appendChild(prevButton);
-            }
-
-            if (page < totalPages) {
-                const nextButton = document.createElement('button');
-                nextButton.className = 'btn btn-secondary';
-                nextButton.innerText = 'Next';
-                nextButton.addEventListener('click', () => {
-                    currentPage++;
-                    displayFriends(friends, currentPage);
-                });
-                paginationContainer.appendChild(nextButton);
-            }
-        }
+        });
+        });
 
     }
 }
+
+
+
+
+
