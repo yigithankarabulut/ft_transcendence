@@ -32,8 +32,14 @@ class Online(AsyncWebsocketConsumer):
         print("Online users: ", Online.online_users)
         await self.send(text_data=json.dumps({
             'user_id': event['user_id'],
-            'status': event['status']
+            'status': event['status'],
+            'online_users': list(Online.online_users)  # online kullanıcıların listesini ekleyin
         }))
 
     async def receive(self, text_data):
-        pass
+        data = json.loads(text_data)
+        if data.get('type') == 'getOnlineUsers':
+            await self.send(text_data=json.dumps({
+                'type': 'onlineUsers',
+                'online_users': list(Online.online_users)
+            }))
