@@ -2,6 +2,7 @@ import { navigateTo } from "../../utils/navTo.js";
 import { userStatuses } from "../../utils/utils.js";
 
 const searchUrl = "http://127.0.0.1:8000/user/search";
+const friendAdd = "http://127.0.0.1:8000/friends/add";
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 
 
@@ -87,11 +88,28 @@ export async function fetchUsers() {
                 tableBody.appendChild(userElement);
                 document.getElementById(`add-friend-button-${user.id}`).addEventListener("click", function(event) {
                     event.preventDefault();
-                    console.log(`Sending friend request from user with ID: ${currentUserId} to user with ID: ${user.id}`);
+                    fetch(friendAdd,{
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${access_token}`
+                        },
+                        body: JSON.stringify({
+                            receiver_id: user.id
+                        })
+                    }).then(response => {
+                        if (!response.ok) {
+                            throw new Error("Failed to send friend request");
+                        }
+                        return response.json();
+                    }
+                    ).then(data => {
+                        console.log(`Sending friend request from user with ID: ${currentUserId} to user with ID: ${user.id}`);
+                    });
                 });
             });
-        }
-        );
+        });
+
     }
 }
 

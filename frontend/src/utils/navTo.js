@@ -16,6 +16,7 @@ const route = {
     "/ai": "fetchAi",
     "/auth": "fetchAuth",
     "/otherprofile": "fetchOtherprofile",
+    "/friendrequests": "fetchFriendrequests",
     // add more routes here.
 };
 
