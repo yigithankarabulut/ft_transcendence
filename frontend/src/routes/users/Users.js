@@ -59,8 +59,8 @@ export async function fetchUsers() {
                     </td>
                     <td>
                         <div class="widget-26-job-title">
-                            <a href="#">${user.username}</a>
-                            <p class="m-0"><a href="#" class="employer-name">${user.first_name} ${user.last_name}</a></p>
+                            <a data-nav href="/otherprofile?id=${user.id}">${user.username}</a>
+                            <p class="m-0"><a data-nav href="#" class="employer-name">${user.first_name} ${user.last_name}</a></p>
                         </div>
                     </td>
                     <td>

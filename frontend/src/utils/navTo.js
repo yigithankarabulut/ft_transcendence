@@ -15,6 +15,7 @@ const route = {
     "/localgame": "fetchLocalgame",
     "/ai": "fetchAi",
     "/auth": "fetchAuth",
+    "/otherprofile": "fetchOtherprofile",
     // add more routes here.
 };
 
