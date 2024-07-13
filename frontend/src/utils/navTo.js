@@ -4,19 +4,21 @@ import { routes } from "../Routes.js";
 import { onlineStatus } from "./utils.js";
 
 const route = {
+    "/ai": "fetchAi",
+    "/edit": "fetchEdit",
+    "/friendrequests": "fetchFriendrequests",
+    "/friends": "fetchFriends",
+    "/game": "fetchGame",
+    "/": "fetchHomePage",
+    "/join": "fetchJoin",
+    "/localgame": "fetchLocalgame",
+    "/login": "fetchLogin",
+    "/otherprofile": "fetchOtherprofile",
     "/profile": "fetchProfile",
     "/quickplay": "fetchQuickplay",
-    "/": "fetchHomePage",
-    "/game": "fetchGame",
-    "/join": "fetchJoin",
-    "/edit": "fetchEdit",
-    "/friends": "fetchFriends",
-    "/users": "fetchUsers",
-    "/localgame": "fetchLocalgame",
-    "/ai": "fetchAi",
+    "/register": "fetchRegister",
     "/auth": "fetchAuth",
-    "/otherprofile": "fetchOtherprofile",
-    "/friendrequests": "fetchFriendrequests",
+    "/users": "fetchUsers",
     // add more routes here.
 };
 
