@@ -4,6 +4,8 @@ import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
 const url = "http://localhost:8000/user/register";
 const form = document.getElementById("register");
 
+export async function fetchRegister() {
+
 form.addEventListener("submit", (e) => {
 
     e.preventDefault();
@@ -77,3 +79,4 @@ form.addEventListener("submit", (e) => {
         // toggleHidden('register-spinner');
     })
 })
+}
