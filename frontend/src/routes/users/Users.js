@@ -71,9 +71,6 @@ export async function fetchUsers() {
                         </div>
                     </td>
                     <td>
-                        <div class="widget-26-job-salary">ID: ${user.id}</div>
-                    </td>
-                    <td>
                     <div class="widget-26-job-category ${user_status === false ?  'bg-soft-danger' : 'bg-soft-success' }">
                             <i class="indicator ${user_status === false ?  ' bg-danger' : 'bg-success' }"></i>
                             <span>${user_status === true ? 'Online' : 'Offline' }</span>

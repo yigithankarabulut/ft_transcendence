@@ -28,14 +28,23 @@ export async function fetchProfile() {
             const errorData = await response.json();
             throw new Error(errorData.error);
         }
+
         const data = await response.json();
         const user = data[0].data[0];
         console.log(user);
+
+        user.win_count = 654546;
         document.getElementById("full-name").textContent = `${user.first_name} ${user.last_name}`;
         document.getElementById("user-name").textContent = user.username;
         document.getElementById("profile-first-name").textContent = user.first_name;
         document.getElementById("profile-last-name").textContent = user.last_name;
         document.getElementById("phone").textContent = user.phone;
+
+        document.getElementById("total-count").textContent = user.win_count + user.lose_count;
+        document.getElementById("win-count").textContent = user.win_count;
+        document.getElementById("lose-count").textContent = user.lose_count;
+
+
         if (localStorage.getItem("status")) {
             document.getElementById("profile-status").textContent = localStorage.getItem("status");
         }
