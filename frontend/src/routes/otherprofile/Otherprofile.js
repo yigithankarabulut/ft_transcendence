@@ -1,4 +1,5 @@
 import { navigateTo } from "../../utils/navTo.js";
+import { userStatuses } from "../../utils/utils.js"
 
 const userDetailUrl = "http://127.0.0.1:8000/user/get/id";
 const matchHistoryUrl = "http://127.0.0.1:8000/game/history";
@@ -17,6 +18,7 @@ export async function fetchOtherprofile() {
         console.log("Fetching user details");
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
+        const user_status = userStatuses.includes(id) ? true : false;
         const response = await fetch(userDetailUrl + "?id=" + id, {
             method: "GET",
             headers: {
@@ -35,9 +37,7 @@ export async function fetchOtherprofile() {
         document.getElementById("profile-first-name").textContent = user.first_name;
         document.getElementById("profile-last-name").textContent = user.last_name;
         document.getElementById("phone").textContent = user.phone;
-        if (localStorage.getItem("status")) {
-            document.getElementById("profile-status").textContent = localStorage.getItem("status");
-        }
+        document.getElementById("profile-status").textContent = user_status === true ? 'Online' : 'Offline'
 
         // match history
         await renderMatchHistory(user.username);
