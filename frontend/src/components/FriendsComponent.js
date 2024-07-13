@@ -11,4 +11,5 @@ class FriendsComponent {
             })
     }
 }
+
 export default FriendsComponent;
