@@ -81,7 +81,7 @@ class FriendsService(IFriendsService):
             return BaseResponse(True, "Friendship not found", None).res()
         if fr.state != 1:
             return BaseResponse(True, "Friendship not accepted", None).res()
-        if not self.repository.delete(sender_id, receiver_id):
+        if not self.repository.delete(fr.sender_id, fr.receiver_id):
             return BaseResponse(True, "Failed to delete friendship", None).res()
         return BaseResponse(False, "Friendship deleted successfully", None).res()
 
