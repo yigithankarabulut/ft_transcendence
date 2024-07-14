@@ -103,7 +103,7 @@ class FriendsService(IFriendsService):
         if not self.repository.reject(sender_id, receiver_id):
             return BaseResponse(True, "Failed to reject friendship", None).res()
         return BaseResponse(False, "Friendship rejected successfully", None).res()
-    
+
     def get_requests(self, user_id, page, limit) -> tuple[dict[str, str], bool]:
         requests = self.repository.get_all_request(user_id)
         if requests is None:
