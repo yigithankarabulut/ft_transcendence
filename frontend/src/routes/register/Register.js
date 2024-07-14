@@ -4,7 +4,7 @@ import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
 const url = "http://localhost:8000/user/register";
 const form = document.getElementById("register");
 
-export async function fetchRegister() {
+export async function    () {
 
 form.addEventListener("submit", (e) => {
 

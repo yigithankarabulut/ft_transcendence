@@ -43,20 +43,22 @@ export async function fetchEdit() {
             const phone = document.querySelector("input[name='phone']").value;
             const avatar = document.querySelector("input[name='avatar']").files[0]; // Added to get the file
 
-            const formData = new FormData();
-            formData.append("first_name", firstName);
-            formData.append("last_name", lastName);
-            formData.append("phone", phone);
-            if (avatar) {
-                formData.append("avatar", avatar); // Added to include the file
-            }
+            let body = {
+                first_name: firstName,
+                last_name: lastName,
+                phone: phone,
+                username: user.username,
+                email: user.email,
+            };
+
             try {
                 const response = await fetch(updateUserUrl, {
-                    method: "POST",
+                    method: "PUT",
                     headers: {
                         "Authorization": `Bearer ${access_token}`,
+                        "Content-Type": "application/json",
                     },
-                    body: formData // Use FormData object
+                    body: JSON.stringify(body),
                 });
 
                 if (!response.ok) {

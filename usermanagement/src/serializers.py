@@ -13,7 +13,7 @@ class CreateManagementSerializer(serializers.Serializer):
     username = serializers.CharField(required=True, min_length=3, max_length=20)
     email = serializers.EmailField(required=True)
     phone = serializers.CharField(required=True, min_length=10, max_length=15)
-    
+
     def bind(self, validated_data):
         return UserManagement(**validated_data)
 

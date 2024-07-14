@@ -108,7 +108,7 @@ export async function fetchFriendrequests() {
                     "Authorization": `Bearer ${access_token}`,
                 },
                 body: JSON.stringify({
-                    "receiver_id": user.id,
+                    "receiver_id": "95b5c82a-9311-4dd3-98f4-9546bf01d425",
                 })
             });
         });
@@ -123,7 +123,7 @@ export async function fetchFriendrequests() {
                     "Authorization": `Bearer ${access_token}`,
                 },
                 body: JSON.stringify({
-                    "receiver_id": user.id,
+                    "receiver_id": "95b5c82a-9311-4dd3-98f4-9546bf01d425",
                 })
             });
         });
