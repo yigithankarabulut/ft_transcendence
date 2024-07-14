@@ -3,6 +3,7 @@ import { navigateTo } from "../../utils/navTo.js";
 
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 const updateUserUrl = "http://127.0.0.1:8000/user/update";
+const avatarUpdateUrl = "http://127.0.0.1:8000/user/image";
 
 
 
@@ -67,6 +68,33 @@ export async function fetchEdit() {
                 console.log(err);
             }
         });
+    document.getElementById("cancel-button").addEventListener("click", () => {
+        navigateTo("/profile");
+    });
+    document.getElementById("update-avatar").addEventListener("click", async () => {
+        const image = document.getElementById("avatar-image").files[0];
+        console.log("Avatar update clicked");
+        fetch(avatarUpdateUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${access_token}`,
+            },
+            body: JSON.stringify({
+                avatar: image,
+            }),
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error("Couldn't update avatar");
+            }
+            return res.json();
+        })
+        .then(data => {
+            console.log(data);
+        })
+    });
+
     } catch (err) {
         console.log(err);
     }
