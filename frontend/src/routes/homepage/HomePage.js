@@ -1,50 +1,28 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { toggleHidden,  insertIntoElement } from "../../utils/utils.js";
+import { toggleHidden } from "../../utils/utils.js";
 
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
-document.getElementById('nav-bar').style.display = 'flex';
-export async function fetchUserDetails() {
-    const token = localStorage.getItem("token");
-    if (!token) {
+
+export async function fetchHomePage() {
+    const access_token = localStorage.getItem("access_token");
+    if (!access_token) {
+        console.log("No access token found");
         navigateTo("/login");
-        return;
+    } else {
+        console.log("Access token found");
     }
-    toggleHidden('home-spinner');
-    try {
-        const response = await fetch(userDetailUrl, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            }
-        });
+}
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error);
-        }
+export async function fetchAuth() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const access_token = urlParams.get("access_token");
+    const refresh_token = urlParams.get("refresh_token");
 
-        const data = await response.json();
-        const user = data[0].data[0];
-        const fullname = document.getElementById('fullname')
-        const username = document.getElementById('username');
-        const email = document.getElementById('email');
-
-        insertIntoElement('fullname', user.fullname);
-        insertIntoElement('username', user.username);
-        insertIntoElement('email', user.email);
-        toggleHidden('fullname');
-        toggleHidden('home-spinner');
-    } catch (err) {
-        console.log(err);
-        if (err.error === "Unauthorized") {
-            navigateTo("/login");
-        } else if (err.error === "Token has expired") {
-            navigateTo("/login");
-        } else if (err.error) {
-            console.error("Error: ", err.error);
-        } else {
-            console.error("Error: internal server error");
-        }
+    if (access_token && refresh_token) {
+        localStorage.setItem("access_token", access_token);
+        localStorage.setItem("refresh_token", refresh_token);
+        navigateTo("/");
+    } else {
+        console.log("No access token found");
+        navigateTo("/login");
     }
 }

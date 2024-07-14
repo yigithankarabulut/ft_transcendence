@@ -17,6 +17,18 @@ class IUserManagementRepository(ABC):
         pass
 
     @abstractmethod
+    def get_by_username(self, username: str) -> UserManagement:
+        pass
+
+    @abstractmethod
+    def get_by_id(self, id: str) -> UserManagement:
+        pass
+
+    @abstractmethod
+    def get_by_phone(self, phone: str) -> UserManagement:
+        pass
+
+    @abstractmethod
     def create(self, user: UserManagement) -> UserManagement:
         pass
 
@@ -26,6 +38,10 @@ class IUserManagementRepository(ABC):
 
     @abstractmethod
     def list(self) -> list:
+        pass
+
+    @abstractmethod
+    def search(self, key: str) -> list:
         pass
 
     @abstractmethod

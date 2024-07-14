@@ -1,7 +1,30 @@
+
 import { routes } from "../Routes.js";
 
+import { onlineStatus } from "./utils.js";
+
+const route = {
+    "/ai": "fetchAi",
+    "/edit": "fetchEdit",
+    "/friendrequests": "fetchFriendrequests",
+    "/friends": "fetchFriends",
+    "/game": "fetchGame",
+    "/": "fetchHomePage",
+    "/join": "fetchJoin",
+    "/localgame": "fetchLocalgame",
+    "/login": "fetchLogin",
+    "/otherprofile": "fetchOtherprofile",
+    "/profile": "fetchProfile",
+    "/quickplay": "fetchQuickplay",
+    "/register": "fetchRegister",
+    "/2fa" : "fetch2FA",
+    "/auth": "fetchAuth",
+    "/users": "fetchUsers",
+    "/localtournament": "fetchLocaltournament",
+    // add more routes here.
+};
+
 export const router = async () => {
-    console.log(location.pathname)
     const potentialMatches = routes.map(route => {
         return {
             route,
@@ -15,19 +38,29 @@ export const router = async () => {
             isMatch: true
         }
     }
-    console.log(match);
+
+    await onlineStatus();
     const root = document.getElementById('root');
     const component = new match.route.component(match.route.htmlPath);
     try {
-        const html = await component.render();
-        root.innerHTML = html;
-        import(match.route.js);
+        root.innerHTML = await component.render();
+        const module = await import(match.route.js);
+
+        const routeFunction = route[location.pathname];
+        if (routeFunction && module[routeFunction]) {
+            module[routeFunction]();
+        }
+        await onlineStatus().catch(err => console.error("WebSocket connection error:", err));
     } catch (err) {
-        console.log("An error occurred while rendering the component.");
+        console.log("Error while render/routing component:", err);
     }
 }
 
 export const navigateTo = (url) => {
     history.pushState(null, null, url);
-    router();
+    router().then(() => console.log("Navigated to:", url));
 }
+
+
+window.addEventListener('popstate', router);
+window.addEventListener('DOMContentLoaded', router);

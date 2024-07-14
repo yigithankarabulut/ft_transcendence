@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-4+_=!fz64vf%cf-^@d_v$yoty&cd-bk^=*_9623**cn+0v0$q%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'apigateway', 'usermanagement', 'authservice']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'apigateway', 'usermanagement', 'authservice', '35.242.209.3']
 
 # Application definition
 
@@ -57,8 +58,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 SERVICE_ROUTES = {
     '/auth': 'http://authservice:8001',
-    # '/friend': 'http://friend:8002',
     # '/auth': 'http://localhost:8001',
+    # '/friend': 'http://friend:8002',
     # '/friend': 'http://localhost:8002',
     # '/match': 'http://localhost:8008',
 }
@@ -96,10 +97,17 @@ WSGI_APPLICATION = 'usermanagement.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'usermanagement',
+        'USER': 'yigit',
+        'PASSWORD': 'yigit',
+        'HOST': 'userpostgres',
+        'PORT': '5432',
     }
 }
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

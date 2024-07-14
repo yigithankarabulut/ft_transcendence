@@ -29,27 +29,85 @@ class UserManagementService(IUserManagementService):
         res = ManagementSerializer().response([user])
         return BaseResponse(False, "User found", res).res()
 
-    def update(self, user: UserManagement) -> BaseResponse:
-        uname = self.repository.get_by_username(user.username)
-        uemail = self.repository.get_by_email(user.email)
-        if uname and uname.id != user.id:
-            return BaseResponse(True, "Username already exists", None).res()
-        elif uname and uname.id == user.id:
-            return BaseResponse(True, "Please provide a different username", None).res()
-        if uemail and uemail.id != user.id:
-            return BaseResponse(True, "Email already exists", None).res()
-
-        elif uemail and uemail.id == user.id:
-            return BaseResponse(True, "Please provide a different email", None).res()
-
-        new_user = self.repository.update(user)
+    def update(self, user: UserManagement, id) -> BaseResponse:
+        data = self.repository.get_by_id(id)
+        if not data:
+            return BaseResponse(True, "User not found", None).res()
+        if data.username != user.username:
+            new_user = self.repository.get_by_username(user.username)
+            if new_user:
+                return BaseResponse(True, "Username already exists", None).res()
+        if data.phone != user.phone:
+            new_user = self.repository.get_by_phone(user.phone)
+            if new_user:
+                return BaseResponse(True, "Phone already exists", None).res()
+        data.first_name = user.first_name
+        data.last_name = user.last_name
+        data.username = user.username
+        data.phone = user.phone
+        new_user = self.repository.update(data)
         if not new_user:
             return BaseResponse(True, "User update failed", None).res()
         res = ManagementSerializer().response([new_user])
         return BaseResponse(False, "User updated successfully", res).res()
 
+
+        # uname = self.repository.get_by_username(user.username)
+        # uemail = self.repository.get_by_email(user.email)
+        # if uname and uname.id != user.id:
+        #     return BaseResponse(True, "Username already exists", None).res()
+        # elif uname and uname.id == user.id:
+        #     return BaseResponse(True, "Please provide a different username", None).res()
+        # if uemail and uemail.id != user.id:
+        #     return BaseResponse(True, "Email already exists", None).res()
+
+        # elif uemail and uemail.id == user.id:
+        #     return BaseResponse(True, "Please provide a different email", None).res()
+
+        # new_user = self.repository.update(user)
+        # if not new_user:
+        #     return BaseResponse(True, "User update failed", None).res()
+        # res = ManagementSerializer().response([new_user])
+        # return BaseResponse(False, "User updated successfully", res).res()
+
     def list(self, page, limit) -> BaseResponse:
         users = self.repository.list()
+        if not users:
+            return BaseResponse(True, "No users found", None).res()
+        paginator = Paginator(users, limit)
+        try:
+            pagineted_users = paginator.page(page)
+        except EmptyPage:
+            return BaseResponse(True, "There is no data on this page", None).res()
+
+        if not pagineted_users:
+            return BaseResponse(False, "No users found", None).res()
+
+        res = ManagementSerializer().response(pagineted_users)
+        paginate_data = {
+            "current_page": page,
+            "page_size": limit,
+            "total_pages": paginator.num_pages,
+            "total_records": paginator.count
+        }
+        return BaseResponse(False, "Users found", res, paginate_data).res()
+
+    def get_by_username(self, username: str) -> BaseResponse:
+        user = self.repository.get_by_username(username)
+        if not user:
+            return BaseResponse(True, "User not found", None).res()
+        res = ManagementSerializer().response([user])
+        return BaseResponse(False, "User found", res).res()
+
+    def get_by_id(self, id: str) -> BaseResponse:
+        user = self.repository.get_by_id(id)
+        if not user:
+            return BaseResponse(True, "User not found", None).res()
+        res = ManagementSerializer().response([user])
+        return BaseResponse(False, "User found", res).res()
+
+    def search(self, key, page, limit) -> BaseResponse:
+        users = self.repository.search(key)
         if not users:
             return BaseResponse(True, "No users found", None).res()
         paginator = Paginator(users, limit)
@@ -180,10 +238,10 @@ class UserManagementService(IUserManagementService):
         if now().timestamp() - float(code_timestamp) > 100:
             return BaseResponse(True, "2FA code expired", None).res()
 
-        token = req_to_auth_service_for_generate_token(user.id)
-        if token == "error":
+        access_token, refresh_token = req_to_auth_service_for_generate_token(user.id)
+        if not access_token or not refresh_token:
             return BaseResponse(True, "Token generation failed", None).res()
-        return BaseResponse(False, "Login successful", {"token": token}).res()
+        return BaseResponse(False, "Login successful", {"access_token": access_token, "refresh_token": refresh_token}).res()
 
     def forgot_password(self, email) -> BaseResponse:
         user = self.repository.get_by_email(email)
@@ -297,7 +355,8 @@ class UserManagementService(IUserManagementService):
             flag = True
             user_management.username = None
         if umail:
-            return BaseResponse(True, "Email already exist.Please login with your Email", None).res()
+            res = ManagementSerializer().response([umail])
+            return BaseResponse(False, "User already exist", res).res()
 
         try:
             with transaction.atomic():
@@ -310,14 +369,6 @@ class UserManagementService(IUserManagementService):
                 oauth_user = self.oauth_repository.oauth_user_create(oauth_user)
                 if not oauth_user:
                     raise Exception("OAuth user creation failed")
-
-                # Request to matchmaking service for create user
-                try:
-                    response = requests.post(f"{SERVICE_ROUTES['/match']}/match/user/create", data={"user_id": user.id})
-                except Exception as e:
-                    raise Exception("Matchmaking service request sending failed")
-                if response.status_code != 201:
-                    raise Exception("Matchmaking service not created user")
                 res = ManagementSerializer().response([user_management])
         except Exception as e:
             err = str(e)

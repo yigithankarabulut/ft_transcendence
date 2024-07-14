@@ -4,10 +4,73 @@ from .service import UserManagementService
 from .repository import UserManagementRepository, OAuthUserRepository
 from .serializers import RegisterSerializer, OauthCreateSerializer, ResetPasswordSerializer
 from .serializers import LoginSerializer, ChangePasswordSerializer, ForgotPasswordSerializer
-from .serializers import CreateManagementSerializer, GetUserByIdSerializer, PaginationSerializer
-from .serializers import TwoFactorAuthSerializer
+from .serializers import CreateManagementSerializer, GetUserByIdSerializer, PaginationSerializer, SearchUserToPaginationSerializer
+from .serializers import TwoFactorAuthSerializer, GetUserByUsernameSerializer, ImageSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework import status
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from .models import ImageModel, UserManagement
 import logging
 
+
+# class ImageViewSet(viewsets.ModelViewSet):
+#     queryset = ImageModel.objects.all()
+#     serializer_class = ImageSerializer
+#     parser_classes = (MultiPartParser, FormParser)
+
+#     def create(self, request, *args, **kwargs):
+#         req = ImageSerializer(data=request.data)
+#         if not req.is_valid():
+#             return Response(req.errors, status=400)
+#         image = req.bind(req.validated_data)
+#         id = request.headers.get('id')
+#         if not id:
+#             return Response({'error': 'Id is required'}, status=400)
+#         image.user_id = id
+#         image.save()
+#         return Response({'message': 'Image uploaded successfully'}, status=201)
+    
+#     def image_serve(self, request):
+#         image = get_object_or_404(ImageModel, user_id=request.headers.get('id'))
+#         with open(image.image.path, 'rb') as img:
+#             return HttpResponse(img.read(), content_type='image/jpeg')
+    
+
+class ImageViewSet(viewsets.ModelViewSet):
+    queryset = ImageModel.objects.all()
+    serializer_class = ImageSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def create(self, request, *args, **kwargs):
+        serializer = ImageSerializer(data=request.data)
+        if serializer.is_valid():
+            id = request.headers.get('id')
+            if not id:
+                return Response({'error': 'Id is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Kullanıcıyı al
+            user = get_object_or_404(UserManagement, id=id)
+            
+            # Image nesnesini oluştur ve kaydet
+            image_instance = serializer.save(user=user)
+            return Response({'message': 'Image uploaded successfully'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        with open(instance.image.path, 'rb') as img:
+            return HttpResponse(img.read(), content_type='image/jpeg')
+
+    def image_serve(self, request):
+        id = request.headers.get('id')
+        if not id:
+            return Response({'error': 'Id is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        image = get_object_or_404(ImageModel, user_id=id)
+        with open(image.image.path, 'rb') as img:
+            return HttpResponse(img.read(), content_type='image/jpeg')
 
 class UserManagementHandler(viewsets.ViewSet):
 
@@ -22,12 +85,36 @@ class UserManagementHandler(viewsets.ViewSet):
         res = self.service.get(user_id)
         return Response(res, status=200)
 
+    def get_user_by_username(self, request):
+        username = request.query_params.get('username')
+        if not username:
+            return Response({'error': 'Username is required'}, status=400)
+        res, err = self.service.get_by_username(username)
+        if err:
+            return Response(res, status=400)
+        return Response(res, status=200)
+
+    def get_user_by_id(self, request):
+        id = request.query_params.get('id')
+        uid = request.headers.get('id')
+        if not id and not uid:
+            return Response({'error': 'Id is required'}, status=400)
+        if not id:
+            id = uid
+        res, err = self.service.get_by_id(id)
+        if err:
+            return Response(res, status=400)
+        return Response(res, status=200)
+
     def update_user(self, request):
         req = CreateManagementSerializer(data=request.data)
         if not req.is_valid():
             return Response(req.errors, status=400)
+        id = request.headers.get('id')
+        if not id:
+            return Response({'error': 'Id is required'}, status=400)
         user = req.bind(req.validated_data)
-        res = self.service.update(user)
+        res = self.service.update(user, id)
         return Response(res, status=200)
 
     def list_user(self, request):
@@ -35,6 +122,13 @@ class UserManagementHandler(viewsets.ViewSet):
         if not req.is_valid():
             return Response(req.errors, status=400)
         res = self.service.list(req.validated_data['page'], req.validated_data['limit'])
+        return Response(res, status=200)
+
+    def search_user(self, request):
+        req = SearchUserToPaginationSerializer(data=request.query_params)
+        if not req.is_valid():
+            return Response(req.errors, status=400)
+        res = self.service.search(req.validated_data['key'], req.validated_data['page'], req.validated_data['limit'])
         return Response(res, status=200)
 
     def delete_user(self, request):

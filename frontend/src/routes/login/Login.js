@@ -1,60 +1,62 @@
-import { navigateTo } from "../../utils/navTo.js";
-import { insertIntoElement, appendToElement, toggleHidden } from "../../utils/utils.js";
+import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
+import  { navigateTo } from "../../utils/navTo.js";
 
-const url = "http://127.0.0.1:8000/user/login";
-const form = document.getElementById("login");
-document.getElementById('nav-bar').style.display = 'none';
+const loginUrl = "http://127.0.0.1:8000/user/login";
+const IntraOAuthUrl = "http://127.0.0.1:8000/auth/intra"
 
-form.addEventListener("submit", (e) => {
+export async function fetchLogin() {
 
+document.getElementById('login-form').addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-    const fields_warning = document.getElementById('fields-warning');
 
-    if (!email  || !password)
-    {
-        insertIntoElement('fields-warning', "fields shouldn't be empty");
+    if (!email || !password) {
+        insertIntoElement('fields-warning', "Fields shouldn't be empty");
         return;
     }
+    toggleHidden('login-form');
+    try {
+        const response = await fetch(loginUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Internal server error");
+        }
+        const data = await response.json();
+        localStorage.setItem("email", email);
+        navigateTo("/2fa");
+    } catch (err) {
+        insertIntoElement('fields-warning', `Error: ${err.message}`);
+        toggleHidden('login-form');
+    }
+});
 
-    toggleHidden('login');
-    // toggleHidden('login-spinner');
-
-    fetch(url, {
+document.getElementById('FtButton').addEventListener("click", () => {
+    const response =  fetch(IntraOAuthUrl, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-            email: email,
-            password: password,
-        }),
-    })
-    .then(res => {
+    });
+    response.then(res => {
         if (!res.ok) {
             return res.json().then(err => {
                 throw err;
             });
         }
-        return res.json();
+
+        res.json().then(data => {
+            if (data.url) {
+                window.location.replace(data.url);
+            }
+        });
     })
-    .then(data => {
-        localStorage.setItem("email", email);
-        navigateTo("/2fa");
-    })
-    .catch((err) => {
-        console.log(err);
-        if (err.error) {
-            fields_warning.innerText = "Error: " + err.error;}
-        else if (err.email) {
-            fields_warning.innerText = "Email error: " + err.email[0];
-        } else if (err.password) {
-            fields_warning.innerText = "Password error: " + err.password[0];
-        } else {
-            fields_warning.innerText = "Error: internal server error";
-        }
-        toggleHidden('login');
-        // toggleHidden('login-spinner');
-    })
-})
+});
+
+}

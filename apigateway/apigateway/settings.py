@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-#fvj*dfcvw*q5!$2)=29sw+z$)1w#f6#6u@k=r(x47(c+g657v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['34.141.6.250', 'localhost', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = ['35.242.209.3', 'localhost', '127.0.0.1', '0.0.0.0']
 
 
 # Application definition
@@ -57,15 +57,17 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_HEADERS = True
 
 
-EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/2fa', '/user/pwd/forgot', '/auth/intra', '/auth/intra/callback']
+EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/2fa', '/user/pwd/forgot', '/auth/intra', '/auth/intra/callback', '/favicon.ico']
 
 SERVICE_ROUTES = {
     '/auth': 'http://authservice:8001',
-    # '/friend': 'http://friend:8002',
+    '/friends': 'http://friendservice:8012',
+    '/game': 'http://gameservice:8010',
     '/user': 'http://usermanagement:8004',
     # '/auth': 'http://localhost:8001',
-    # '/friend': 'http://localhost:8002',
     # '/user': 'http://localhost:8004',
+    # '/game': 'http://localhost:8010',
+    # '/friend': 'http://localhost:8002',
 }
 
 ROOT_URLCONF = 'apigateway.urls'

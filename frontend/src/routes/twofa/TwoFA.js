@@ -3,6 +3,9 @@ import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
 
 
 const url = "http://127.0.0.1:8000/user/2fa";
+
+export async function fetch2FA() {
+
 const form = document.getElementById("2fa-code");
 
 form.addEventListener("submit", (e) => {
@@ -37,12 +40,16 @@ form.addEventListener("submit", (e) => {
         document.getElementById('nav-bar').style.display = 'flex';
         return res.json();
     })
-    .then(token => {
-        localStorage.setItem("token", token.data.token);
+    .then(data => {
+        localStorage.setItem("access_token", data.data.access_token);
+        localStorage.setItem("refresh_token", data.data.refresh_token);
         navigateTo("/");
     })
     .catch((err) => {
         toggleHidden('2fa-code');
         toggleHidden('login-spinner');
-    })
+    });
+
+    localStorage.removeItem("email");
 })
+}

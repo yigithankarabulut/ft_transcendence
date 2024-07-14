@@ -1,7 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { wsInstance } from "../../sockets/BaseSocket.js";
 
-
 var queryparams = new URLSearchParams(window.location.search);
 if (queryparams.size != 2) {
     navigateTo('/');
@@ -18,27 +17,20 @@ console.log(tournament, username);
 wsInstance.connect('ws://localhost:8009/ws/tournament/' + tournament + '/' + '?user=' + username);
 
 // var ws;
-
 // function openWebSocket() {
-
-
 //     ws.onopen = () => {
 //         console.log('connected');
 //     }
-
 //     ws.onmessage = (e) => {
 //         console.log(e.data);
 //     }
-
 //     ws.onclose = () => {
 //         console.log('disconnected');
 //     }
-
 //     ws.onerror = (e) => {
 //         console.log(e);
 //     }
 // }
-
 // // Only open the WebSocket connection if it's not already open
 // if (!ws || ws.readyState !== WebSocket.OPEN) {
 //     openWebSocket();
