@@ -32,6 +32,23 @@
             left: 50%;
             transform: translateX(-50%);
         }
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            background-color: #e2e8f0;
+            
+        }
+        nav {
+            width: 100%;
+        }
+        #root {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -50,6 +67,9 @@
                     <a class="nav-link" href="/friends" data-nav>Friends</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/friendrequests" data-nav>Friend Requests</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/users" data-nav>Users</a>
                 </li>
                 <li class="nav-item">
@@ -59,14 +79,7 @@
                     <a class="nav-link" href="/ai" data-nav>VS AI</a>
                 </li>
             </ul>
-            <a class="navbar-brand" href="#">ft_transcendence</a>
             <ul class="nav nav-underline ms-auto">
-                <li class="nav-item">
-                    <div class="search-container">
-                        <input type="text" placeholder="Search">
-                        <button><img src="../../../public/images/search.jpg" alt="Search"></button>
-                    </div>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/profile" data-nav>Profile</a>
                 </li>

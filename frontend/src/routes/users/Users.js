@@ -1,10 +1,10 @@
 import { navigateTo } from "../../utils/navTo.js";
+import { userStatuses } from "../../utils/utils.js";
 
-const randomUserApiUrl = "https://randomuser.me/api/?results=20";
+const searchUrl = "http://127.0.0.1:8000/user/search";
+const friendAdd = "http://127.0.0.1:8000/friends/add";
+const userDetailUrl = "http://127.0.0.1:8000/user/details";
 
-let currentPage = 1;
-const usersPerPage = 4;
-let users = [];
 
 export async function fetchUsers() {
 
@@ -13,83 +13,104 @@ export async function fetchUsers() {
         console.log("No access token found");
         navigateTo("/login");
     } else {
-            const response = await fetch(randomUserApiUrl);
-            if (!response.ok) {
-                throw new Error("Failed to fetch random users");
+        const response = await fetch(userDetailUrl, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${access_token}`,
             }
-            const data = await response.json();
-            users = data.results;
-            displayUsers(users, currentPage);
-        function displayUsers(users, page) {
-            const usersList = document.getElementById('users-list');
-            usersList.innerHTML = ''; // Clear previous content
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error);
+        }
+        const data = await response.json();
+        const currentUser = data[0].data[0];
+        const currentUserId = currentUser.id;
+        document.getElementById('search-form').addEventListener("submit", function(event) {
+            event.preventDefault();
+        });
 
-            const startIndex = (page - 1) * usersPerPage;
-            const endIndex = startIndex + usersPerPage;
-            const usersToDisplay = users.slice(startIndex, endIndex);
-
-            usersToDisplay.forEach(friend => {
-                const friendCard = document.createElement('div');
-                friendCard.className = 'col-md-4 mb-3';
-                friendCard.innerHTML = `
-                <div class="people-nearby">
-                    <div class="nearby-user">
-                        <div class="row">
-                            <div class="col-md-2 col-sm-2">
-                                <img src="${friend.picture.medium}" alt="user" class="profile-photo-lg">
-                            </div>
-                            <div class="col-md-7 col-sm-7">
-                                <h5><a href="#" class="profile-link">${friend.name.first} ${friend.name.last}</a></h5>
-                                <p>${friend.email}</p>
-                                <p class="text-muted">${friend.location.city}, ${friend.location.country}</p>
-                            </div>
-                            <div class="col-md-3 col-sm-3">
-                                <button class="btn btn-primary delete-btn pull-right add-friend-btn">Add Friend</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-
-                const addFriendButton = friendCard.querySelector('.add-friend-btn');
-                addFriendButton.addEventListener('click', () => {
-                    console.log('Friend information:', friend);
-                    // İstediğiniz işlemleri burada yapabilirsiniz.
-                });
-
-                usersList.appendChild(friendCard);
+        document.getElementById("search-button").addEventListener("click", async () => {
+            const searchValue = document.getElementById("search").value;
+            const response = await fetch(searchUrl + "?page=1" + "&limit=5" +"&key=" + searchValue, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${access_token}`,
+                }
             });
+            const data = await response.json();
+            const users = data[0].data;
 
-            displayPagination(users.length, page);
-        }
-
-        function displayPagination(totalUsers, page) {
-            const paginationContainer = document.getElementById('pagination');
-            paginationContainer.innerHTML = ''; // Clear previous content
-
-            const totalPages = Math.ceil(totalUsers / usersPerPage);
-
-            if (page > 1) {
-                const prevButton = document.createElement('button');
-                prevButton.className = 'btn btn-secondary';
-                prevButton.innerText = 'Previous';
-                prevButton.addEventListener('click', () => {
-                    currentPage--;
-                    displayUsers(users, currentPage);
+            const tableBody = document.querySelector('.widget-26 tbody');
+            tableBody.innerHTML = ''; // Clear previous content
+            users.forEach(user => {
+                const userElement = document.createElement('tr');
+                let randomImage = "https://placeimg.com/640/480/people"; // Random image URL
+                const user_status = userStatuses.includes(user.id) ? true : false;
+                console.log(user_status);
+                console.log(userStatuses);
+                console.log(user.id);
+                userElement.innerHTML = `
+                    <td>
+                        <div class="widget-26-job-emp-img">
+                            <img src="${randomImage}" alt="User Image" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="widget-26-job-title">
+                            <a data-nav href="/otherprofile?id=${user.id}">${user.username}</a>
+                            <p class="m-0"><a data-nav href="#" class="employer-name">${user.first_name} ${user.last_name}</a></p>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="widget-26-job-info">
+                            <p class="type m-0">Email: ${user.email}</p>
+                            <p class="text-muted m-0">Phone: <span class="location">${user.phone}</span></p>
+                        </div>
+                    </td>
+                    <td>
+                    <div class="widget-26-job-category ${user_status === false ?  'bg-soft-danger' : 'bg-soft-success' }">
+                            <i class="indicator ${user_status === false ?  ' bg-danger' : 'bg-success' }"></i>
+                            <span>${user_status === true ? 'Online' : 'Offline' }</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="widget-26-job-starred">
+                            <button id="add-friend-button-${user.id}">Add Friend</button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(userElement);
+                document.getElementById(`add-friend-button-${user.id}`).addEventListener("click", function(event) {
+                    event.preventDefault();
+                    fetch(friendAdd,{
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${access_token}`
+                        },
+                        body: JSON.stringify({
+                            receiver_id: user.id
+                        })
+                    }).then(response => {
+                        if (!response.ok) {
+                            throw new Error("Failed to send friend request");
+                        }
+                        return response.json();
+                    }
+                    ).then(data => {
+                        console.log(`Sending friend request from user with ID: ${currentUserId} to user with ID: ${user.id}`);
+                    });
                 });
-                paginationContainer.appendChild(prevButton);
-            }
-
-            if (page < totalPages) {
-                const nextButton = document.createElement('button');
-                nextButton.className = 'btn btn-secondary';
-                nextButton.innerText = 'Next';
-                nextButton.addEventListener('click', () => {
-                    currentPage++;
-                    displayUsers(users, currentPage);
-                });
-                paginationContainer.appendChild(nextButton);
-            }
-        }
+            });
+        });
 
     }
 }
+
+
+
+
+

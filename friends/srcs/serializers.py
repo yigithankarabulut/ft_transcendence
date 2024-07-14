@@ -29,3 +29,14 @@ class FriendsSerializer(serializers.Serializer):
     @classmethod
     def response(self, instance):
         return [self.single_representation(i) for i in instance]
+
+class FriendReqListSerializer(serializers.Serializer):
+    @staticmethod
+    def single_representation(instance):
+        return {
+            "id": instance['sender_id'],
+        }
+
+    @classmethod
+    def response(self, instance):
+        return [self.single_representation(i) for i in instance]

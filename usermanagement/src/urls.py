@@ -1,5 +1,8 @@
 from django.urls import path
-from .views import UserManagementHandler, AuthHandler
+from .views import UserManagementHandler, AuthHandler, ImageViewSet
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('details', UserManagementHandler.as_view({'get': 'get_user'})),
@@ -22,4 +25,7 @@ urlpatterns = [
     # TODO: Frontend must receive the reset url we sent but now we send this url to queue.
     path('reset-password/<uidb64>/<token>/', AuthHandler.as_view({'post': 'reset_password'}), name='reset_password'),
     path('email_verify/<uidb64>/<token>/', AuthHandler.as_view({'get': 'email_verify'}), name='email_verify'),
-]
+
+    path('image', ImageViewSet.as_view({'post': 'create'})),
+    path('image/serve', ImageViewSet.as_view({'get': 'image_serve'})),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

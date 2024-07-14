@@ -78,3 +78,4 @@ class GameHandler(viewsets.ViewSet):
         if err:
             return Response(res, status=500)
         return Response(res, status=200)
+    

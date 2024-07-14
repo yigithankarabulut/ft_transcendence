@@ -55,7 +55,7 @@ services:
       POSTGRES_PASSWORD: yigit
       POSTGRES_DB: gamepostgres
     ports:
-        - "5433:5432"
+      - "5433:5432"
 
   friendspostgres:
     container_name: friendspostgres
@@ -65,7 +65,7 @@ services:
       POSTGRES_PASSWORD: yigit
       POSTGRES_DB: friendspostgres
     ports:
-        - "5434:5432"
+      - "5434:5432"
 
   usermanagement:
     container_name: usermanagement
@@ -109,3 +109,20 @@ services:
         timeout: 10s
         retries: 5
 
+  # coregameservice:
+  #   container_name: coregameservice
+  #   build: ./coregameservice
+  #   depends_on:
+  #     - gamepostgres
+  #   volumes:
+  #     - ./coregameservice:/app
+  #   ports:
+  #     - "8011:8011"
+
+  statusserver:
+    container_name: statusserver
+    build: ./statusserver
+    volumes:
+      - ./statusserver:/app
+    ports:
+      - "8020:8020"

@@ -38,6 +38,13 @@ class UserManagementRepository(IUserManagementRepository):
             return model
         except:
             return None
+    
+    def get_by_phone(self, phone: str) -> UserManagement:
+        try:
+            model = UserManagement.objects.filter(phone=phone).first()
+            return model
+        except:
+            return None
 
     def create(self, user: UserManagement) -> UserManagement:
         try:

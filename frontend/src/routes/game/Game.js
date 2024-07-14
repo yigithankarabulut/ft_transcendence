@@ -9,7 +9,6 @@ export async function fetchGame() {
   localStorage.removeItem("game_id");
   console.log("Gameid: " + game_id);
 
-  //buraya bir sorgu at kullanici bilgisini getir
   const access_token = localStorage.getItem("access_token");
   const response = await fetch(userDetailUrl, {
     method: "GET",

@@ -182,6 +182,8 @@ class GameService(IGameService):
         games = Game.objects.filter(status=2).filter(player1=user['id'])
         games2 = Game.objects.filter(status=2).filter(player2=user['id'])
         resp = []
+        win_count = 0
+        lose_count = 0
         for game in games:
             room = Room.objects.get(id=game.room_id)
             players = Player.objects.filter(room=room)
@@ -194,11 +196,16 @@ class GameService(IGameService):
                 return BaseResponse(True, response.json()['error'], None).res()
             res = response.json()
             user = res['data'][0]
+            if game.player1_score > game.player2_score:
+                win_count += 1
+            else:
+                lose_count += 1
             resp.append({
                 "player1": username,
                 "player2": user['username'],
                 "player1_score": game.player1_score,
                 "player2_score": game.player2_score,
+                "date": game.updated_at,
             })
         for game in games2:
             room = Room.objects.get(id=game.room_id)
@@ -212,14 +219,24 @@ class GameService(IGameService):
                 return BaseResponse(True, response.json()['error'], None).res()
             res = response.json()
             user = res['data'][0]
+            if game.player2_score > game.player1_score:
+                win_count += 1
+            else:
+                lose_count += 1
             resp.append({
                 "player1": user['username'],
                 "player2": username,
                 "player1_score": game.player1_score,
                 "player2_score": game.player2_score,
+                "date": game.updated_at,
             })
-        return BaseResponse(False, 'List of games', resp).res()
-    
+        stats = {
+            "total_games": len(resp),
+            "win_count": win_count,
+            "lose_count": lose_count,
+        }
+        return BaseResponse(False, 'List of games', resp, None, stats).res()
+
     def check_game(self, user_id, game_id) -> BaseResponse:
         try:
             game = Game.objects.get(id=game_id)

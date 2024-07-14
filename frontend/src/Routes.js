@@ -11,6 +11,9 @@ import FriendsComponent from "./components/FriendsComponent.js"
 import UsersComponent from "./components/UsersComponent.js"
 import LocalgameComponent from "./components/LocalgameComponent.js"
 import AiComponent from "./components/AiComponent.js"
+import SearchComponent from "./components/SearchComponent.js"
+import OtherprofileComponent from "./components/OtherprofileComponent.js"
+import FriendrequestsComponent from "./components/FriendrequestsComponent.js"
 
 
 export const routes = [
@@ -91,5 +94,23 @@ export const routes = [
         htmlPath: "./src/routes/ai/ai.html",
         js: "/src/routes/ai/Ai.js",
         component: AiComponent,
-    }
+    },
+    {
+        path:"/search",
+        htmlPath: "./src/routes/search/search.html",
+        js: "/src/routes/search/Search.js",
+        component: SearchComponent,
+    },
+    {
+        path:"/otherprofile",
+        htmlPath: "./src/routes/otherprofile/otherprofile.html",
+        js: "/src/routes/otherprofile/Otherprofile.js",
+        component: OtherprofileComponent,
+    },
+    {
+        path:"/friendrequests",
+        htmlPath: "./src/routes/friendrequests/friendrequests.html",
+        js: "/src/routes/friendrequests/Friendrequests.js",
+        component: FriendrequestsComponent,
+    },
 ]
