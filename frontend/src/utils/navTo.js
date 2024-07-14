@@ -20,6 +20,7 @@ const route = {
     "/2fa" : "fetch2FA",
     "/auth": "fetchAuth",
     "/users": "fetchUsers",
+    "/localtournament": "fetchLocaltournament",
     // add more routes here.
 };
 
