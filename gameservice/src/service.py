@@ -205,6 +205,7 @@ class GameService(IGameService):
                 "player2": user['username'],
                 "player1_score": game.player1_score,
                 "player2_score": game.player2_score,
+                "date": game.updated_at,
             })
         for game in games2:
             room = Room.objects.get(id=game.room_id)
@@ -235,7 +236,7 @@ class GameService(IGameService):
             "lose_count": lose_count,
         }
         return BaseResponse(False, 'List of games', resp, None, stats).res()
-    
+
     def check_game(self, user_id, game_id) -> BaseResponse:
         try:
             game = Game.objects.get(id=game_id)

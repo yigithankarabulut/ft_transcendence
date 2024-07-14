@@ -40,6 +40,14 @@ body{
 					<div class="card-body">
 						<div class="row mb-3">
 							<div class="col-sm-3">
+								<h6 class="mb-0">User Name</h6>
+							</div>
+							<div class="col-sm-9 text-secondary">
+								<input type="text" name='user-name' class="form-control" value="username">
+							</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-sm-3">
 								<h6 class="mb-0">First Name</h6>
 							</div>
 							<div class="col-sm-9 text-secondary">
@@ -68,12 +76,15 @@ body{
 							</div>
 							<div class="col-sm-9 text-secondary">
 								<input type="file" name="avatar" class="form-control" accept="image/*">
+
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-sm-3"></div>
 							<div class="col-sm-9 text-secondary">
 								<input id="save-button" type="button" class="btn btn-primary px-4" value="Save Changes">
+								<!-- add margin left 4 px -->
+								<input id="update-avatar" type="button" class="btn btn-primary px-4" value="Update Avatar">
 							</div>
 						</div>
 					</div>

@@ -17,6 +17,7 @@ const route = {
     "/profile": "fetchProfile",
     "/quickplay": "fetchQuickplay",
     "/register": "fetchRegister",
+    "/2fa" : "fetch2FA",
     "/auth": "fetchAuth",
     "/users": "fetchUsers",
     // add more routes here.
