@@ -98,6 +98,7 @@ export async function fetchLocalgame() {
                 rightScore = 0;
                 gameRunning = false;
                 startButton.style.display = 'block';
+                navigateTo("/localgame");
             }
         }
 
@@ -161,4 +162,3 @@ export async function fetchLocalgame() {
         draw();
     }
   }
-  fetchLocalgame();

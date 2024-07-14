@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             localStorage.removeItem('refresh_token');
             localStorage.removeItem('email');
             navigateTo('/login');
+            // window.location.reload();
         }
     });
 });

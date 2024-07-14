@@ -4,7 +4,7 @@ import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
 const url = "http://localhost:8000/user/register";
 const form = document.getElementById("register");
 
-export async function fetchRegister() {
+export async function   fetchRegister () {
 
 form.addEventListener("submit", (e) => {
 
@@ -18,7 +18,7 @@ form.addEventListener("submit", (e) => {
     const fields_warning = document.getElementById('fields-warning');
     const fields_success = document.getElementById('fields-success');
 
-    
+
     if (!username || !email  || !password || !firstname || !lastname || !phone)
     {
         insertIntoElement('fields-warning', "fields shouldn't be empty");
@@ -67,7 +67,7 @@ form.addEventListener("submit", (e) => {
         } else if (err.password) {
             insertIntoElement('fields-warning', "Password error: " + err.password[0]);
         } else if (err.first_name) {
-            insertIntoElement('fields-warning', "First name error: " + err.first_name[0]); 
+            insertIntoElement('fields-warning', "First name error: " + err.first_name[0]);
         } else if (err.last_name) {
             insertIntoElement('fields-warning', "Last name error: " + err.last_name[0]);
         } else {

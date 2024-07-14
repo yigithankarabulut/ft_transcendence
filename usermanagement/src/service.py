@@ -29,24 +29,46 @@ class UserManagementService(IUserManagementService):
         res = ManagementSerializer().response([user])
         return BaseResponse(False, "User found", res).res()
 
-    def update(self, user: UserManagement) -> BaseResponse:
-        uname = self.repository.get_by_username(user.username)
-        uemail = self.repository.get_by_email(user.email)
-        if uname and uname.id != user.id:
-            return BaseResponse(True, "Username already exists", None).res()
-        elif uname and uname.id == user.id:
-            return BaseResponse(True, "Please provide a different username", None).res()
-        if uemail and uemail.id != user.id:
-            return BaseResponse(True, "Email already exists", None).res()
-
-        elif uemail and uemail.id == user.id:
-            return BaseResponse(True, "Please provide a different email", None).res()
-
-        new_user = self.repository.update(user)
+    def update(self, user: UserManagement, id) -> BaseResponse:
+        data = self.repository.get_by_id(id)
+        if not data:
+            return BaseResponse(True, "User not found", None).res()
+        if data.username != user.username:
+            new_user = self.repository.get_by_username(user.username)
+            if new_user:
+                return BaseResponse(True, "Username already exists", None).res()
+        if data.phone != user.phone:
+            new_user = self.repository.get_by_phone(user.phone)
+            if new_user:
+                return BaseResponse(True, "Phone already exists", None).res()
+        data.first_name = user.first_name
+        data.last_name = user.last_name
+        data.username = user.username
+        data.phone = user.phone
+        new_user = self.repository.update(data)
         if not new_user:
             return BaseResponse(True, "User update failed", None).res()
         res = ManagementSerializer().response([new_user])
         return BaseResponse(False, "User updated successfully", res).res()
+
+
+        # uname = self.repository.get_by_username(user.username)
+        # uemail = self.repository.get_by_email(user.email)
+        # if uname and uname.id != user.id:
+        #     return BaseResponse(True, "Username already exists", None).res()
+        # elif uname and uname.id == user.id:
+        #     return BaseResponse(True, "Please provide a different username", None).res()
+        # if uemail and uemail.id != user.id:
+        #     return BaseResponse(True, "Email already exists", None).res()
+
+        # elif uemail and uemail.id == user.id:
+        #     return BaseResponse(True, "Please provide a different email", None).res()
+
+        # new_user = self.repository.update(user)
+        # if not new_user:
+        #     return BaseResponse(True, "User update failed", None).res()
+        # res = ManagementSerializer().response([new_user])
+        # return BaseResponse(False, "User updated successfully", res).res()
 
     def list(self, page, limit) -> BaseResponse:
         users = self.repository.list()

@@ -12,4 +12,10 @@ RUN pip3 install --upgrade pip
 
 RUN pip3 install -r requirements.txt
 
+COPY start.sh /app/start.sh
+
+RUN chmod +x /app/start.sh
+
+ENTRYPOINT ["sh", "./start.sh"]
+
 CMD ["python3", "manage.py", "runserver", "0.0.0.0:8012"]

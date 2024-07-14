@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from datetime import datetime, timedelta
 from django.utils import timezone
-from .models import UserManagement, OAuthUser
+from .models import UserManagement, OAuthUser, ImageModel
 
 class GetUserByIdSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=True)
@@ -13,7 +13,7 @@ class CreateManagementSerializer(serializers.Serializer):
     username = serializers.CharField(required=True, min_length=3, max_length=20)
     email = serializers.EmailField(required=True)
     phone = serializers.CharField(required=True, min_length=10, max_length=15)
-    
+
     def bind(self, validated_data):
         return UserManagement(**validated_data)
 
@@ -139,3 +139,18 @@ class OauthCreateSerializer(serializers.Serializer):
             phone=validated_data['phone']
         )
         return user_management
+
+
+# class ImageSerializer(serializers.Serializer):
+#     image = serializers.ImageField(required=True)
+
+#     def bind(self, validated_data):
+#         return ImageModel(**validated_data)
+    
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ImageModel
+        fields = ['image']
+
+    def bind(self, validated_data):
+        return ImageModel(**validated_data)

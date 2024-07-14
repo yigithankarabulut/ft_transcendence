@@ -25,6 +25,10 @@ class IUserManagementRepository(ABC):
         pass
 
     @abstractmethod
+    def get_by_phone(self, phone: str) -> UserManagement:
+        pass
+
+    @abstractmethod
     def create(self, user: UserManagement) -> UserManagement:
         pass
 

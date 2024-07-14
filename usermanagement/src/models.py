@@ -31,3 +31,12 @@ class OAuthUser(models.Model):
     access_token = models.CharField(max_length=100)
     refresh_token = models.CharField(max_length=100)
     expires_in = models.DateTimeField()
+
+
+class ImageModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(UserManagement, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    image = models.ImageField(upload_to='images/')
