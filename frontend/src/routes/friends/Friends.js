@@ -111,12 +111,15 @@ export async function fetchFriends() {
                     })
                 }).then(response => {
                     if (!response.ok) {
-                        throw new Error("Failed to send friend request");
+                        return response.json().then(error => {
+                            throw new Error(error.error);
+                        });
                     }
                     return response.json();
-                }
-                ).then(data => {
-                    console.log(`Sending friend delete request from user with ID: ${currentUserId} to user with ID: ${user_res.id}`);
+                }).then(data => {
+                    navigateTo("/friends");
+                }).catch(error => {
+                    alert(error.message);
                 });
             });
         });

@@ -1,53 +1,15 @@
 from rest_framework.response import Response
 from rest_framework import viewsets
-from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework import status
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
 import logging
 import usermanagement.settings
-from .models import ImageModel, UserManagement
 from django.http import HttpResponseRedirect
 from .service import UserManagementService
 from .repository import UserManagementRepository, OAuthUserRepository
 from .serializers import RegisterSerializer, OauthCreateSerializer, ResetPasswordSerializer
 from .serializers import LoginSerializer, ChangePasswordSerializer, ForgotPasswordSerializer
 from .serializers import CreateManagementSerializer, GetUserByIdSerializer, PaginationSerializer, SearchUserToPaginationSerializer
-from .serializers import TwoFactorAuthSerializer, GetUserByUsernameSerializer, ImageSerializer
+from .serializers import TwoFactorAuthSerializer
 
-
-class ImageViewSet(viewsets.ModelViewSet):
-    queryset = ImageModel.objects.all()
-    serializer_class = ImageSerializer
-    parser_classes = (MultiPartParser, FormParser)
-
-    def create(self, request, *args, **kwargs):
-        serializer = ImageSerializer(data=request.data)
-        if serializer.is_valid():
-            id = request.headers.get('id')
-            if not id:
-                return Response({'error': 'Id is required'}, status=status.HTTP_400_BAD_REQUEST)
-            
-            user = get_object_or_404(UserManagement, id=id)
-            
-            image_instance = serializer.save(user=user)
-            return Response({'message': 'Image uploaded successfully'}, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        with open(instance.image.path, 'rb') as img:
-            return HttpResponse(img.read(), content_type='image/jpeg')
-
-    def image_serve(self, request):
-        id = request.headers.get('id')
-        if not id:
-            return Response({'error': 'Id is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        image = get_object_or_404(ImageModel, user_id=id)
-        with open(image.image.path, 'rb') as img:
-            return HttpResponse(img.read(), content_type='image/jpeg')
 
 class UserManagementHandler(viewsets.ViewSet):
 
@@ -192,7 +154,7 @@ class AuthHandler(viewsets.ViewSet):
         res, err = self.service.redirect_reset_password(uidb64, token)
         if err:
             return Response(res, status=500)
-        return HttpResponseRedirect(usermanagement.settings.FRONTEND_URL + '/reset-password/' + uidb64 + '/' + token)
+        return HttpResponseRedirect(usermanagement.settings.FRONTEND_URL + '/reset-password?uidb64=' + uidb64 + '&token=' + token)
 
     def email_verify(self, request, uidb64=None, token=None):
         if not uidb64 or not token:
