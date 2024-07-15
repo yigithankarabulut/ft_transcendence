@@ -1,17 +1,19 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
+import { insertIntoElement } from "../../utils/utils.js";
 
-const resetUrlBase = "http://localhost:8004/user/pwd/change";
+const changeUrlBase = "http://localhost:8000/user/pwd/update";
 
-export async function fetchResetpassword() {
+export async function fetchChangepassword() {
+	const access_token = localStorage.getItem("access_token");
+	if (!access_token) {
+		console.log("No access token found");
+		navigateTo("/login");
+	}else
+	{
 	document.querySelector('form').addEventListener('submit', async function(event) {
 		event.preventDefault();
 
-		const urlParams = new URLSearchParams(window.location.search);
-		const uidb64 = urlParams.get("uidb64");
-		const token = urlParams.get("token");
-		const resetUrl = `${resetUrlBase}/${uidb64}/${token}/`;
-
+		const currentPassword = document.getElementById('current-password').value;
 		const newPassword = document.getElementById('new-password').value;
 		const confirmPassword = document.getElementById('confirm-password').value;
 		const fields_warning = document.getElementById('fields-warning');
@@ -29,13 +31,15 @@ export async function fetchResetpassword() {
 
 		let body = {
 			"new_password": newPassword,
+			"old_password": currentPassword,
 		}
 
 		try {
-			const response = await fetch(resetUrl, {
+			const response = await fetch(changeUrlBase, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json',
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${access_token}`,
 				},
 				body: JSON.stringify(body),
 			});
@@ -47,8 +51,9 @@ export async function fetchResetpassword() {
 
 			const data = await response.json();
 			setTimeout(() => {
-				navigateTo("/login");
-			}, 2000);
+				alert("Password changed successfully");
+				navigateTo("/");
+			}, 500);
 
 		} catch (err) {
 			if (err.error) {
@@ -59,5 +64,6 @@ export async function fetchResetpassword() {
 			}
 		}
 	});
+}
 }
 

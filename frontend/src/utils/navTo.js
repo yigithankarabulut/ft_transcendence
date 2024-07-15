@@ -23,6 +23,8 @@ const route = {
     "/localtournament": "fetchLocaltournament",
     "/forgot-password": "fetchForgotpassword",
     "/reset-password": "fetchResetpassword",
+    "/change-password": "fetchChangepassword",
+    "/conflictusername": "fetchConflictusername",
     // add more routes here.
 };
 

@@ -2,6 +2,7 @@ import { navigateTo } from "../../utils/navTo.js";
 
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 const matchHistoryUrl = "http://127.0.0.1:8000/game/history";
+const pictureUrl = "http://localhost:8014/bucket/image/serve";
 const matchesPerPage = 3; // Number of matches per page
 let matches = []; // Match history data
 let currentPage = 1; // Current page
@@ -54,6 +55,8 @@ export async function fetchProfile() {
         const data = await response.json();
         matches = data.data;
         let stats = data.stats;
+
+        document.getElementById("profile-pic").src = pictureUrl + "?id=" + user.id;
         document.getElementById('total-games').textContent = stats.total_games;
         document.getElementById('win-count').textContent = stats.win_count;
         document.getElementById('lose-count').textContent = stats.lose_count;
