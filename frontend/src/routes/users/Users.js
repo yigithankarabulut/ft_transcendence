@@ -4,6 +4,7 @@ import { userStatuses } from "../../utils/utils.js";
 const searchUrl = "http://127.0.0.1:8000/user/search";
 const friendAdd = "http://127.0.0.1:8000/friends/add";
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
+const pictureUrl = "http://localhost:8014/bucket/image/serve";
 
 
 export async function fetchUsers() {
@@ -47,7 +48,7 @@ export async function fetchUsers() {
             tableBody.innerHTML = ''; // Clear previous content
             users.forEach(user => {
                 const userElement = document.createElement('tr');
-                let randomImage = "https://placeimg.com/640/480/people"; // Random image URL
+                let image = pictureUrl + "?id=" + user.id;
                 const user_status = userStatuses.includes(user.id) ? true : false;
                 console.log(user_status);
                 console.log(userStatuses);
@@ -55,7 +56,7 @@ export async function fetchUsers() {
                 userElement.innerHTML = `
                     <td>
                         <div class="widget-26-job-emp-img">
-                            <img src="${randomImage}" alt="User Image" />
+                            <img src="${image}" alt="User Image" />
                         </div>
                     </td>
                     <td>

@@ -6,7 +6,7 @@ const friendList = "http://127.0.0.1:8000/friends/list";
 const friendDelete = "http://127.0.0.1:8000/friends/delete";
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 const singleUserDetailUrl = "http://127.0.0.1:8000/user/get/id";
-
+const pictureUrl = "http://localhost:8014/bucket/image/serve";
 
 export async function fetchFriends() {
 
@@ -61,12 +61,12 @@ export async function fetchFriends() {
                 user_res = data.data[0];
 
             const userElement = document.createElement('tr');
-            let randomImage = "https://placeimg.com/640/480/people"; // Random image URL
+            let image = pictureUrl + "?id=" + user.id;
             const user_status = userStatuses.includes(user.id) ? true : false;
             userElement.innerHTML = `
                 <td>
                     <div class="widget-26-job-emp-img">
-                        <img src="${randomImage}" alt="User Image" />
+                        <img src="${image}" alt="User Image" />
                     </div>
                 </td>
                 <td>
