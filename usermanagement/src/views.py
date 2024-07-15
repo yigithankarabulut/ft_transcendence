@@ -5,9 +5,72 @@ from .repository import UserManagementRepository, OAuthUserRepository
 from .serializers import RegisterSerializer, OauthCreateSerializer, ResetPasswordSerializer
 from .serializers import LoginSerializer, ChangePasswordSerializer, ForgotPasswordSerializer
 from .serializers import CreateManagementSerializer, GetUserByIdSerializer, PaginationSerializer, SearchUserToPaginationSerializer
-from .serializers import TwoFactorAuthSerializer, GetUserByUsernameSerializer
+from .serializers import TwoFactorAuthSerializer, GetUserByUsernameSerializer, ImageSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework import status
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from .models import ImageModel, UserManagement
 import logging
 
+
+# class ImageViewSet(viewsets.ModelViewSet):
+#     queryset = ImageModel.objects.all()
+#     serializer_class = ImageSerializer
+#     parser_classes = (MultiPartParser, FormParser)
+
+#     def create(self, request, *args, **kwargs):
+#         req = ImageSerializer(data=request.data)
+#         if not req.is_valid():
+#             return Response(req.errors, status=400)
+#         image = req.bind(req.validated_data)
+#         id = request.headers.get('id')
+#         if not id:
+#             return Response({'error': 'Id is required'}, status=400)
+#         image.user_id = id
+#         image.save()
+#         return Response({'message': 'Image uploaded successfully'}, status=201)
+    
+#     def image_serve(self, request):
+#         image = get_object_or_404(ImageModel, user_id=request.headers.get('id'))
+#         with open(image.image.path, 'rb') as img:
+#             return HttpResponse(img.read(), content_type='image/jpeg')
+    
+
+class ImageViewSet(viewsets.ModelViewSet):
+    queryset = ImageModel.objects.all()
+    serializer_class = ImageSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def create(self, request, *args, **kwargs):
+        serializer = ImageSerializer(data=request.data)
+        if serializer.is_valid():
+            id = request.headers.get('id')
+            if not id:
+                return Response({'error': 'Id is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Kullanıcıyı al
+            user = get_object_or_404(UserManagement, id=id)
+            
+            # Image nesnesini oluştur ve kaydet
+            image_instance = serializer.save(user=user)
+            return Response({'message': 'Image uploaded successfully'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        with open(instance.image.path, 'rb') as img:
+            return HttpResponse(img.read(), content_type='image/jpeg')
+
+    def image_serve(self, request):
+        id = request.headers.get('id')
+        if not id:
+            return Response({'error': 'Id is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        image = get_object_or_404(ImageModel, user_id=id)
+        with open(image.image.path, 'rb') as img:
+            return HttpResponse(img.read(), content_type='image/jpeg')
 
 class UserManagementHandler(viewsets.ViewSet):
 

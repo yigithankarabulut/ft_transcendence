@@ -14,6 +14,7 @@ import AiComponent from "./components/AiComponent.js"
 import SearchComponent from "./components/SearchComponent.js"
 import OtherprofileComponent from "./components/OtherprofileComponent.js"
 import FriendrequestsComponent from "./components/FriendrequestsComponent.js"
+import LocaltournamentComponent from "./components/LocaltournamentComponent.js"
 
 
 export const routes = [
@@ -112,5 +113,11 @@ export const routes = [
         htmlPath: "./src/routes/friendrequests/friendrequests.html",
         js: "/src/routes/friendrequests/Friendrequests.js",
         component: FriendrequestsComponent,
+    },
+    {
+        path:"/localtournament",
+        htmlPath: "./src/routes/localtournament/localtournament.html",
+        js: "/src/routes/localtournament/Localtournament.js",
+        component: LocaltournamentComponent,
     },
 ]
