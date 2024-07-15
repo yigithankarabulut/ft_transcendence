@@ -1,55 +1,55 @@
-<!-- <html><head><base href="https://websim.ai/pong-tournament/"><title>Pong Tournament</title> -->
 <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: #f0f0f0;
-        }
-        #gameCanvas {
-            border: 2px solid #000;
-            background-color: #000;
-        }
-        #scoreBoard {
-            font-size: 24px;
-            margin: 10px 0;
-        }
-        #tournamentInfo {
-            font-size: 18px;
-            margin: 10px 0;
-        }
-        #playerForm {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        input {
-            margin: 5px;
-            padding: 5px;
-        }
-        button {
-            margin: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
-
-    <div id="playerForm">
-        <input type="text" id="player1" placeholder="Player 1 alias">
-        <input type="text" id="player2" placeholder="Player 2 alias">
-        <input type="text" id="player3" placeholder="Player 3 alias">
-        <input type="text" id="player4" placeholder="Player 4 alias">
-        <button onclick="startTournament()">Start Tournament</button>
-    </div>
-    <div id="tournamentInfo"></div>
-    <div id="scoreBoard"></div>
-    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+    #gameCanvas {
+        border: 2px solid #000;
+        background-color: #000;
+    }
+    #scoreBoard {
+        font-size: 24px;
+        margin: 10px 0;
+    }
+    #tournamentInfo {
+        font-size: 18px;
+        margin: 10px 0;
+    }
+    #playerForm {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    input {
+        margin: 5px;
+        padding: 5px;
+    }
+    button {
+        margin: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+</style>
+<div id="playerForm">
+    <input type="text" id="player1" placeholder="Player 1 alias">
+    <input type="text" id="player2" placeholder="Player 2 alias">
+    <input type="text" id="player3" placeholder="Player 3 alias">
+    <input type="text" id="player4" placeholder="Player 4 alias">
+    <button id="start-tournement">Start Tournament</button>
+</div>
+<div id="tournamentInfo"></div>
+<div id="scoreBoard"></div>
+<canvas id="gameCanvas" width="800" height="400"></canvas>
