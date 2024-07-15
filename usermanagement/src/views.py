@@ -8,7 +8,7 @@ from .repository import UserManagementRepository, OAuthUserRepository
 from .serializers import RegisterSerializer, OauthCreateSerializer, ResetPasswordSerializer
 from .serializers import LoginSerializer, ChangePasswordSerializer, ForgotPasswordSerializer
 from .serializers import CreateManagementSerializer, GetUserByIdSerializer, PaginationSerializer, SearchUserToPaginationSerializer
-from .serializers import TwoFactorAuthSerializer
+from .serializers import TwoFactorAuthSerializer, UpdateUsernameSerializer
 
 
 class UserManagementHandler(viewsets.ViewSet):
@@ -54,6 +54,19 @@ class UserManagementHandler(viewsets.ViewSet):
             return Response({'error': 'Id is required'}, status=400)
         user = req.bind(req.validated_data)
         res = self.service.update(user, id)
+        return Response(res, status=200)
+
+    def update_username(self, request):
+        req = UpdateUsernameSerializer(data=request.data)
+        if not req.is_valid():
+            return Response(req.errors, status=400)
+        username = request.data.get('username')
+        id = request.headers.get('id')
+        if not id:
+            return Response({'error': 'Unauthorized'}, status=401)
+        res, err = self.service.update_username(username, id)
+        if err:
+            return Response(res, status=500)
         return Response(res, status=200)
 
     def list_user(self, request):
@@ -174,4 +187,7 @@ class AuthHandler(viewsets.ViewSet):
         res, err = self.service.oauth_user_create(user_management, user_oauth)
         if err:
             return Response(res, status=500)
-        return Response(res, status=201)
+        # 207 status code is for username already exist. Redirect to frontend to update username
+        if res.get('message') == 'User created successfully' or res.get('message') == 'Login successfully':
+            return Response(res, status=201)
+        return Response(res, status=207)
