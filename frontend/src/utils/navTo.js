@@ -21,6 +21,8 @@ const route = {
     "/auth": "fetchAuth",
     "/users": "fetchUsers",
     "/localtournament": "fetchLocaltournament",
+    "/forgot-password": "fetchForgotpassword",
+    "/reset-password": "fetchResetpassword",
     // add more routes here.
 };
 

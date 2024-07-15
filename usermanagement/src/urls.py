@@ -19,11 +19,11 @@ urlpatterns = [
     path('2fa', AuthHandler.as_view({'post': 'two_factor_auth'})),
 
     path('register', AuthHandler.as_view({'post': 'register'})),
-    path('pwd/forgot', AuthHandler.as_view({'post': 'forgot_password'})),
     path('oauth/create', AuthHandler.as_view({'post': 'oauth_user_create'})),
 
-    # TODO: Frontend must receive the reset url we sent but now we send this url to queue.
-    path('reset-password/<uidb64>/<token>/', AuthHandler.as_view({'post': 'reset_password'}), name='reset_password'),
+    path('pwd/forgot', AuthHandler.as_view({'post': 'forgot_password'})),
+    path('reset-password/<uidb64>/<token>/', AuthHandler.as_view({'get': 'redirect_reset_password'}), name='reset_password'),
+    path('pwd/change/<uidb64>/<token>/', AuthHandler.as_view({'post': 'reset_password'}), name='change_password'),
     path('email_verify/<uidb64>/<token>/', AuthHandler.as_view({'get': 'email_verify'}), name='email_verify'),
 
     path('image', ImageViewSet.as_view({'post': 'create'})),

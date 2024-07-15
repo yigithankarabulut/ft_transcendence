@@ -96,12 +96,17 @@ export async function fetchUsers() {
                         })
                     }).then(response => {
                         if (!response.ok) {
-                            throw new Error("Failed to send friend request");
+                            return response.json().then(error => {
+                                // If the error message is "Cannot add yourself as a friend", throw an error
+                                    throw new Error(error.error);
+                            });
                         }
                         return response.json();
-                    }
-                    ).then(data => {
-                        console.log(`Sending friend request from user with ID: ${currentUserId} to user with ID: ${user.id}`);
+                    }).then(data => {
+                        navigateTo("/users");
+                    }).catch(error => {
+                        // If an error was thrown, display an alert with the error message
+                        alert(error.message);
                     });
                 });
             });

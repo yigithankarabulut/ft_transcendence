@@ -1,4 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
+
+const userGetByIdUrl = "http://127.0.0.1:8000/user/get/id";
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 const requestsList = "http://127.0.0.1:8000/friends/request";
 const acceptUrl = "http://127.0.0.1:8000/friends/accept";
@@ -43,45 +45,42 @@ export async function fetchFriendrequests() {
     const requests_res = await response.json();
     const requests = requests_res.data
 
-    // mimick data
-    // const requests = [
-    //     {
-    //         "id": 1,
-    //         "username": "user1",
-    //         "first_name": "first_name1",
-    //     },
-    //     {
-    //         "id": 2,
-    //         "username": "user2",
-    //         "first_name": "first_name2",
-    //     },
-    //     {
-    //         "id": 3,
-    //         "username": "user3",
-    //         "first_name": "first_name3",
-    //     }];
-
     console.log(requests);
     const tbody = document.querySelector(".table tbody");
-    tbody.innerHTML = ""; // Clear existing rows
-
+    tbody.innerHTML = "";
+    let sender = {};
     requests.forEach((request, index) => {
-        const row = document.createElement("tr");
 
-        const th = document.createElement("th");
-        th.scope = "row";
-        th.innerText = index + 1;
-        row.appendChild(th);
+        fetch(userGetByIdUrl + "?id=" + request.id, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${access_token}`,
+            }
+        }).then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to get user");
+                }
+                return response.json();
+            }).then((data) => {
+                let sender = data.data[0];
 
-        const sender = document.createElement("td");
-        sender.innerText = request.username; // Adjust based on actual user object
-        row.appendChild(sender);
+                const row = document.createElement("tr");
 
-        const first_name = document.createElement("td");
-        first_name.innerText = request.first_name; // Adjust based on actual user object
-        row.appendChild(first_name);
+                const th = document.createElement("th");
+                th.scope = "row";
+                th.innerText = index + 1;
+                row.appendChild(th);
 
-      //add two buttons accept and reject button to each row
+                const sender_td = document.createElement("td");
+                sender_td.innerText = sender.username; // Adjust based on actual user object
+                row.appendChild(sender_td);
+
+                const full_name = document.createElement("td");
+                full_name.innerText = sender.first_name + " " + sender.last_name; // Adjust based on actual user object
+                row.appendChild(full_name);
+
+                      //add two buttons accept and reject button to each row
         const td = document.createElement("td");
         const acceptButton = document.createElement("button");
         acceptButton.id = "accept-button";
@@ -100,32 +99,53 @@ export async function fetchFriendrequests() {
         tbody.appendChild(row);
 
         acceptButton.addEventListener("click", async () => {
-            console.log("accept button clicked id:", user.id);
-            await fetch(acceptUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${access_token}`,
-                },
-                body: JSON.stringify({
-                    "receiver_id": "95b5c82a-9311-4dd3-98f4-9546bf01d425",
-                })
-            });
+            try {
+                const response = await fetch(acceptUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${access_token}`,
+                    },
+                    body: JSON.stringify({
+                        "receiver_id": request.id,
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error);
+                }
+                navigateTo("/friendrequests");
+            } catch (error) {
+                alert(error.message);
+            }
         });
 
         rejectButton.addEventListener("click", async () => {
-            console.log("reject button clicked id:", user.id);
+            try {
+                const response = await fetch(rejectUrl, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${access_token}`,
+                    },
+                    body: JSON.stringify({
+                        "receiver_id": request.id,
+                    })
+                });
 
-            await fetch(rejectUrl, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${access_token}`,
-                },
-                body: JSON.stringify({
-                    "receiver_id": "95b5c82a-9311-4dd3-98f4-9546bf01d425",
-                })
-            });
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error);
+                }
+                navigateTo("/friendrequests");
+            } catch (error) {
+                alert(error.message);
+            }
         });
+
+            }).catch((error) => {
+                console.error(error);
+            });
     });
 }

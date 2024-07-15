@@ -15,6 +15,8 @@ import SearchComponent from "./components/SearchComponent.js"
 import OtherprofileComponent from "./components/OtherprofileComponent.js"
 import FriendrequestsComponent from "./components/FriendrequestsComponent.js"
 import LocaltournamentComponent from "./components/LocaltournamentComponent.js"
+import ForgotpasswordComponent from "./components/ForgotpasswordComponent.js"
+import ResetpasswordComponent from "./components/ResetpasswordComponent.js"
 
 
 export const routes = [
@@ -119,5 +121,17 @@ export const routes = [
         htmlPath: "./src/routes/localtournament/localtournament.html",
         js: "/src/routes/localtournament/Localtournament.js",
         component: LocaltournamentComponent,
+    },
+    {
+        path:"/forgot-password",
+        htmlPath: "./src/routes/forgotpassword/forgotpassword.html",
+        js: "/src/routes/forgotpassword/Forgotpassword.js",
+        component: ForgotpasswordComponent,
+    },
+    {
+        path:"/reset-password",
+        htmlPath: "./src/routes/resetpassword/resetpassword.html",
+        js: "/src/routes/resetpassword/Resetpassword.js",
+        component: ResetpasswordComponent,
     },
 ]

@@ -109,16 +109,6 @@ services:
         timeout: 10s
         retries: 5
 
-  # coregameservice:
-  #   container_name: coregameservice
-  #   build: ./coregameservice
-  #   depends_on:
-  #     - gamepostgres
-  #   volumes:
-  #     - ./coregameservice:/app
-  #   ports:
-  #     - "8011:8011"
-
   statusserver:
     container_name: statusserver
     build: ./statusserver
