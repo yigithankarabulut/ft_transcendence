@@ -101,6 +101,7 @@ export async function fetchEdit() {
                 }
                 const data = await res.json();
                 console.log(data);
+                navigateTo("/profile");
             } catch (err) {
                 console.log(err);
             }
