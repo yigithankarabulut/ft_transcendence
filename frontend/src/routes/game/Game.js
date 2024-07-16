@@ -129,9 +129,4 @@ export async function fetchGame() {
     83: "s",
   };
 
-  // if route changes, close the websocket connection
-  window.addEventListener("popstate", function () {
-    ws.close();
-  });
-
 }

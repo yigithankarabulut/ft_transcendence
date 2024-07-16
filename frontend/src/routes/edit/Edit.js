@@ -1,4 +1,5 @@
 import { navigateTo } from "../../utils/navTo.js";
+import { insertIntoElement } from "../../utils/utils.js";
 
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 const updateUserUrl = "http://127.0.0.1:8000/user/update";
@@ -45,6 +46,7 @@ export async function fetchEdit() {
             const firstName = document.querySelector("input[name='first-name']").value;
             const lastName = document.querySelector("input[name='last-name']").value;
             const phone = document.querySelector("input[name='phone']").value;
+            const fields_warning = document.getElementById('fields-warning');
 
             let body = {
                 first_name: firstName,
@@ -66,12 +68,27 @@ export async function fetchEdit() {
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.error);
+                    throw errorData;
                 }
+                alert("Profile updated successfully");
                 navigateTo("/profile");
-            } catch (err) {
-                console.log(err);
-            }
+
+                } catch (err) {
+                    if (err.error) {
+                        insertIntoElement('fields-warning', "Error: " + err.error);
+                    } else if (err.username) {
+                        insertIntoElement('fields-warning', "Username error: " + err.username);
+                    } else if (err.phone) {
+                        insertIntoElement('fields-warning', "Phone error: " + err.phone);
+                    } else if (err.first_name) {
+                        insertIntoElement('fields-warning', "First name error: " + err.first_name);
+                    } else if (err.last_name) {
+                        insertIntoElement('fields-warning', "Last name error: " + err.last_name);
+                    } else {
+                        insertIntoElement('fields-warning', "Error: internal server error");
+                        console.log(err);
+                    }
+                }
         });
 
         document.getElementById("cancel-button").addEventListener("click", () => {

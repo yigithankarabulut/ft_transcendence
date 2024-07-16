@@ -126,23 +126,30 @@ export async function fetchLocaltournament() {
                 // Clear canvas
                 ctx.fillStyle = '#000';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+            
                 // Draw paddles
                 ctx.fillStyle = '#fff';
-                ctx.fillRect(0, gameState.paddle1.y, 20, 100);
-                ctx.fillRect(canvas.width - 20, gameState.paddle2.y, 20, 100);
-
+                ctx.fillRect(0, gameState.paddle1.y, 15, 100);
+                ctx.fillRect(canvas.width - 15, gameState.paddle2.y, 15, 100);
+            
                 // Draw ball
                 ctx.beginPath();
                 ctx.arc(gameState.ball.x, gameState.ball.y, 10, 0, Math.PI * 2);
                 ctx.fill();
-
-                // Draw center line
-                ctx.setLineDash([5, 15]);
+            
+                // Draw center line (net)
+                drawNet();
+            }
+            
+            function drawNet() {
+                ctx.setLineDash([15, 5]);
+                ctx.strokeStyle = '#fff';
+                ctx.beginPath();
                 ctx.moveTo(canvas.width / 2, 0);
                 ctx.lineTo(canvas.width / 2, canvas.height);
                 ctx.stroke();
-            }
+                ctx.setLineDash([]); // Clear the dashed setting
+            }            
 
             function resetBall() {
                 gameState.ball.x = canvas.width / 2;
