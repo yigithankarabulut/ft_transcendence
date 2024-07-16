@@ -3,7 +3,7 @@ from rest_framework import viewsets, status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 import requests
-from ftbucketservice.settings import SERVICE_ROUTES
+from bucketservice.settings import SERVICE_ROUTES
 from django.http import HttpResponse
 import os
 import logging
