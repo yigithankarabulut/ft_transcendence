@@ -24,7 +24,7 @@ const route = {
     "/forgot-password": "fetchForgotpassword",
     "/reset-password": "fetchResetpassword",
     "/change-password": "fetchChangepassword",
-    "/conflictusername": "fetchConflictusername",
+    "/uname": "fetchConflictusername",
     // add more routes here.
 };
 

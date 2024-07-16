@@ -6,6 +6,7 @@ import requests
 from ftbucketservice.settings import SERVICE_ROUTES
 from django.http import HttpResponse
 import os
+import logging
 from .models import ImageModel
 from .serializers import ImageSerializer
 
@@ -48,8 +49,11 @@ class ImageViewSet(viewsets.ModelViewSet):
         id = request.query_params.get('id')
         if not id:
             return Response({'error': 'Id is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        image = get_object_or_404(ImageModel, user_id=id)
-        with open(image.image.path, 'rb') as img:
+        
+        try:
+            image = get_object_or_404(ImageModel, user_id=id)
+            path = image.image.path
+        except:
+            path = '/app/media/images/default_avatar.jpg'
+        with open(path, 'rb') as img:
             return HttpResponse(img.read(), content_type='image/jpeg')
-

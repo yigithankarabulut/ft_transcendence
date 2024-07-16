@@ -86,6 +86,19 @@ class UserManagementService(IUserManagementService):
             return BaseResponse(True, "User not found", None).res()
         res = ManagementSerializer().response([user])
         return BaseResponse(False, "User found", res).res()
+    
+    def update_username(self, username, id) -> BaseResponse:
+        user = self.repository.get_by_id(id)
+        if not user:
+            return BaseResponse(True, "User not found", None).res()
+        new_user = self.repository.get_by_username(username)
+        if new_user:
+            return BaseResponse(True, "Username already exists", None).res()
+        user.username = username
+        res = self.repository.update(user)
+        if not res:
+            return BaseResponse(True, "Username update failed", None).res()
+        return BaseResponse(False, "Username updated successfully", None).res()
 
     def search(self, key, page, limit) -> BaseResponse:
         users = self.repository.search(key)
@@ -332,6 +345,21 @@ class UserManagementService(IUserManagementService):
         return BaseResponse(False, "Email verified successfully. You can login now", None).res()
 
     def oauth_user_create(self, user_management: UserManagement, oauth_user: OAuthUser) -> BaseResponse:
+        # If user already logged in with oauth provider, update the user with new data, but username should be unique.
+        user = self.oauth_repository.get_oauth_user_with_provider_and_provider_user_id(oauth_user.provider, oauth_user.provider_user_id)
+        if user:
+            user.access_token = oauth_user.access_token
+            user.refresh_token = oauth_user.refresh_token
+            user.expires_in = oauth_user.expires_in
+            if self.oauth_repository.update_oauth_user(user) is None:
+                return BaseResponse(True, "OAuth user update failed", None).res()
+            if user.user.username:
+                res = ManagementSerializer().response([user.user])
+                return BaseResponse(False, "Login successfully", res).res()
+            else:
+                res = ManagementSerializer().response([user.user])
+                return BaseResponse(False, "Login successfully but your username is not set. Please update your username", res).res()
+
         uname = self.repository.get_by_username(user_management.username)
         umail = self.repository.get_by_email(user_management.email)
         flag = False
@@ -340,7 +368,7 @@ class UserManagementService(IUserManagementService):
             user_management.username = None
         if umail:
             res = ManagementSerializer().response([umail])
-            return BaseResponse(False, "User already exist", res).res()
+            return BaseResponse(True, "Email already exists", res).res()
 
         try:
             with transaction.atomic():
@@ -362,7 +390,7 @@ class UserManagementService(IUserManagementService):
             return BaseResponse(
                 False,
                 "User created successfully but your intra username is already exist."
-                "Please visit your profile and update your username",
+                "Please update your username",
                 res
             ).res()
         return BaseResponse(False, "User created successfully", res).res()

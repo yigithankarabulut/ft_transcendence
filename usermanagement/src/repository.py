@@ -51,9 +51,6 @@ class UserManagementRepository(IUserManagementRepository):
             user.save()
             return user
         except Exception as e:
-            print("User", user.__dict__)
-            print("-   -----------")
-            print(e)
             return None
 
     def update(self, user: UserManagement) -> UserManagement:

@@ -95,17 +95,26 @@ class AuthHandler(viewsets.ViewSet):
         oauth_token = response.json()
 
         user_creation_response = self.create_user(oauth_token)
-        if user_creation_response.status_code != 201:
+        if user_creation_response.status_code != 201 and user_creation_response.status_code != 207:
+            logging.error("--------------> %s", user_creation_response.json())
             return Response(user_creation_response.json(), status=user_creation_response.status_code)
 
         response_data = user_creation_response.json().get('data')
         user_id = response_data[0].get('id')
         token = generate_access_token(user_id)
         refresh_token = generate_refresh_token(user_id)
-        redirect_url = f"{settings.FRONTEND_URL}/auth?access_token={token}&refresh_token={refresh_token}"
+
+        # 207 status code is for username already exist. 
+        # Redirect to frontend for update username. Otherwise, redirect to homepage
+        if user_creation_response.status_code == 207:
+            redirect_url = f"{settings.FRONTEND_URL}/uname?access_token={token}&refresh_token={refresh_token}"
+        else:
+            redirect_url = f"{settings.FRONTEND_URL}/auth?access_token={token}&refresh_token={refresh_token}"
         res = {
             "redirect_url": redirect_url
         }
+        if user_creation_response.status_code == 207:
+            return Response(res, status=status.HTTP_207_MULTI_STATUS)
         return Response(res, status=status.HTTP_200_OK)
 
     def create_user(self, oauth_token):

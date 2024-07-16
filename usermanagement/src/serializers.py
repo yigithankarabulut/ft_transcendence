@@ -32,6 +32,11 @@ class SearchUserToPaginationSerializer(serializers.Serializer):
 class GetUserByUsernameSerializer(serializers.Serializer):
     username = serializers.CharField(required=True, min_length=3, max_length=20)
 
+
+class UpdateUsernameSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True, min_length=3, max_length=20)
+
+
 class ManagementSerializer(serializers.Serializer):
     def single_representation(self, instance):
         return {

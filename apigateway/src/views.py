@@ -43,7 +43,7 @@ def pass_request_to_destination_service(request, path, headers):
     method = request.method.lower()
     response = requests.request(method, full_url, headers=headers, json=request.data)
 
-    if path.startswith('auth/') and response.status_code == 200:
+    if path.startswith('auth/') and response.status_code == 200 or response.status_code == 207:
         json_response = response.json()
         if 'redirect_url' in json_response:
             return HttpResponseRedirect(json_response['redirect_url'])
