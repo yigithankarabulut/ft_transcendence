@@ -134,3 +134,11 @@ services:
       - ./statusservice:/app
     ports:
       - "8020:8020"
+
+  gameplayservice:
+    container_name: gameplayservice
+    build: ./gameplayservice
+    volumes:
+      - ./gameplayservice:/app
+    ports:
+      - "8011:8011"
