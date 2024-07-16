@@ -1,5 +1,5 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { toggleHidden } from "../../utils/utils.js";
+
 
 
 export async function fetchHomePage() {

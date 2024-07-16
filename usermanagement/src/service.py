@@ -51,25 +51,6 @@ class UserManagementService(IUserManagementService):
         res = ManagementSerializer().response([new_user])
         return BaseResponse(False, "User updated successfully", res).res()
 
-
-        # uname = self.repository.get_by_username(user.username)
-        # uemail = self.repository.get_by_email(user.email)
-        # if uname and uname.id != user.id:
-        #     return BaseResponse(True, "Username already exists", None).res()
-        # elif uname and uname.id == user.id:
-        #     return BaseResponse(True, "Please provide a different username", None).res()
-        # if uemail and uemail.id != user.id:
-        #     return BaseResponse(True, "Email already exists", None).res()
-
-        # elif uemail and uemail.id == user.id:
-        #     return BaseResponse(True, "Please provide a different email", None).res()
-
-        # new_user = self.repository.update(user)
-        # if not new_user:
-        #     return BaseResponse(True, "User update failed", None).res()
-        # res = ManagementSerializer().response([new_user])
-        # return BaseResponse(False, "User updated successfully", res).res()
-
     def list(self, page, limit) -> BaseResponse:
         users = self.repository.list()
         if not users:
@@ -105,6 +86,19 @@ class UserManagementService(IUserManagementService):
             return BaseResponse(True, "User not found", None).res()
         res = ManagementSerializer().response([user])
         return BaseResponse(False, "User found", res).res()
+    
+    def update_username(self, username, id) -> BaseResponse:
+        user = self.repository.get_by_id(id)
+        if not user:
+            return BaseResponse(True, "User not found", None).res()
+        new_user = self.repository.get_by_username(username)
+        if new_user:
+            return BaseResponse(True, "Username already exists", None).res()
+        user.username = username
+        res = self.repository.update(user)
+        if not res:
+            return BaseResponse(True, "Username update failed", None).res()
+        return BaseResponse(False, "Username updated successfully", None).res()
 
     def search(self, key, page, limit) -> BaseResponse:
         users = self.repository.search(key)
@@ -151,13 +145,6 @@ class UserManagementService(IUserManagementService):
                 user = self.repository.create(user)
                 if not user:
                     raise Exception("User creation failed")
-                # Request to matchmaking service for create user
-                # try:
-                #     response = requests.post(f"{SERVICE_ROUTES['/match']}/match/user/create", data={"user_id": user.id})
-                # except Exception as e:
-                #     raise Exception("Matchmaking service request sending failed")
-                # if response.status_code != 201:
-                #     raise Exception("Matchmaking service not created user")
                 res = ManagementSerializer().response([user])
         except Exception as e:
             err = str(e)
@@ -203,7 +190,6 @@ class UserManagementService(IUserManagementService):
         if not user.email_verified:
             return BaseResponse(True, "Email not verified. Please check your mailbox and verify your email", None).res()
 
-        # 2FA code generation. code: 123456, db_code: "123456-timestamp"
         code, db_code = generate_2fa_code()
         user.twofa_code = db_code
         res = self.repository.update(user)
@@ -211,7 +197,7 @@ class UserManagementService(IUserManagementService):
             return BaseResponse(True, "2FA code generation failed", None).res()
 
         message = {
-            'subject': 'Transcendence Password Reset Email',
+            'subject': 'Transcendence 2FA Code',
             'body': {'email': user.email, 'code': code},
             'type': '2fa_code'
         }
@@ -271,8 +257,6 @@ class UserManagementService(IUserManagementService):
         if not res:
             return BaseResponse(True, "Unknow error. Please try again later!", None).res()
 
-        # TODO: Fix the front back communication this situation
-        # TODO: Change this url with frontend url
         reset_url = f"http://localhost:8004{reset_path}"
         message = {
             'subject': 'Transcendence Password Reset Email',
@@ -286,8 +270,8 @@ class UserManagementService(IUserManagementService):
             return BaseResponse(True, "Password reset link sending failed", None).res()
         return BaseResponse(False, "Password reset link sent to your email", None).res()
 
-    def change_password(self, req) -> BaseResponse:
-        user = self.repository.get_by_username(req.get("username"))
+    def change_password(self, req, id) -> BaseResponse:
+        user = self.repository.get_by_id(id)
         if not user:
             return BaseResponse(True, "User not found", None).res()
         if user.password != sha256(req.get("old_password").encode()).hexdigest():
@@ -325,6 +309,19 @@ class UserManagementService(IUserManagementService):
             return BaseResponse(True, "Password reset failed", None).res()
         return BaseResponse(False, "Password reset successfully", None).res()
 
+    def redirect_reset_password(self, uid, token) -> BaseResponse:
+        email = force_str(urlsafe_base64_decode(uid))
+        if not email:
+            return BaseResponse(True, "Invalid token", None).res()
+        user = self.repository.get_by_email(email)
+        if not user:
+            return BaseResponse(True, "User not found", None).res()
+        if not user.reset_password_token:
+            return BaseResponse(True, "This link is already used", None).res()
+        if user.reset_password_token != token:
+            return BaseResponse(True, "Invalid token", None).res()
+        return BaseResponse(False, "Reset password", None).res()
+
     def email_verify(self, req, uid, token) -> BaseResponse:
         email = force_str(urlsafe_base64_decode(uid))
         if not email:
@@ -348,6 +345,21 @@ class UserManagementService(IUserManagementService):
         return BaseResponse(False, "Email verified successfully. You can login now", None).res()
 
     def oauth_user_create(self, user_management: UserManagement, oauth_user: OAuthUser) -> BaseResponse:
+        # If user already logged in with oauth provider, update the user with new data, but username should be unique.
+        user = self.oauth_repository.get_oauth_user_with_provider_and_provider_user_id(oauth_user.provider, oauth_user.provider_user_id)
+        if user:
+            user.access_token = oauth_user.access_token
+            user.refresh_token = oauth_user.refresh_token
+            user.expires_in = oauth_user.expires_in
+            if self.oauth_repository.update_oauth_user(user) is None:
+                return BaseResponse(True, "OAuth user update failed", None).res()
+            if user.user.username:
+                res = ManagementSerializer().response([user.user])
+                return BaseResponse(False, "Login successfully", res).res()
+            else:
+                res = ManagementSerializer().response([user.user])
+                return BaseResponse(False, "Login successfully but your username is not set. Please update your username", res).res()
+
         uname = self.repository.get_by_username(user_management.username)
         umail = self.repository.get_by_email(user_management.email)
         flag = False
@@ -356,7 +368,7 @@ class UserManagementService(IUserManagementService):
             user_management.username = None
         if umail:
             res = ManagementSerializer().response([umail])
-            return BaseResponse(False, "User already exist", res).res()
+            return BaseResponse(True, "Email already exists", res).res()
 
         try:
             with transaction.atomic():
@@ -378,7 +390,7 @@ class UserManagementService(IUserManagementService):
             return BaseResponse(
                 False,
                 "User created successfully but your intra username is already exist."
-                "Please visit your profile and update your username",
+                "Please update your username",
                 res
             ).res()
         return BaseResponse(False, "User created successfully", res).res()

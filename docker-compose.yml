@@ -67,6 +67,16 @@ services:
     ports:
       - "5434:5432"
 
+  ftbucketpostgres:
+    container_name: ftbucketpostgres
+    image: postgres:13
+    environment:
+      POSTGRES_USER: yigit
+      POSTGRES_PASSWORD: yigit
+      POSTGRES_DB: ftbucketpostgres
+    ports:
+      - "5435:5432"
+
   usermanagement:
     container_name: usermanagement
     build: ./usermanagement
@@ -96,6 +106,14 @@ services:
       - ./friends:/app
     ports:
       - "8012:8012"
+  
+  ftbucketservice:
+    container_name: ftbucketservice
+    build: ./ftbucketservice
+    volumes:
+      - ./ftbucketservice:/app
+    ports:
+      - "8014:8014"
 
   rabbitmq:
       container_name: rabbitmq
@@ -108,16 +126,6 @@ services:
         interval: 30s
         timeout: 10s
         retries: 5
-
-  # coregameservice:
-  #   container_name: coregameservice
-  #   build: ./coregameservice
-  #   depends_on:
-  #     - gamepostgres
-  #   volumes:
-  #     - ./coregameservice:/app
-  #   ports:
-  #     - "8011:8011"
 
   statusserver:
     container_name: statusserver

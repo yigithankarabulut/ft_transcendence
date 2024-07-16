@@ -64,6 +64,8 @@ SERVICE_ROUTES = {
     # '/match': 'http://localhost:8008',
 }
 
+FRONTEND_URL = 'http://127.0.0.1:808'
+
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 
         'rest_framework.pagination.PageNumberPagination',
@@ -106,8 +108,6 @@ DATABASES = {
     }
 }
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

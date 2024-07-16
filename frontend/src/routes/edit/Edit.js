@@ -1,11 +1,9 @@
 import { navigateTo } from "../../utils/navTo.js";
 
-
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 const updateUserUrl = "http://127.0.0.1:8000/user/update";
-const avatarUpdateUrl = "http://127.0.0.1:8000/user/image";
-
-
+const pictureUrl = "http://localhost:8014/bucket/image/serve";
+const avatarUpdateUrl = "http://localhost:8014/bucket/image";
 
 export async function fetchEdit() {
     const access_token = localStorage.getItem("access_token");
@@ -13,6 +11,7 @@ export async function fetchEdit() {
         navigateTo("/login");
         return;
     }
+
     try {
         const response = await fetch(userDetailUrl, {
             method: "GET",
@@ -21,19 +20,25 @@ export async function fetchEdit() {
                 "Authorization": `Bearer ${access_token}`,
             }
         });
+
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.error);
         }
+
         const data = await response.json();
         const user = data[0].data[0];
-        console.log(user);
+
+        document.getElementById("profile-pic").src = pictureUrl + "?id=" + user.id;
+
+
         document.getElementById("full-name").textContent = `${user.first_name} ${user.last_name}`;
         document.getElementById("user-name").textContent = user.username;
         document.querySelector("input[name='first-name']").value = user.first_name;
         document.querySelector("input[name='user-name']").value = user.username;
         document.querySelector("input[name='last-name']").value = user.last_name;
         document.querySelector("input[name='phone']").value = user.phone;
+
         document.getElementById("save-button").addEventListener("click", async () => {
             const access_token = localStorage.getItem("access_token");
             const userName = document.querySelector("input[name='user-name']").value;
@@ -68,32 +73,39 @@ export async function fetchEdit() {
                 console.log(err);
             }
         });
-    document.getElementById("cancel-button").addEventListener("click", () => {
-        navigateTo("/profile");
-    });
-    document.getElementById("update-avatar").addEventListener("click", async () => {
-        const image = document.getElementById("avatar-image").files[0];
-        console.log("Avatar update clicked");
-        fetch(avatarUpdateUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${access_token}`,
-            },
-            body: JSON.stringify({
-                avatar: image,
-            }),
-        })
-        .then(res => {
-            if (!res.ok) {
-                throw new Error("Couldn't update avatar");
+
+        document.getElementById("cancel-button").addEventListener("click", () => {
+            navigateTo("/profile");
+        });
+
+        document.getElementById("reset-pass").addEventListener("click", () => {
+            navigateTo("/change-password");
+        });
+
+        document.getElementById("update-avatar").addEventListener("click", async () => {
+            const image = document.getElementById("avatar-image").files[0];
+            const formData = new FormData();
+            formData.append('image', image);
+
+            try {
+                const res = await fetch(avatarUpdateUrl, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${access_token}`,
+                    },
+                    body: formData,
+                });
+
+                if (!res.ok) {
+                    throw new Error("Couldn't update avatar");
+                }
+                const data = await res.json();
+                console.log(data);
+                navigateTo("/profile");
+            } catch (err) {
+                console.log(err);
             }
-            return res.json();
-        })
-        .then(data => {
-            console.log(data);
-        })
-    });
+        });
 
     } catch (err) {
         console.log(err);

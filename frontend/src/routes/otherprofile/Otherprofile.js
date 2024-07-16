@@ -3,6 +3,7 @@ import { userStatuses } from "../../utils/utils.js"
 
 const userDetailUrl = "http://127.0.0.1:8000/user/get/id";
 const matchHistoryUrl = "http://127.0.0.1:8000/game/history";
+const pictureUrl = "http://localhost:8014/bucket/image/serve";
 const access_token = localStorage.getItem("access_token");
 const matchesPerPage = 3; // Number of matches per page
 let matches = []; // Match history data
@@ -32,6 +33,7 @@ export async function fetchOtherprofile() {
         }
         const data = await response.json();
         const user = data.data[0];
+        document.getElementById("profile-pic").src = pictureUrl + "?id=" + user.id;
         document.getElementById("full-name").textContent = `${user.first_name} ${user.last_name}`;
         document.getElementById("user-name").textContent = user.username;
         document.getElementById("profile-first-name").textContent = user.first_name;

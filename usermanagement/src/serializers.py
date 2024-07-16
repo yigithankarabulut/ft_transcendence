@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.utils import timezone
-from .models import UserManagement, OAuthUser, ImageModel
+from .models import UserManagement, OAuthUser
 
 class GetUserByIdSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=True)
@@ -31,6 +31,11 @@ class SearchUserToPaginationSerializer(serializers.Serializer):
 
 class GetUserByUsernameSerializer(serializers.Serializer):
     username = serializers.CharField(required=True, min_length=3, max_length=20)
+
+
+class UpdateUsernameSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True, min_length=3, max_length=20)
+
 
 class ManagementSerializer(serializers.Serializer):
     def single_representation(self, instance):
@@ -95,7 +100,6 @@ class ResetPasswordSerializer(serializers.Serializer):
 
 
 class ChangePasswordSerializer(serializers.Serializer):
-    username = serializers.CharField(required=True, min_length=3, max_length=20)
     old_password = serializers.CharField(required=True, min_length=8, max_length=20)
     new_password = serializers.CharField(required=True, min_length=8, max_length=20)
     
@@ -139,18 +143,3 @@ class OauthCreateSerializer(serializers.Serializer):
             phone=validated_data['phone']
         )
         return user_management
-
-
-# class ImageSerializer(serializers.Serializer):
-#     image = serializers.ImageField(required=True)
-
-#     def bind(self, validated_data):
-#         return ImageModel(**validated_data)
-    
-class ImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ImageModel
-        fields = ['image']
-
-    def bind(self, validated_data):
-        return ImageModel(**validated_data)

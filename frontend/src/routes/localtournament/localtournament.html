@@ -15,32 +15,103 @@
     #scoreBoard {
         font-size: 24px;
         margin: 10px 0;
+        position: absolute;
+        font-weight: bold;
+        top: 365px;
     }
     #tournamentInfo {
         font-size: 18px;
-        margin: 10px 0;
+        margin: 1px 0;
+        position: absolute;
+        top: 925px;
     }
     #playerForm {
         display: flex;
         flex-direction: column;
         align-items: center;
         margin-bottom: 20px;
+        position: absolute;
+        top: 130px;
     }
     input {
         margin: 5px;
         padding: 5px;
     }
-    button {
-        margin: 10px;
-        padding: 10px 20px;
-        font-size: 16px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        cursor: pointer;
+    .btn-23,
+    .btn-23 *,
+    .btn-23 :after,
+    .btn-23 :before,
+    .btn-23:after,
+    .btn-23:before {
+        border: 0 solid;
+        box-sizing: border-box;
     }
-    button:hover {
-        background-color: #45a049;
+    .btn-23 {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-appearance: button;
+        background-color: #000;
+        background-image: none;
+        color: #fff;
+        cursor: pointer;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif,
+        Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+        font-size: 100%;
+        font-weight: 900;
+        line-height: 1.5;
+        margin: 0;
+        -webkit-mask-image: -webkit-radial-gradient(#000, #fff);
+        padding: 0;
+        text-transform: uppercase;
+        border-radius: 99rem;
+        border-width: 2px;
+        overflow: hidden;
+        padding: 0.8rem 3rem;
+        position: relative;
+    }
+    .btn-23 span {
+        display: grid;
+        inset: 0;
+        place-items: center;
+        position: absolute;
+        transition: opacity 0.2s ease;
+    }
+    .btn-23 .marquee {
+        --spacing: 5em;
+        --start: 0em;
+        --end: 5em;
+        -webkit-animation: marquee 1s linear infinite;
+        animation: marquee 1s linear infinite;
+        -webkit-animation-play-state: paused;
+        animation-play-state: paused;
+        opacity: 0;
+        position: relative;
+        text-shadow: #fff var(--spacing) 0, #fff calc(var(--spacing) * -1) 0,
+        #fff calc(var(--spacing) * -2) 0;
+    }
+    .btn-23:hover .marquee {
+        -webkit-animation-play-state: running;
+        animation-play-state: running;
+        opacity: 1;
+    }
+    .btn-23:hover .text {
+        opacity: 0;
+    }
+    @-webkit-keyframes marquee {
+        0% {
+            transform: translateX(var(--start));
+        }
+        to {
+            transform: translateX(var(--end));
+        }
+    }
+    @keyframes marquee {
+        0% {
+            transform: translateX(var(--start));
+        }
+        to {
+            transform: translateX(var(--end));
+        }
     }
 </style>
 <div id="playerForm">
@@ -48,7 +119,10 @@
     <input type="text" id="player2" placeholder="Player 2 alias">
     <input type="text" id="player3" placeholder="Player 3 alias">
     <input type="text" id="player4" placeholder="Player 4 alias">
-    <button id="start-tournement">Start Tournament</button>
+    <button id="start-tournement" class="btn-23">
+        <span class="text">Start</span>
+        <span aria-hidden="true" class="marquee">Start</span>
+    </button>
 </div>
 <div id="tournamentInfo"></div>
 <div id="scoreBoard"></div>
