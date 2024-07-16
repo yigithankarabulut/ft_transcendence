@@ -1,13 +1,20 @@
 import { navigateTo } from "../../utils/navTo.js";
+import { insertIntoElement } from "../../utils/utils.js";
 const gameCreateUrl = "http://127.0.0.1:8000/game/room";
 export async function fetchQuickplay() {
-
+    const access_token = localStorage.getItem("access_token");
+    if (!access_token) {
+        navigateTo("/login");
+        return;
+    }
+    else {
     console.log("fetchingquickplay");
     const form = document.querySelector(".requires-validation2");
-
     form.addEventListener("submit", function (event) {
         event.preventDefault();
         event.stopPropagation();
+        const fields_warning = document.getElementById('fields-warning');
+
         if (form.checkValidity()) {
             const user2 = document.querySelector('input[name="user2"]').value;
             const user3 = document.querySelector('input[name="user3"]').value;
@@ -21,36 +28,39 @@ export async function fetchQuickplay() {
                     user4
                 ]
             };
-            // JSON verisini console'da görüntüleyin
             fetch(gameCreateUrl, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "authorization": "Bearer " + localStorage.getItem("access_token"),
+                    "Authorization": "Bearer " + access_token,
                 },
                 body: JSON.stringify(data),
-            }).then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to create game room");
+            }).then(res => {
+                if (!res.ok) {
+                    return res.json().then(errorData => {
+                        throw errorData;
+                    });
                 }
-                return response.json();
-            }
-            ).then((data) => {
-                console.log(data);
+                return res.json();
+            }).then(data => {
                 localStorage.setItem("game_id", data.data.game_id);
                 navigateTo("/game");
-            }).catch((error) => {
-                console.error(error);
-            })
+            }).catch((err) => {
+                if (err.error) {
+                    console.error(err.error);
+                    insertIntoElement('fields-warning', "Error: " + err.error);
+                }else if (err.non_field_errors)
+                insertIntoElement('fields-warning', "Error: " + err.error);
+            });
         }
         form.classList.add('was-validated');
     }, false);
 
     const form2 = document.querySelector(".requires-validation");
-
     form2.addEventListener("submit", function (event) {
         event.preventDefault();
         event.stopPropagation();
+        const fields_warning_one = document.getElementById('fields-warning-one');
 
         if (form2.checkValidity()) {
             const user5 = document.querySelector('input[name="user5"]').value;
@@ -64,23 +74,25 @@ export async function fetchQuickplay() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer " + localStorage.getItem("access_token"),
+                    "Authorization": "Bearer " + access_token,
                 },
                 body: JSON.stringify(data),
-            }).then((response) => {
+            }).then(response => {
                 if (!response.ok) {
-                    throw new Error("Failed to create game room");
+                    return response.json().then(errorData => {
+                        throw errorData;
+                    });
                 }
                 return response.json();
-            }
-            ).then((data) => {
+            }).then(data => {
                 localStorage.setItem("game_id", data.data.game_id);
                 navigateTo("/game");
-            }).catch((error) => {
-                console.error(error);
-            })
+            }).catch((err) => {
+            console.error(err.error);
+            insertIntoElement('fields-warning-one', "Error: " + err.error);
+            });
         }
         form2.classList.add('was-validated');
     }, false);
 }
-
+}

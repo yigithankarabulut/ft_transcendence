@@ -5,7 +5,7 @@ from .views import UserManagementHandler, AuthHandler
 urlpatterns = [
     path('details', UserManagementHandler.as_view({'get': 'get_user'})),
     path('update', UserManagementHandler.as_view({'put': 'update_user'})),
-    path('update/username', UserManagementHandler.as_view({'patch': 'update_username'})),
+    path('username', UserManagementHandler.as_view({'patch': 'update_username'})),
     path('get', UserManagementHandler.as_view({'get': 'get_user_by_username'})),
     path('get/id', UserManagementHandler.as_view({'get': 'get_user_by_id'})),
     path('delete', UserManagementHandler.as_view({'delete': 'delete_user'})),

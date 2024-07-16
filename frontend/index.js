@@ -1,5 +1,7 @@
 
 import { navigateTo} from "./src/utils/navTo.js";
+import { socket } from "./src/utils/utils.js";
+
 
 
 document.querySelector("link[rel~='icon']").href = "public/images/42_Logo.svg.png";
@@ -11,6 +13,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             navigateTo(e.target.href);
         } else if (e.target.id === "logout-button") {
             e.preventDefault();
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.close();
+            }
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             localStorage.removeItem('email');

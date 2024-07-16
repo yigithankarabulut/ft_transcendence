@@ -19,6 +19,8 @@ class GameHandler(viewsets.ViewSet):
             return Response(req.errors, status=400)
         res, err = self.service.create_room(req.validated_data, user_id)
         if err:
+            if res.get('error') == 'You cannot invite yourself':
+                return Response(res, status=400)
             return Response(res, status=500)
         return Response(res, status=200)
 

@@ -6,6 +6,7 @@ from django.core.paginator import Paginator, EmptyPage
 from .models import Room, Game, Player
 from .utils import BaseResponse
 from gameservice.settings import SERVICE_ROUTES
+import logging
 
 
 class IGameService(ABC):
@@ -50,7 +51,9 @@ class GameService(IGameService):
                 return BaseResponse(True, response.json()['error'], None).res()
             res = response.json()
             user = res['data'][0]
-            users.append(user)
+            if user['id'] == user_id:
+                return BaseResponse(True, 'You cannot invite yourself', None).res()
+            users.append(user) 
         room = Room.objects.create(room_limit=request['room_limit'])
         count = 0
         for user in users:
@@ -124,12 +127,27 @@ class GameService(IGameService):
                 "game_id": active_game.id,
             }
             return BaseResponse(False, 'Game updated successfully', res).res()
+        
+        other_game1 = Game.objects.filter(room=room, status=0).first()
+        other_game2 = Game.objects.filter(room=room, status=3).first()
+        other_game = other_game1 or other_game2
+        logging.error("---------->>>>>> other_game %s", other_game)
+        
         if game.player1_score > game.player2_score:
             new_game = Game.objects.create(room=room, status=0, player1=game.player1)
             new_game.save()
         else:
             new_game = Game.objects.create(room=room, status=0, player1=game.player2)
             new_game.save()
+        if other_game:
+            other_game.status = 3
+            other_game.save()
+            new_game.player1_score = 5
+            new_game.player2_score = 0
+            new_game.status = 3
+            new_game.player2 = "Cancelled"
+            new_game.save()
+            return BaseResponse(False, 'Other game not played yet', None).res()
         res = {
             "game_id": new_game.id,
         }
@@ -188,18 +206,23 @@ class GameService(IGameService):
             room = Room.objects.get(id=game.room_id)
             players = Player.objects.filter(room=room)
             player2 = players[1].user_id
-            try:
-                response = requests.get(f"{SERVICE_ROUTES['/user']}/user/get/id?id={player2}")
-            except Exception as e:
-                return BaseResponse(True, str(e), None).res()
-            if response.status_code != 200:
-                return BaseResponse(True, response.json()['error'], None).res()
-            res = response.json()
-            user = res['data'][0]
-            if game.player1_score > game.player2_score:
-                win_count += 1
+            if player2 != "Cancelled":
+                try:
+                    response = requests.get(f"{SERVICE_ROUTES['/user']}/user/get/id?id={player2}")
+                except Exception as e:
+                    return BaseResponse(True, str(e), None).res()
+                if response.status_code != 200:
+                    return BaseResponse(True, response.json()['error'], None).res()
+                res = response.json()
+                user = res['data'][0]
+                if game.player1_score > game.player2_score:
+                    win_count += 1
+                else:
+                    lose_count += 1
             else:
-                lose_count += 1
+                user = {
+                    "username": "Cancelled"
+                }
             resp.append({
                 "player1": username,
                 "player2": user['username'],
@@ -211,18 +234,23 @@ class GameService(IGameService):
             room = Room.objects.get(id=game.room_id)
             players = Player.objects.filter(room=room)
             player1 = players[0].user_id
-            try:
-                response = requests.get(f"{SERVICE_ROUTES['/user']}/user/get/id?id={player1}")
-            except Exception as e:
-                return BaseResponse(True, str(e), None).res()
-            if response.status_code != 200:
-                return BaseResponse(True, response.json()['error'], None).res()
-            res = response.json()
-            user = res['data'][0]
-            if game.player2_score > game.player1_score:
-                win_count += 1
+            if player1 != "Cancelled":
+                try:
+                    response = requests.get(f"{SERVICE_ROUTES['/user']}/user/get/id?id={player1}")
+                except Exception as e:
+                    return BaseResponse(True, str(e), None).res()
+                if response.status_code != 200:
+                    return BaseResponse(True, response.json()['error'], None).res()
+                res = response.json()
+                user = res['data'][0]
+                if game.player2_score > game.player1_score:
+                    win_count += 1
+                else:
+                    lose_count += 1
             else:
-                lose_count += 1
+                user = {
+                    "username": "Cancelled"
+                }
             resp.append({
                 "player1": user['username'],
                 "player2": username,
