@@ -1,6 +1,8 @@
 import { navigateTo } from "../../utils/navTo.js";
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 
+export let ws;
+
 export async function fetchGame() {
   console.log("fetchGame");
   const canvas = document.getElementById("canvas-pong");
@@ -31,8 +33,8 @@ export async function fetchGame() {
     return;
   }
 
-  var connection = "ws://localhost:8011/ws/game/" + "?room=" + game_id + "?token=" + access_token;
-  let ws = new WebSocket(connection);
+  var connection = "ws://localhost:8111/ws/game/" + "?room=" + game_id + "?token=" + access_token;
+  ws = new WebSocket(connection);
 
 
   ws.onopen = () => {

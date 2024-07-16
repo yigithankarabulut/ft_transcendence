@@ -1,5 +1,6 @@
 
 import { routes } from "../Routes.js";
+import { ws } from "../routes/game/Game.js";
 
 import { onlineStatus } from "./utils.js";
 
@@ -61,6 +62,9 @@ export const router = async () => {
 }
 
 export const navigateTo = (url) => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close();
+    }
     history.pushState(null, null, url);
     router().then(() => console.log("Navigated to:", url));
 }
@@ -68,3 +72,9 @@ export const navigateTo = (url) => {
 
 window.addEventListener('popstate', router);
 window.addEventListener('DOMContentLoaded', router);
+window.addEventListener('popstate', () => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close();
+    }
+    router();
+});

@@ -35,18 +35,21 @@ export async function fetchQuickplay() {
                     "Authorization": "Bearer " + access_token,
                 },
                 body: JSON.stringify(data),
-            }).then(response => {
-                if (!response.ok) {
-                    return response.json().then(errorData => {
+            }).then(res => {
+                if (!res.ok) {
+                    return res.json().then(errorData => {
                         throw errorData;
                     });
                 }
-                return response.json();
+                return res.json();
             }).then(data => {
                 localStorage.setItem("game_id", data.data.game_id);
                 navigateTo("/game");
             }).catch((err) => {
-                console.error(err.error);
+                if (err.error) {
+                    console.error(err.error);
+                    insertIntoElement('fields-warning', "Error: " + err.error);
+                }else if (err.non_field_errors)
                 insertIntoElement('fields-warning', "Error: " + err.error);
             });
         }
@@ -80,6 +83,7 @@ export async function fetchQuickplay() {
                         throw errorData;
                     });
                 }
+                return response.json();
             }).then(data => {
                 localStorage.setItem("game_id", data.data.game_id);
                 navigateTo("/game");

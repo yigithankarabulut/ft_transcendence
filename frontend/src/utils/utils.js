@@ -27,7 +27,7 @@ export const toggleHidden = (elementId) => {
 
 
 
-let socket = null;
+export let socket = null;
 export let userStatuses = {};
 
 export async function onlineStatus() {
