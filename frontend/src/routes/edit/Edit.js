@@ -1,10 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement } from "../../utils/utils.js";
-
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
-const updateUserUrl = "http://127.0.0.1:8000/user/update";
-const pictureUrl = "http://localhost:8014/bucket/image/serve";
-const avatarUpdateUrl = "http://localhost:8014/bucket/image";
+import { userDetailUrl, updateUserUrl, pictureUrl, avatarUpdateUrl } from "../../contants/contants.js";
 
 export async function fetchEdit() {
     const access_token = localStorage.getItem("access_token");

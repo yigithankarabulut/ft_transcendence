@@ -1,7 +1,7 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
+import { registerUrl } from "../../contants/contants.js";
 
-const url = "http://localhost:8000/user/register";
 const form = document.getElementById("register");
 
 export async function   fetchRegister () {
@@ -28,7 +28,7 @@ form.addEventListener("submit", (e) => {
     toggleHidden('register');
     // toggleHidden('register-spinner');
 
-    fetch(url, {
+    fetch(registerUrl, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

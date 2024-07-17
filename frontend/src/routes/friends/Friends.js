@@ -1,11 +1,7 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { userStatuses } from "../../utils/utils.js";
 import { goPagination } from "../../utils/utils.js";
-const friendList = "http://127.0.0.1:8000/friends/list";
-const friendDelete = "http://127.0.0.1:8000/friends/delete";
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
-const singleUserDetailUrl = "http://127.0.0.1:8000/user/get/id";
-const pictureUrl = "http://localhost:8014/bucket/image/serve";
+import { friendList, friendDelete, userDetailUrl, singleUserDetailUrl, pictureUrl } from "../../contants/contants.js";
 
 let currentPage = 1; // Current page
 export async function fetchFriends() {

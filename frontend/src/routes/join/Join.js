@@ -1,10 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { goPagination } from "../../utils/utils.js";
-
-
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
-const gameDetailUrl = "http://127.0.0.1:8000/game/list";
-const joinUrl = "http://127.0.0.1:8000/game/join";
+import { userDetailUrl, gameDetailUrl, joinUrl } from "../../contants/contants.js";
 
 let currentPage = 1; // Current page
 

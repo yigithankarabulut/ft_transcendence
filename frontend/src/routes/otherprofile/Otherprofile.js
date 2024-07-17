@@ -2,10 +2,7 @@
 
 import { navigateTo } from "../../utils/navTo.js";
 import { goPagination } from "../../utils/utils.js";
-
-const userGetByIdUrl = "http://127.0.0.1:8000/user/get/id";
-const matchHistoryUrl = "http://127.0.0.1:8000/game/history";
-const pictureUrl = "http://localhost:8014/bucket/image/serve";
+import { userGetByIdUrl, matchHistoryUrl, pictureUrl } from "../../contants/contants.js";
 
 let currentPage = 1; // Current page
 

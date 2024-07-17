@@ -1,12 +1,7 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { userStatuses } from "../../utils/utils.js";
 import { goPagination } from "../../utils/utils.js";
-
-
-const searchUrl = "http://127.0.0.1:8000/user/search";
-const friendAdd = "http://127.0.0.1:8000/friends/add";
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
-const pictureUrl = "http://localhost:8014/bucket/image/serve";
+import { searchUrl, friendAdd, userDetailUrl, pictureUrl } from "../../contants/contants.js;
 
 let currentPage = 1; // Current page
 

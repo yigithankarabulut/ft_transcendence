@@ -1,4 +1,5 @@
 import { navigateTo } from "./navTo";
+import{ ValidateAccessToken, ValidateRefreshToken, userDetailUrl } from "../contants/contants";
 
 export const insertIntoElement = (elementId, element) => {
     const el = document.getElementById(elementId);
@@ -27,8 +28,6 @@ export const toggleHidden = (elementId) => {
     }
 }
 
-
-
 export let socket = null;
 export let userStatuses = {};
 
@@ -36,7 +35,6 @@ export async function onlineStatus() {
     let userId = 0;
 
     async function getUserId() {
-        const userDetailUrl = "http://127.0.0.1:8000/user/details";
         const access_token = localStorage.getItem("access_token");
         const response = await fetch(userDetailUrl, {
             method: "GET",
@@ -140,8 +138,6 @@ export function goPagination(totalPages, currentPage, onClick, elementId) {
     paginationContainer.appendChild(nextButton);
 }
 
-const ValidateAccessToken = "http://127.0.0.1:8000/auth/token/validate";
-const ValidateRefreshToken = "http://127.0.0.1:8000/auth/token/refresh";
 export async function CheckAuth() {
     const access_token = localStorage.getItem("access_token");
     if (!access_token) {

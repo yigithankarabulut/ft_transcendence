@@ -1,7 +1,7 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
+import { changeUsernameUrl } from "../../contants/contants.js";
 
-const url = "http://127.0.0.1:8000/user/username";
 
 export async function fetchConflictusername() {
     const form = document.getElementById("uname-code");
@@ -22,7 +22,7 @@ export async function fetchConflictusername() {
         toggleHidden('login-spinner');
 
         try {
-            const response = await fetch(url, {
+            const response = await fetch(changeUsernameUrl, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",

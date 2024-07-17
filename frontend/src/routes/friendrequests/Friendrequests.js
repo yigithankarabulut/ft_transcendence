@@ -1,12 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { goPagination } from "../../utils/utils.js";
-
-
-const userGetByIdUrl = "http://127.0.0.1:8000/user/get/id";
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
-const requestsList = "http://127.0.0.1:8000/friends/request";
-const acceptUrl = "http://127.0.0.1:8000/friends/accept";
-const rejectUrl = "http://127.0.0.1:8000/friends/reject";
+import { userGetByIdUrl, userDetailUrl, requestsList, acceptUrl, rejectUrl } from "../../contants/contants.js";
 
 let currentPage = 1; // Current page
 
