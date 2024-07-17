@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = ['35.242.209.3', 'localhost', '127.0.0.1', '0.0.0.0', 'authservice']
+ALLOWED_HOSTS = ['35.242.209.3', 'localhost', '127.0.0.1', '0.0.0.0', 'authservice', 'apigateway', 'usermanagement', 'gameservice', 'friendservice', 'statusservice', 'gameplayservice']
 
 INTRA_REDIRECT_URL = os.environ.get('INTRA_REDIRECT_URL')
 INTRA_UID = os.environ.get('INTRA_UID')

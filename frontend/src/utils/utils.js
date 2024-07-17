@@ -1,3 +1,5 @@
+import { navigateTo } from "./navTo";
+
 export const insertIntoElement = (elementId, element) => {
     const el = document.getElementById(elementId);
     if (el)
@@ -101,3 +103,73 @@ export async function onlineStatus() {
     await initializeWebSocket();
 }
 
+const ValidateAccessToken = "http://127.0.0.1:8000/auth/token/validate";
+const ValidateRefreshToken = "http://127.0.0.1:8000/auth/token/refresh";
+
+export async function CheckAuth() {
+    const access_token = localStorage.getItem("access_token");
+    if (!access_token) {
+        return false;
+    }
+    const auth_response = await fetch(ValidateAccessToken, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access_token}`,
+        }
+    });
+    if (!auth_response.ok) {
+        const errorData = await auth_response.json();
+        if (auth_response.status === 401) {
+            if (errorData.error === "Token has expired") {
+                let state = await RefreshToken();
+                if (state) {
+                    return true;
+                }
+                return false;
+            }
+        }
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        return false;
+    }
+    const data = await auth_response.json();
+    if (data.user_id) {
+        return true;
+    }
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    return false;
+}
+
+export async function RefreshToken() {
+    const refresh_token = localStorage.getItem("refresh_token");
+    const access_token = localStorage.getItem("access_token");
+    if (!refresh_token) {
+        return false;
+    }
+    const refresh_response = await fetch(ValidateRefreshToken, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access_token}`,
+        },
+        body: JSON.stringify({ refresh_token: refresh_token })
+    });
+
+    if (!refresh_response.ok) {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        return false;
+    }
+
+    const data = await refresh_response.json();
+    if (!data.access_token || !data.refresh_token) {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        return false;
+    }
+    localStorage.setItem("access_token", data.access_token);
+    localStorage.setItem("refresh_token", data.refresh_token);
+    return true;
+}
