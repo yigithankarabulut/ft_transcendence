@@ -103,6 +103,7 @@ class GameService(IGameService):
         return BaseResponse(False, 'Room joined successfully', res).res()
 
     def update_game(self, request) -> BaseResponse:
+        logging.error("--------++++++++++++ request %s", request)
         game = Game.objects.get(id=request['game_id'])
         game.player1_score = request['player1_score']
         game.player2_score = request['player2_score']
@@ -223,9 +224,7 @@ class GameService(IGameService):
                 user = {
                     "username": "Cancelled"
                 }
-            i = 0
-            for i in range(2):
-                resp.append({
+            resp.append({
                     "player1": username,
                     "player2": user['username'],
                     "player1_score": game.player1_score,
@@ -253,14 +252,12 @@ class GameService(IGameService):
                 user = {
                     "username": "Cancelled"
                 }
-            i = 0
-            for i in range(2):
-                resp.append({
-                    "player1": user['username'],
-                    "player2": username,
-                    "player1_score": game.player1_score,
-                    "player2_score": game.player2_score,
-                    "date": game.updated_at,
+            resp.append({
+                "player1": user['username'],
+                "player2": username,
+                "player1_score": game.player1_score,
+                "player2_score": game.player2_score,
+                "date": game.updated_at,
                 })
         stats = {
             "total_games": len(resp),

@@ -3,6 +3,7 @@ from rest_framework.utils import json
 import json
 import asyncio
 import requests
+import logging
 
 rooms = {}
 game_data = {str: dict}
@@ -33,6 +34,7 @@ class Pong(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.room_id = None
+        self.access_token = None
 
     async def connect(self):
         # burada oda idsi aliniyor url den yaninda kullanici adi alinacak sonuc olarak statlar frontende donulecek
@@ -52,8 +54,9 @@ class Pong(AsyncWebsocketConsumer):
                 res = response.json()
                 user = res['data'][0]
                 tmp_player_name = user['username']
+                self.access_token = access_token
         except Exception as e:
-            print(str(e))
+            logging.error("Error: %s", str(e))
 
         if tmp_player_name == None:
             await self.close()
@@ -69,16 +72,16 @@ class Pong(AsyncWebsocketConsumer):
                 return
             else:
                 res = response.json()
-                print(res)
+                logging.error("check game response: %s", res)
         except Exception as e:
-            print(str(e))
+            logging.error("Error: %s", str(e))
 
         if tmp_room_id == "null":
             await self.close()
             return
         await self.accept()
-        print('Room: ', tmp_room_id)
-        print('Player Name: ', tmp_player_name)
+        logging.error("Room: %s", tmp_room_id)
+        logging.error("Player: %s", tmp_player_name)
         if tmp_room_id in rooms and 'padd_left' in rooms[tmp_room_id] and 'padd_right' in rooms[tmp_room_id]:
             await self.close()
             return
@@ -88,7 +91,7 @@ class Pong(AsyncWebsocketConsumer):
                 self.room_id,
                 self.channel_name
             )
-            print('Connected to: ', self.room_id)
+            logging.error("Room id: %s", self.room_id)
             if self.room_id not in rooms:
                 rooms[self.room_id] = {
                     'padd_left': {
@@ -99,7 +102,7 @@ class Pong(AsyncWebsocketConsumer):
                 }
                 self.username = tmp_player_name
                 #rooms[self.room_id]['user_count'] = 1
-                print(rooms[self.room_id])
+                logging.error(rooms[self.room_id])
             elif len(rooms[self.room_id]) == 1:
                 if tmp_player_name == rooms[self.room_id]['padd_left']['username']:
                     await self.close()
@@ -110,8 +113,6 @@ class Pong(AsyncWebsocketConsumer):
                     'username': tmp_player_name
                 }
                 self.username = tmp_player_name
-                #rooms[self.room_id]['user_count'] = 2
-                print('Starting game for: ', self.room_id)
                 await self.start_game(self.room_id)
 
     def init_game(self, room_id):
@@ -176,7 +177,7 @@ class Pong(AsyncWebsocketConsumer):
                 'message': 'ball',
             }
         )
-        print(rooms[room_id]['ball'])
+        logging.error(rooms[room_id]['ball'])
         if room_id in rooms:
             asyncio.create_task(self.game_loop(room_id))
 
@@ -291,14 +292,17 @@ class Pong(AsyncWebsocketConsumer):
                     response = requests.put(
                         GameUpdate_URL,
                         data=json.dumps(body),
-                        headers={'Content-Type': 'application/json'},
+                        headers={
+                            'Content-Type': 'application/json',
+                            'Authorization': f'Bearer {self.access_token}',
+                        },
                     )
                     if response.status_code == 200:
                         res = response.json()
-                        print(res)
+                        logging.error(res)
                         # data = res['data']
                 except Exception as e:
-                    print(str(e))
+                    logging.error(str(e))
                 del rooms[self.room_id]
         await self.close()
 
@@ -319,7 +323,7 @@ class Pong(AsyncWebsocketConsumer):
     async def game_loop(self, room_id):
         while rooms[room_id]['game_status']:
             if room_id not in rooms:
-                print('Game over for: ', room_id)
+                logging.error("Game over for: ", room_id)
                 break
             rooms[room_id]['ball']['positionX'] += rooms[room_id]['ball']['speedX']
             rooms[room_id]['ball']['positionY'] += rooms[room_id]['ball']['speedY']
@@ -350,17 +354,21 @@ class Pong(AsyncWebsocketConsumer):
                         'player1_score': int(rooms[room_id]['padd_left']['info']['score']),
                         'player2_score': int(rooms[room_id]['padd_right']['info']['score']),
                     }
+                    logging.error("------------+++++++++ line: 352, body: %s", body)
                     response = requests.put(
                         GameUpdate_URL,
                         data=json.dumps(body),
-                        headers={'Content-Type': 'application/json'},
+                        headers={
+                            'Content-Type': 'application/json',
+                            'Authorization': f'Bearer {self.access_token}',
+                        },
                     )
                     if response.status_code == 200:
                         res = response.json()
                         if res['data'] is not None and res['data']['game_id'] is not None:
                             newGameId = res['data']['game_id']
                 except Exception as e:
-                    print(str(e))
+                    logging.error(str(e))
                 await self.channel_layer.group_send(
                     room_id,
                     {
@@ -388,14 +396,17 @@ class Pong(AsyncWebsocketConsumer):
                 response = requests.put(
                     GameUpdate_URL,
                     data=json.dumps(body),
-                    headers={'Content-Type': 'application/json'},
+                    headers={
+                        'Content-Type': 'application/json',
+                        'Authorization': f'Bearer {self.access_token}',
+                    },
                 )
                 if response.status_code == 200:
                     res = response.json()
-                    print(res)
+                    logging.error(res)
                     #data = res['data']
             except Exception as e:
-                print(str(e))
+                logging.error(str(e))
             await self.channel_layer.group_send(
                 room_id,
                 {
@@ -429,5 +440,4 @@ class Pong(AsyncWebsocketConsumer):
         )
         rooms[room_id]['user_count'] -= 1
         await self.close()
-
 
