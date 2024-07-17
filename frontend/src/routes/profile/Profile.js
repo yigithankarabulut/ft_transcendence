@@ -1,16 +1,11 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { goPagination, CheckAuth } from "../../utils/utils.js";
+import { goPagination, CheckAuth, RefreshToken} from "../../utils/utils.js";
 import { userDetailUrl, matchHistoryUrl, pictureUrl } from "../../contants/contants.js";
 
 let currentPage = 1; // Current page
 
 export async function fetchProfile() {
-    const access_token = localStorage.getItem("access_token");
-    if (await CheckAuth() === false) {
-        console.log(11111111111111111);
-        navigateTo("/login");
-        return;
-    } else {
+
         console.log("Fetching user details");
         const response_user = await fetch(userDetailUrl, {
             method: "GET",
@@ -111,6 +106,4 @@ export async function fetchProfile() {
         currentPage = newPage;
         fetchProfile();
     }, "pagination-container");
-    }
-
 }
