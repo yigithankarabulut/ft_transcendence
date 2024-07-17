@@ -13,6 +13,8 @@ class PublisherBase:
         rabbitmq_user = os.environ.get('RABBITMQ_DEFAULT_USER')
         rabbitmq_pass = os.environ.get('RABBITMQ_DEFAULT_PASS')
         rabbitmq_vhost = os.environ.get('RABBITMQ_DEFAULT_VHOST')
+        logging.error("->>>>>>>>>>> host: %s, port: %s, user: %s, pass: %s, vhost: %s", rabbitmq_host, rabbitmq_port, rabbitmq_user, rabbitmq_pass, rabbitmq_vhost)
+
         credentials = pika.PlainCredentials(rabbitmq_user, rabbitmq_pass)
         parameters = pika.ConnectionParameters(rabbitmq_host,
                                                rabbitmq_port,

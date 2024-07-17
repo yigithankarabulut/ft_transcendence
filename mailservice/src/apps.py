@@ -13,7 +13,7 @@ def start_rabbitmq_consumer():
     rabbitmq_user = os.environ.get('RABBITMQ_DEFAULT_USER')
     rabbitmq_password = os.environ.get('RABBITMQ_DEFAULT_PASS')
     rabbitmq_vhost = os.environ.get('RABBITMQ_DEFAULT_VHOST')
-    amqp_url = f"amqp://{rabbitmq_user}:{rabbitmq_password}@{rabbitmq_host}:{rabbitmq_port}/{rabbitmq_vhost}"
+    amqp_url = f"amqp://{rabbitmq_user}:{rabbitmq_password}@{rabbitmq_host}:{rabbitmq_port}{rabbitmq_vhost}"
     logging.error("->>>>>>>>>>> amqp_url: %s", amqp_url)
     
     queue_name = os.environ.get('RABBITMQ_QUEUE_NAME')

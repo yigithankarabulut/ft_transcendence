@@ -7,3 +7,4 @@ pika
 psycopg2-binary
 daphne
 channels
+channels_redis

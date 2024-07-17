@@ -17,6 +17,10 @@ services:
       - authservice
       - mailservice
       - usermanagement
+    environment:
+      - SECRET_KEY=${ApiGateway_SECRET_KEY}
+      - DEBUG=True
+      - FRONTEND_URL=${FRONTEND_URL}
     volumes:
       - ./apigateway:/app
     ports:

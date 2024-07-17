@@ -79,11 +79,20 @@ ASGI_APPLICATION = "statusservice.asgi.application"
 #     },
 # }
 
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels.layers.RedisChannelLayer',
+#         'CONFIG': {
+#             'hosts': [(os.environ.get('REDIS_HOST'), os.environ.get('REDIS_PORT'))],
+#         },
+#     },
+# }
+
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [(os.environ.get('REDIS_HOST'), os.environ.get('REDIS_PORT'))],
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(os.environ.get('REDIS_HOST'), os.environ.get('REDIS_PORT'))],
         },
     },
 }

@@ -160,3 +160,4 @@ function createPagination(totalPages, currentPage, onClick, elementId) {
     });
     paginationContainer.appendChild(nextButton);
 }
+}

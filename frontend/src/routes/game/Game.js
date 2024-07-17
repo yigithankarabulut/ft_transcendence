@@ -33,7 +33,7 @@ export async function fetchGame() {
     return;
   }
 
-  var connection = "ws://localhost:8111/ws/game/" + "?room=" + game_id + "?token=" + access_token;
+  var connection = "ws://127.0.0.1:8011/ws/game/" + "?room=" + game_id + "?token=" + access_token;
   ws = new WebSocket(connection);
 
 

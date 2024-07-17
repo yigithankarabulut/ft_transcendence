@@ -167,7 +167,7 @@ class UserManagementService(IUserManagementService):
             'email_verify',
             kwargs={'uidb64': uid, 'token': encoded_token},
         )
-        verify_url = f"${SERVICE_ROUTES['auth']}{verify_url}"
+        verify_url = f"${SERVICE_ROUTES['/auth']}{verify_url}"
         message = {
             'subject': 'Transcendence Email Verification',
             'body': {'email': user.email, 'verify_url': verify_url},
@@ -184,6 +184,8 @@ class UserManagementService(IUserManagementService):
         user = self.repository.get_by_email(req.email)
         if not user:
             return BaseResponse(True, "User not found", None).res()
+        if user.oauth_users > 0:
+            return BaseResponse(True, "User logged in with oauth provider", None).res()
         if user.password != sha256(req.password.encode()).hexdigest():
             return BaseResponse(True, "Invalid password", None).res()
         if not user.email_verified:
@@ -256,7 +258,7 @@ class UserManagementService(IUserManagementService):
         if not res:
             return BaseResponse(True, "Unknow error. Please try again later!", None).res()
 
-        reset_url = f"${SERVICE_ROUTES['auth']}{reset_path}"
+        reset_url = f"${SERVICE_ROUTES['/auth']}{reset_path}"
         message = {
             'subject': 'Transcendence Password Reset Email',
             'body': {'email': email, 'reset_url': reset_url},
