@@ -1,5 +1,4 @@
-import { navigateTo } from "./navTo";
-import{ ValidateAccessToken, ValidateRefreshToken, userDetailUrl } from "../contants/contants";
+import{ ValidateAccessToken, ValidateRefreshToken, userDetailUrl } from "../contants/contants.js";
 
 export const insertIntoElement = (elementId, element) => {
     const el = document.getElementById(elementId);
@@ -139,8 +138,10 @@ export function goPagination(totalPages, currentPage, onClick, elementId) {
 }
 
 export async function CheckAuth() {
+    console.log("Checking auth");
     const access_token = localStorage.getItem("access_token");
     if (!access_token) {
+        console.log("Check Spot No access token");
         return false;
     }
     const auth_response = await fetch(ValidateAccessToken, {
@@ -156,11 +157,14 @@ export async function CheckAuth() {
             if (errorData.error === "Token has expired") {
                 let state = await RefreshToken();
                 if (state) {
+                    console.log("Access token refreshed");
                     return true;
                 }
+                console.log("Access token is not valid");
                 return false;
             }
         }
+        console.log("Access token is not valid");
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
         return false;
@@ -169,6 +173,7 @@ export async function CheckAuth() {
     if (data.user_id) {
         return true;
     }
+    console.log("Access token is not valid");
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     return false;
@@ -189,6 +194,7 @@ export async function RefreshToken() {
     });
 
     if (!refresh_response.ok) {
+        console.log("Refresh token is not valid");
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
         return false;
@@ -196,10 +202,12 @@ export async function RefreshToken() {
 
     const data = await refresh_response.json();
     if (!data.access_token || !data.refresh_token) {
+        console.log("Refresh token is not valid");
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
         return false;
     }
+    console.log("Access token refreshed");
     localStorage.setItem("access_token", data.access_token);
     localStorage.setItem("refresh_token", data.refresh_token);
     return true;

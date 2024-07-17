@@ -5,7 +5,7 @@ import { changeUsernameUrl } from "../../contants/contants.js";
 
 export async function fetchConflictusername() {
     const form = document.getElementById("uname-code");
-    
+
     const urlParams = new URLSearchParams(window.location.search);
     const access_token = urlParams.get("access_token");
     const refresh_token = urlParams.get("refresh_token");
