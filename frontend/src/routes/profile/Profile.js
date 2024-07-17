@@ -110,45 +110,53 @@ export async function fetchProfile() {
             matchTableBody.appendChild(row);
         }
 
-        const paginationContainer = document.getElementById("pagination");
-        paginationContainer.innerHTML = "";
-
+        // Render pagination
         const totalPages = Math.ceil(matches.length / matchesPerPage);
+        createPagination(totalPages, currentPage, async (newPage) => {
+            currentPage = newPage;
+            fetchProfile();
+        }, "pagination-container");
+}
 
-        // Create previous button
-        const prevButton = document.createElement("li");
-        prevButton.innerHTML = `<li class="page-item ${currentPage === 1 ? "disabled" : ""}"><a href="#" class="page-link">&laquo;</a></li>`;
-        prevButton.addEventListener("click", async (event) => {
-            event.preventDefault();
-            if (currentPage > 1) {
-                currentPage--;
-                await fetchProfile();
-            }
-        });
-        paginationContainer.appendChild(prevButton);
+//  bana yukardaki pagination stratejisini dinamik bir şekilde yapan başka page de kullanabileceğim bir fonksiyon yazın
+//  ve bu fonksiyonu kullanarak aşağıdaki pagination fonksiyonunu refactor edin
 
-        // Create page number buttons
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = document.createElement("li");
-            pageButton.innerHTML = `<li class="page-item ${i === currentPage ? "active" : ""}"><a href="#" class="page-link">${i}</a></li>`;
-            pageButton.addEventListener("click", async (event) => {
-                event.preventDefault();
-                currentPage = i;
-                await fetchProfile();
-            });
-            paginationContainer.appendChild(pageButton);
+function createPagination(totalPages, currentPage, onClick, elementId) {
+    const paginationContainer = document.getElementById(elementId);
+    paginationContainer.innerHTML = "";
+
+    // Create previous button
+    const prevButton = document.createElement("li");
+    prevButton.innerHTML = `<li class="page-item ${currentPage === 1 ? "disabled" : ""}"><a href="#" class="page-link">&laquo;</a></li>`;
+    prevButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        if (currentPage > 1) {
+            currentPage--;
+            onClick(currentPage);
         }
+    });
+    paginationContainer.appendChild(prevButton);
 
-        // Create next button
-        const nextButton = document.createElement("li");
-        nextButton.innerHTML = `<li class="page-item ${currentPage === totalPages ? "disabled" : ""}"><a href="#" class="page-link">&raquo;</a></li>`;
-        nextButton.addEventListener("click", async (event) => {
+    // Create page number buttons
+    for (let i = 1; i <= totalPages; i++) {
+        const pageButton = document.createElement("li");
+        pageButton.innerHTML = `<li class="page-item ${i === currentPage ? "active" : ""}"><a href="#" class="page-link">${i}</a></li>`;
+        pageButton.addEventListener("click", async (event) => {
             event.preventDefault();
-            if (currentPage < totalPages) {
-                currentPage++;
-                await fetchProfile();
-            }
+            onClick(i);
         });
-        paginationContainer.appendChild(nextButton);
+        paginationContainer.appendChild(pageButton);
     }
+
+    // Create next button
+    const nextButton = document.createElement("li");
+    nextButton.innerHTML = `<li class="page-item ${currentPage === totalPages ? "disabled" : ""}"><a href="#" class="page-link">&raquo;</a></li>`;
+    nextButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        if (currentPage < totalPages) {
+            currentPage++;
+            onClick(currentPage);
+        }
+    });
+    paginationContainer.appendChild(nextButton);
 }

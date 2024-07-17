@@ -20,7 +20,7 @@ class UserManagementRepository(IUserManagementRepository):
 
     def get_by_email(self, email: str) -> UserManagement:
         try:
-            model = UserManagement.objects.filter(email=email).first()
+            model = UserManagement.objects.filter(email=email, oauth_user=0).first()
             return model
         except:
             return None

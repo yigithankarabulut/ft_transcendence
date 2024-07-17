@@ -24,6 +24,9 @@ padd_right = {
     'sizeY': 160,
 }
 
+GetUserByID_URL = "http://apigateway:8000/user/get/id"
+CheckGame_URL = "http://apigateway:8000/game/check"
+GameUpdate_URL = "http://apigateway:8000/game/update"
 
 class Pong(AsyncWebsocketConsumer):
 
@@ -41,7 +44,10 @@ class Pong(AsyncWebsocketConsumer):
         tmp_player_name = None
 
         try:
-            response = requests.get("http://localhost:8000/user/get/id", headers = {'Authorization': f'Bearer {access_token}'})
+            response = requests.get(
+                GetUserByID_URL,
+                headers = {'Authorization': f'Bearer {access_token}'},
+            )
             if response.status_code == 200:
                 res = response.json()
                 user = res['data'][0]
@@ -54,7 +60,10 @@ class Pong(AsyncWebsocketConsumer):
             return
 
         try:
-            response = requests.get(f'http://localhost:8000/game/check?game_id={tmp_room_id}', headers = {'Authorization': f'Bearer {access_token}'})
+            response = requests.get(
+                f'{CheckGame_URL}?game_id={tmp_room_id}',
+                headers = {'Authorization': f'Bearer {access_token}'},
+            )
             if response.status_code != 200:
                 await self.close()
                 return
@@ -279,7 +288,11 @@ class Pong(AsyncWebsocketConsumer):
                         'player1_score': 0,
                         'player2_score': 0,
                     }
-                    response = requests.put(f"http://localhost:8010/game/update", data=json.dumps(body), headers={'Content-Type': 'application/json'})
+                    response = requests.put(
+                        GameUpdate_URL,
+                        data=json.dumps(body),
+                        headers={'Content-Type': 'application/json'},
+                    )
                     if response.status_code == 200:
                         res = response.json()
                         print(res)
@@ -337,7 +350,11 @@ class Pong(AsyncWebsocketConsumer):
                         'player1_score': int(rooms[room_id]['padd_left']['info']['score']),
                         'player2_score': int(rooms[room_id]['padd_right']['info']['score']),
                     }
-                    response = requests.put(f"http://localhost:8010/game/update", data=json.dumps(body), headers={'Content-Type': 'application/json'})
+                    response = requests.put(
+                        GameUpdate_URL,
+                        data=json.dumps(body),
+                        headers={'Content-Type': 'application/json'},
+                    )
                     if response.status_code == 200:
                         res = response.json()
                         if res['data'] is not None and res['data']['game_id'] is not None:
@@ -368,7 +385,11 @@ class Pong(AsyncWebsocketConsumer):
                     'player1_score': int(rooms[room_id]['padd_left']['info']['score']),
                     'player2_score': int(rooms[room_id]['padd_right']['info']['score']),
                 }
-                response = requests.put(f"http://localhost:8010/game/update", data=json.dumps(body), headers={'Content-Type': 'application/json'})
+                response = requests.put(
+                    GameUpdate_URL,
+                    data=json.dumps(body),
+                    headers={'Content-Type': 'application/json'},
+                )
                 if response.status_code == 200:
                     res = response.json()
                     print(res)

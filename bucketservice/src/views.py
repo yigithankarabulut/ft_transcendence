@@ -3,10 +3,9 @@ from rest_framework import viewsets, status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 import requests
-from bucketservice.settings import SERVICE_ROUTES
+from bucketservice.settings import SERVICE_ROUTES, DEFAULT_AVATAR_PATH
 from django.http import HttpResponse
 import os
-import logging
 from .models import ImageModel
 from .serializers import ImageSerializer
 
@@ -17,9 +16,6 @@ class ImageViewSet(viewsets.ModelViewSet):
     parser_classes = (MultiPartParser, FormParser)
 
     def create(self, request, *args, **kwargs):
-        serializer = ImageSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         access_token = request.headers.get('Authorization')
         if not access_token.split(' ')[0] == 'Bearer':
             return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
@@ -30,6 +26,9 @@ class ImageViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Internal server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         if response.status_code != 200:
             return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        serializer = ImageSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         res = response.json()
         id = res['user_id']
         if not id:
@@ -54,6 +53,6 @@ class ImageViewSet(viewsets.ModelViewSet):
             image = get_object_or_404(ImageModel, user_id=id)
             path = image.image.path
         except:
-            path = '/app/media/images/default_avatar.jpg'
+            path = DEFAULT_AVATAR_PATH
         with open(path, 'rb') as img:
             return HttpResponse(img.read(), content_type='image/jpeg')

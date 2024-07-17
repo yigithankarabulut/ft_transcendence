@@ -223,13 +223,15 @@ class GameService(IGameService):
                 user = {
                     "username": "Cancelled"
                 }
-            resp.append({
-                "player1": username,
-                "player2": user['username'],
-                "player1_score": game.player1_score,
-                "player2_score": game.player2_score,
-                "date": game.updated_at,
-            })
+            i = 0
+            for i in range(2):
+                resp.append({
+                    "player1": username,
+                    "player2": user['username'],
+                    "player1_score": game.player1_score,
+                    "player2_score": game.player2_score,
+                    "date": game.updated_at,
+                })
         for game in games2:
             room = Room.objects.get(id=game.room_id)
             players = Player.objects.filter(room=room)
@@ -251,19 +253,27 @@ class GameService(IGameService):
                 user = {
                     "username": "Cancelled"
                 }
-            resp.append({
-                "player1": user['username'],
-                "player2": username,
-                "player1_score": game.player1_score,
-                "player2_score": game.player2_score,
-                "date": game.updated_at,
-            })
+            i = 0
+            for i in range(2):
+                resp.append({
+                    "player1": user['username'],
+                    "player2": username,
+                    "player1_score": game.player1_score,
+                    "player2_score": game.player2_score,
+                    "date": game.updated_at,
+                })
         stats = {
             "total_games": len(resp),
             "win_count": win_count,
             "lose_count": lose_count,
         }
-        return BaseResponse(False, 'List of games', resp, None, stats).res()
+        paginate_data = {
+            "current_page": page,
+            "page_size": limit,
+            "total_pages": int(len(resp) / limit) + 1,
+            "total_records": len(resp)
+        }
+        return BaseResponse(False, 'List of games', resp, paginate_data, stats).res()
 
     def check_game(self, user_id, game_id) -> BaseResponse:
         try:

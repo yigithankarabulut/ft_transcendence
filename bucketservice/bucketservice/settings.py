@@ -21,17 +21,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ji21vz1bxstq*-eemexk^3ok(98i&-b*sh+j(s67(+v%e2yk*1'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG')
 
 ALLOWED_HOSTS = []
 
 SERVICE_ROUTES = {
     '/auth': 'http://authservice:8001',
     '/user': 'http://usermanagement:8004',
-    '/friend': 'http://friend:8012',
+    '/friend': 'http://friendservice:8012',
 }
 
 # Application definition
@@ -87,17 +87,18 @@ WSGI_APPLICATION = 'bucketservice.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'bucketpostgres',
-        'USER': 'yigit',
-        'PASSWORD': 'yigit',
-        'HOST': 'bucketpostgres',
-        'PORT': '5432',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
 
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+DEFAULT_AVATAR_PATH = os.path.join(MEDIA_ROOT, 'images/default_avatar.jpg')
 
 
 # Password validation

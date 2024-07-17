@@ -3,23 +3,7 @@ import logging
 from .repository import IFriendsRepository
 from django.core.paginator import Paginator
 from .serializers import FriendsSerializer, FriendReqListSerializer
-
-
-class BaseResponse:
-    def __init__(self, err: bool, msg: str, data, pagination=None):
-        self.err = err
-        self.string = {"error": msg}
-        self.data = {"message": msg, "data": data}
-        self.pagination = pagination
-
-    def res(self):
-        if self.err:
-            return self.string, self.err
-        response_data = self.data
-        if self.pagination:
-            response_data['pagination'] = self.pagination
-        return response_data, self.err
-
+from .utils import BaseResponse
 
 class IFriendsService(ABC):
     @abstractmethod
@@ -46,7 +30,6 @@ class IFriendsService(ABC):
     def get_friends(self, user_id, page, limit) -> BaseResponse:
         pass
 
-
 class FriendsService(IFriendsService):
     def __init__(self, repository: IFriendsRepository):
         self.repository = repository
@@ -57,7 +40,6 @@ class FriendsService(IFriendsService):
 
         friendship = self.repository.get_double(sender_id, receiver_id)
         if friendship:
-            print(friendship.deleted_at)
             match friendship.state:
                 case 0:
                     return BaseResponse(True, "Friend request already sent", None).res()

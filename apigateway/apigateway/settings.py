@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#fvj*dfcvw*q5!$2)=29sw+z$)1w#f6#6u@k=r(x47(c+g657v'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG')
 
 ALLOWED_HOSTS = ['35.242.209.3', 'localhost', '127.0.0.1', '0.0.0.0']
 
@@ -67,10 +68,6 @@ SERVICE_ROUTES = {
     '/friends': 'http://friendservice:8012',
     '/game': 'http://gameservice:8010',
     '/user': 'http://usermanagement:8004',
-    # '/auth': 'http://localhost:8001',
-    # '/user': 'http://localhost:8004',
-    # '/game': 'http://localhost:8010',
-    # '/friend': 'http://localhost:8002',
 }
 
 ROOT_URLCONF = 'apigateway.urls'

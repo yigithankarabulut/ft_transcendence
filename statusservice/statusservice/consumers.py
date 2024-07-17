@@ -33,7 +33,7 @@ class Online(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'user_id': event['user_id'],
             'status': event['status'],
-            'online_users': list(Online.online_users)  # online kullanıcıların listesini ekleyin
+            'online_users': list(Online.online_users)
         }))
 
     async def receive(self, text_data):
