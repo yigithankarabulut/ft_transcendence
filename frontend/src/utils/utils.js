@@ -103,9 +103,45 @@ export async function onlineStatus() {
     await initializeWebSocket();
 }
 
+export function goPagination(totalPages, currentPage, onClick, elementId) {
+    const paginationContainer = document.getElementById(elementId);
+    paginationContainer.innerHTML = "";
+    // Create previous button
+    const prevButton = document.createElement("li");
+    prevButton.innerHTML = `<li class="page-item ${currentPage === 1 ? "disabled" : ""}"><a href="#" class="page-link">&laquo;</a></li>`;
+    prevButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        if (currentPage > 1) {
+            currentPage--;
+            onClick(currentPage);
+        }
+    });
+    paginationContainer.appendChild(prevButton);
+    // Create page number buttons
+    for (let i = 1; i <= totalPages; i++) {
+        const pageButton = document.createElement("li");
+        pageButton.innerHTML = `<li class="page-item ${i === currentPage ? "active" : ""}"><a href="#" class="page-link">${i}</a></li>`;
+        pageButton.addEventListener("click", async (event) => {
+            event.preventDefault();
+            onClick(i);
+        });
+        paginationContainer.appendChild(pageButton);
+    }
+    // Create next button
+    const nextButton = document.createElement("li");
+    nextButton.innerHTML = `<li class="page-item ${currentPage === totalPages ? "disabled" : ""}"><a href="#" class="page-link">&raquo;</a></li>`;
+    nextButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        if (currentPage < totalPages) {
+            currentPage++;
+            onClick(currentPage);
+        }
+    });
+    paginationContainer.appendChild(nextButton);
+}
+
 const ValidateAccessToken = "http://127.0.0.1:8000/auth/token/validate";
 const ValidateRefreshToken = "http://127.0.0.1:8000/auth/token/refresh";
-
 export async function CheckAuth() {
     const access_token = localStorage.getItem("access_token");
     if (!access_token) {
@@ -141,7 +177,6 @@ export async function CheckAuth() {
     localStorage.removeItem("refresh_token");
     return false;
 }
-
 export async function RefreshToken() {
     const refresh_token = localStorage.getItem("refresh_token");
     const access_token = localStorage.getItem("access_token");

@@ -1,7 +1,12 @@
 import { navigateTo } from "../../utils/navTo.js";
+import { goPagination } from "../../utils/utils.js";
+
+
 const userDetailUrl = "http://127.0.0.1:8000/user/details";
 const gameDetailUrl = "http://127.0.0.1:8000/game/list";
 const joinUrl = "http://127.0.0.1:8000/game/join";
+
+let currentPage = 1; // Current page
 
 export async function fetchJoin() {
     const access_token = localStorage.getItem("access_token");
@@ -10,7 +15,7 @@ export async function fetchJoin() {
         return;
     }
     console.log("Fetching user details");
-    const response = await fetch(gameDetailUrl, {
+    const response = await fetch(gameDetailUrl + "?page=" + currentPage + "&limit=5" , {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -23,8 +28,13 @@ export async function fetchJoin() {
         throw new Error(errorData.error);
     }
 
+
     const invites_res = await response.json();
     const invites = invites_res.data
+    let pagination = invites_res.pagination;
+    let totalPages = pagination.total_pages;
+
+
     console.log(invites);
     const tbody = document.querySelector(".table tbody");
     tbody.innerHTML = ""; // Clear existing rows
@@ -68,11 +78,14 @@ export async function fetchJoin() {
                     alert(data.error);
                 } else {
                     alert("Joined game successfully");
-                    //set local storage
                     localStorage.setItem("game_id", data.data.game_id);
                     navigateTo("/game");
                 }
             });
         });
     });
+    goPagination(totalPages, currentPage, async (newPage) => {
+        currentPage = newPage;
+        fetchJoin();
+    }, "pagination-container");
 }
