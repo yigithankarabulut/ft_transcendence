@@ -21,9 +21,9 @@ def generate_access_token(user_id):
 
 
 def generate_refresh_token(user_id, access_token, exp, iat):
-    if not exp:
+    if exp is None:
         exp = datetime.utcnow() + timedelta(days=7)
-    if not iat:
+    if iat is None:
         iat = datetime.utcnow()
     payload = {
         'user_id': user_id,
@@ -44,7 +44,7 @@ class AuthHandler(viewsets.ViewSet):
             return Response(req.errors, status=400)
         user_id = req.validated_data['user_id']
         access_token = generate_access_token(user_id)
-        refresh_token = generate_refresh_token(user_id, access_token)
+        refresh_token = generate_refresh_token(user_id, access_token, None, None)
         return Response({
             'access_token': access_token,
             'refresh_token': refresh_token
@@ -123,7 +123,7 @@ class AuthHandler(viewsets.ViewSet):
         response_data = user_creation_response.json().get('data')
         user_id = response_data[0].get('id')
         token = generate_access_token(user_id)
-        refresh_token = generate_refresh_token(user_id, token)
+        refresh_token = generate_refresh_token(user_id, token, None, None)
 
         # 207 status code is for username already exist. 
         # Redirect to frontend for update username. Otherwise, redirect to homepage
