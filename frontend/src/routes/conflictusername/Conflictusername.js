@@ -1,11 +1,10 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
-
-const url = "http://127.0.0.1:8000/user/username";
+import { userUsernameUrl } from "../../constants/urls.js";
 
 export async function fetchConflictusername() {
     const form = document.getElementById("uname-code");
-    
+
     const urlParams = new URLSearchParams(window.location.search);
     const access_token = urlParams.get("access_token");
     const refresh_token = urlParams.get("refresh_token");
@@ -22,7 +21,7 @@ export async function fetchConflictusername() {
         toggleHidden('login-spinner');
 
         try {
-            const response = await fetch(url, {
+            const response = await fetch(userUsernameUrl, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",

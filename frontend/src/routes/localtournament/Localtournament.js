@@ -11,6 +11,9 @@ export async function fetchLocaltournament() {
             const scoreBoard = document.getElementById('scoreBoard');
             const tournamentInfo = document.getElementById('tournamentInfo');
 
+            scoreBoard.style.color = 'white';
+            tournamentInfo.style.color = 'white';
+
             let players = [];
             let currentMatch = 0;
             let matchWinners = [];
@@ -75,23 +78,23 @@ export async function fetchLocaltournament() {
                 if (keys.ArrowDown && gameState.paddle2.y < canvas.height - 100) gameState.paddle2.y += 5;
                 if (keys.w && gameState.paddle1.y > 0) gameState.paddle1.y -= 5;
                 if (keys.s && gameState.paddle1.y < canvas.height - 100) gameState.paddle1.y += 5;
-            
+
                 // Ball movement
                 gameState.ball.x += gameState.ball.dx;
                 gameState.ball.y += gameState.ball.dy;
-            
+
                 // Ball collision with top and bottom walls
                 if (gameState.ball.y <= 0 || gameState.ball.y >= canvas.height) {
                     gameState.ball.dy *= -1;
                 }
-            
+
                 // Ball collision with paddles
                 if (
                     (gameState.ball.x <= 15 && gameState.ball.y >= gameState.paddle1.y && gameState.ball.y <= gameState.paddle1.y + 100) ||
                     (gameState.ball.x >= canvas.width - 15 && gameState.ball.y >= gameState.paddle2.y && gameState.ball.y <= gameState.paddle2.y + 100)
                 ) {
                     gameState.ball.dx *= -1;
-            
+
                     // Move ball away from the paddle to prevent sticking
                     if (gameState.ball.x <= 15) {
                         gameState.ball.x = 15 + 10; // 15 is paddle width, 10 is ball radius
@@ -99,7 +102,7 @@ export async function fetchLocaltournament() {
                         gameState.ball.x = canvas.width - 15 - 10;
                     }
                 }
-            
+
                 // Ball out of bounds (left or right side)
                 if (gameState.ball.x <= 0) {
                     gameState.paddle2.score++;
@@ -108,19 +111,19 @@ export async function fetchLocaltournament() {
                     gameState.paddle1.score++;
                     resetBall();
                 }
-            
+
                 // Update scoreboard
                 if (currentMatch != 2) {
                     scoreBoard.innerHTML = `${players[currentMatch * 2]} ${gameState.paddle1.score} - ${gameState.paddle2.score} ${players[currentMatch * 2 + 1]}`;
                 } else {
                     scoreBoard.innerHTML = `${finalMatchParticipants[0]} ${gameState.paddle1.score} - ${gameState.paddle2.score} ${finalMatchParticipants[1]}`;
                 }
-            
+
                 // Check if match is over
                 if (gameState.paddle1.score === 5 || gameState.paddle2.score === 5) {
                     endMatch();
                 }
-            }            
+            }
 
             function draw() {
                 // Clear canvas
@@ -129,19 +132,26 @@ export async function fetchLocaltournament() {
 
                 // Draw paddles
                 ctx.fillStyle = '#fff';
-                ctx.fillRect(0, gameState.paddle1.y, 20, 100);
-                ctx.fillRect(canvas.width - 20, gameState.paddle2.y, 20, 100);
+                ctx.fillRect(0, gameState.paddle1.y, 15, 100);
+                ctx.fillRect(canvas.width - 15, gameState.paddle2.y, 15, 100);
 
                 // Draw ball
                 ctx.beginPath();
                 ctx.arc(gameState.ball.x, gameState.ball.y, 10, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Draw center line
-                ctx.setLineDash([5, 15]);
+                // Draw center line (net)
+                drawNet();
+            }
+
+            function drawNet() {
+                ctx.setLineDash([15, 5]);
+                ctx.strokeStyle = '#fff';
+                ctx.beginPath();
                 ctx.moveTo(canvas.width / 2, 0);
                 ctx.lineTo(canvas.width / 2, canvas.height);
                 ctx.stroke();
+                ctx.setLineDash([]); // Clear the dashed setting
             }
 
             function resetBall() {

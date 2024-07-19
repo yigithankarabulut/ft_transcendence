@@ -1,14 +1,11 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { userStatuses } from "../../utils/utils.js"
+import { userStatuses } from "../../utils/utils.js";
+import { userGetByIdUrl, matchHistoryUrl, pictureUrl } from "../../constants/urls.js";
 
-const userDetailUrl = "http://127.0.0.1:8000/user/get/id";
-const matchHistoryUrl = "http://127.0.0.1:8000/game/history";
-const pictureUrl = "http://localhost:8014/bucket/image/serve";
 const access_token = localStorage.getItem("access_token");
-const matchesPerPage = 3; // Number of matches per page
-let matches = []; // Match history data
+
 let currentPage = 1; // Current page
-let originalUserData = {};
+
 
 export async function fetchOtherprofile() {
     if (!access_token) {
@@ -20,147 +17,106 @@ export async function fetchOtherprofile() {
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
         const user_status = userStatuses.includes(id) ? true : false;
-        const response = await fetch(userDetailUrl + "?id=" + id, {
+        const userResponse = await fetch(userGetByIdUrl + "?id=" + id, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${access_token}`,
             }
         });
-        if (!response.ok) {
-            const errorData = await response.json();
+        if (!userResponse.ok) {
+            const errorData = await userResponse.json();
             throw new Error(errorData.error);
         }
-        const data = await response.json();
-        const user = data.data[0];
+        const userData = await userResponse.json();
+        const user = userData.data[0];
+        console.log(user);
+
         document.getElementById("profile-pic").src = pictureUrl + "?id=" + user.id;
         document.getElementById("full-name").textContent = `${user.first_name} ${user.last_name}`;
         document.getElementById("user-name").textContent = user.username;
         document.getElementById("profile-first-name").textContent = user.first_name;
         document.getElementById("profile-last-name").textContent = user.last_name;
         document.getElementById("phone").textContent = user.phone;
-        document.getElementById("profile-status").textContent = user_status === true ? 'Online' : 'Offline'
 
-        // match history
-        await renderMatchHistory(user.username);
+        if (localStorage.getItem("status")) {
+            document.getElementById("profile-status").textContent = localStorage.getItem("status");
+        }
 
-    } catch (err) {
-        console.log(err);
-    }
-
-}
-
-// Function to render match history table
-async function renderMatchHistory(username) {
-    try {
         console.log("Fetching match history");
-        const response = await fetch(matchHistoryUrl + `?username=${username}&page=${currentPage}&limit=${matchesPerPage}`, {
+        const matchResponse = await fetch(`${matchHistoryUrl}?username=${user.username}&page=${currentPage}&limit=3`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${access_token}`,
             }
         });
-        if (!response.ok) {
-            const errorData = await response.json();
+        if (!matchResponse.ok) {
+            const errorData = await matchResponse.json();
             throw new Error(errorData.error);
         }
-        const data = await response.json();
-        console.log("Match history data:");
-        console.log(data.data);
-        matches = data.data;
+        const matchData = await matchResponse.json();
+        const matches = matchData.data;
+        const stats = matchData.stats;
+        const paginate_data = matchData.pagination;
+        const totalPages = paginate_data.total_pages;
 
-        console.log(matches);
+        document.getElementById('total-games').textContent = stats.total_games;
+        document.getElementById('win-count').textContent = stats.win_count;
+        document.getElementById('lose-count').textContent = stats.lose_count;
 
         const matchTableBody = document.querySelector("#match-history-table tbody");
         matchTableBody.innerHTML = "";
 
-        // Calculate start and end indices for the current page
-        const startIndex = (currentPage - 1) * matchesPerPage;
-        const endIndex = Math.min(startIndex + matchesPerPage, matches.length);
+
+
 
         // Render match rows
-        for (let i = startIndex; i < endIndex; i++) {
-            const match = matches[i];
+
+         matches.forEach(match => {
+            const date = new Date(match.date).toLocaleString();
             const row = document.createElement("tr");
             row.innerHTML = `
-                <th>
-                    <div class="col-md-4 col-lg-4 mb-4 mb-lg-0">
-                        <div class="text-center text-lg-left">
-                        <div class="d-block d-lg-flex align-items-center">
-                            <div class="text">
-                            <h3 class="h5 mb-0 text-black">${match.player1}</h3>
+                <td>
+                    <h6 class="h5 mb-0 text-black">${date}</h6>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-4 col-lg-4 mb-4 mb-lg-0">
+                            <div class="text-center text-lg-left">
+                                <div class="d-block d-lg-flex align-items-center">
+                                    <div class="text">
+                                        <h3 class="h5 mb-0 text-black">${match.player1}</h3>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        <div class="col-md-4 col-lg-4 text-center mb-4 mb-lg-0">
+                            <div class="d-inline-block">
+                                <div class="bg-black py-2 px-4 mb-2 text-white d-inline-block rounded">
+                                    <span class="h5">${match.player1_score}:${match.player2_score}</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </th>
-                <div class="col-md-4 col-lg-4 text-center mb-4 mb-lg-0">
-                    <div class="d-inline-block">
-                        <div class="bg-black py-2 px-4 mb-2 text-white d-inline-block rounded">
-                            <span class="h5">${match.player1_score}:${match.player2_score}</span>
-                        </div>
-                    </div>
-                </div>
-                <th>
-                    <div class="col-md-4 col-lg-4 mb-4 mb-lg-0">
-                        <div class="text-center text-lg-right">
-                            <div class="d-block d-lg-flex align-items-center">
-                                <div class="text">
-                                    <h3 class="h5 mb-0 text-black">${match.player2}</h3>
+                        <div class="col-md-4 col-lg-4 mb-4 mb-lg-0">
+                            <div class="text-center text-lg-right">
+                                <div class="d-block d-lg-flex align-items-center">
+                                    <div class="text">
+                                        <h3 class="h5 mb-0 text-black">${match.player2}</h3>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </th>
+                </td>
             `;
             matchTableBody.appendChild(row);
-        }
+        })
 
-         await renderPaginationControls();
-
+        goPagination(totalPages, currentPage, async (newPage) => {
+            currentPage = newPage;
+            fetchOtherProfile();
+        }, "pagination-container");
     } catch (err) {
         console.log(err);
     }
-}
-
-// Function to render pagination controls
-async function renderPaginationControls() {
-    const paginationContainer = document.getElementById("pagination");
-    paginationContainer.innerHTML = "";
-
-    const totalPages = Math.ceil(matches.length / matchesPerPage);
-
-    // Create previous button
-    const prevButton = document.createElement("li");
-    prevButton.innerHTML = `<li class="page-item disabled"><a href="#" class="page-link">&laquo;</a></li>`;
-    prevButton.addEventListener("click", async () => {
-        if (currentPage > 1) {
-            currentPage--;
-            await renderMatchHistory();
-        }
-    });
-    paginationContainer.appendChild(prevButton);
-
-    // Create page number buttons
-    for (let i = 1; i <= totalPages; i++) {
-        const pageButton = document.createElement("li");
-        pageButton.innerHTML = `<li class="page-item ${i === currentPage ? "active" : ""}"><a href="#" class="page-link">${i}</a></li>`;
-        pageButton.addEventListener("click", async () => {
-            currentPage = i;
-            await renderMatchHistory();
-        });
-        paginationContainer.appendChild(pageButton);
-    }
-
-    // Create next button
-    const nextButton = document.createElement("li");
-    nextButton.innerHTML = `<li class="page-item disabled"><a href="#" class="page-link">&raquo;</a></li>`;
-    nextButton.addEventListener("click", async () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            await renderMatchHistory();
-        }
-    });
-    paginationContainer.appendChild(nextButton);
 }

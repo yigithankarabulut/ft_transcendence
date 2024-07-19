@@ -1,6 +1,5 @@
+import { forgotpasswordUrl } from "../../constants/urls.js";
 
-
-const forgotpasswordUrl = "http://127.0.0.1:8000/user/pwd/forgot"; //post body email
 export async function fetchForgotpassword() {
 	document.querySelector('form').addEventListener('submit', async function(event) {
 		event.preventDefault();

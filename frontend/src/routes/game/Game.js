@@ -1,5 +1,7 @@
 import { navigateTo } from "../../utils/navTo.js";
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
+import { userDetailUrl } from "../../constants/urls.js";
+
+export let ws;
 
 export async function fetchGame() {
   console.log("fetchGame");
@@ -31,8 +33,8 @@ export async function fetchGame() {
     return;
   }
 
-  var connection = "ws://localhost:8011/ws/game/" + "?room=" + game_id + "?token=" + access_token;
-  let ws = new WebSocket(connection);
+  var connection = "ws://localhost:8111/ws/game/" + "?room=" + game_id + "?token=" + access_token;
+  ws = new WebSocket(connection);
 
 
   ws.onopen = () => {
@@ -63,31 +65,6 @@ export async function fetchGame() {
 
   ws.onmessage = (message) => {
     let items = JSON.parse(message.data);
-
-    /*
-    if (items.message === "game_over") {
-      const requestBody = JSON.stringify(items);
-      const requestHeaders = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${access_token}`
-      };
-      fetch("http://localhost:8000/game/save", {
-        method: "POST",
-        headers: requestHeaders,
-        body: requestBody,
-      }).then((response) => {
-        console.log("Sunucudan gelen yanıt:", response);
-        if (!response.ok) {
-          throw new Error("Error saving game");
-        }
-        return response.json();
-      }).then((data) => {
-        console.log("Sunucudan gelen veri:", data);
-      }).catch((error) => {
-        console.log(error);
-      });
-      navigateTo("/");
-    }*/
 
     console.log(items);
 

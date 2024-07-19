@@ -1,0 +1,6 @@
+export const requestsList = "http://127.0.0.1:8000/friends/request";
+export const friendList = "http://127.0.0.1:8000/friends/list";
+export const matchHistoryUrl = "http://127.0.0.1:8000/game/history";
+export const requestsList = "http://127.0.0.1:8000/friends/request";
+export const searchUrl = "http://127.0.0.1:8000/user/search";
+

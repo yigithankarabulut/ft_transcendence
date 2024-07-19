@@ -1,11 +1,9 @@
 import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
 import  { navigateTo } from "../../utils/navTo.js";
-
-const loginUrl = "http://127.0.0.1:8000/user/login";
-const IntraOAuthUrl = "http://127.0.0.1:8000/auth/intra"
+import { loginUrl, IntraOAuthUrl } from "../../constants/urls.js";
 
 export async function fetchLogin() {
-
+document.getElementById("nav-bar").style.display = "none";
 document.getElementById('login-form').addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("email").value;

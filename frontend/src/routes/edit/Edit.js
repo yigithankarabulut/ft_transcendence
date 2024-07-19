@@ -1,10 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement } from "../../utils/utils.js";
-
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
-const updateUserUrl = "http://127.0.0.1:8000/user/update";
-const pictureUrl = "http://localhost:8014/bucket/image/serve";
-const avatarUpdateUrl = "http://localhost:8014/bucket/image";
+import { userDetailUrl, updateUserUrl, pictureUrl, buckerImageUrl } from "../../constants/urls.js";
 
 export async function fetchEdit() {
     const access_token = localStorage.getItem("access_token");
@@ -105,7 +101,7 @@ export async function fetchEdit() {
             formData.append('image', image);
 
             try {
-                const res = await fetch(avatarUpdateUrl, {
+                const res = await fetch(buckerImageUrl, {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${access_token}`,

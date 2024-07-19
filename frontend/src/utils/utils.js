@@ -27,7 +27,7 @@ export const toggleHidden = (elementId) => {
 
 
 
-let socket = null;
+export let socket = null;
 export let userStatuses = {};
 
 export async function onlineStatus() {
@@ -100,4 +100,43 @@ export async function onlineStatus() {
 
     await initializeWebSocket();
 }
+
+
+export function goPagination(totalPages, currentPage, onClick, elementId) {
+    const paginationContainer = document.getElementById(elementId);
+    paginationContainer.innerHTML = "";
+    // Create previous button
+    const prevButton = document.createElement("li");
+    prevButton.innerHTML = `<li class="page-item ${currentPage === 1 ? "disabled" : ""}"><a href="#" class="page-link">&laquo;</a></li>`;
+    prevButton.addEventListener("click", async (event) => {
+    event.preventDefault();
+    if (currentPage > 1) {
+        currentPage--;
+        onClick(currentPage);
+    }
+    });
+    paginationContainer.appendChild(prevButton);
+    // Create page number buttons
+    for (let i = 1; i <= totalPages; i++) {
+    const pageButton = document.createElement("li");
+    pageButton.innerHTML = `<li class="page-item ${i === currentPage ? "active" : ""}"><a href="#" class="page-link">${i}</a></li>`;
+    pageButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        onClick(i);
+    });
+    paginationContainer.appendChild(pageButton);
+    }
+    // Create next button
+    const nextButton = document.createElement("li");
+    nextButton.innerHTML = `<li class="page-item ${currentPage === totalPages ? "disabled" : ""}"><a href="#" class="page-link">&raquo;</a></li>`;
+    nextButton.addEventListener("click", async (event) => {
+    event.preventDefault();
+    if (currentPage < totalPages) {
+        currentPage++;
+        onClick(currentPage);
+    }
+    });
+    paginationContainer.appendChild(nextButton)
+}
+
 

@@ -20,4 +20,3 @@ class BaseResponse:
         if self.stats:
             response_data['stats'] = self.stats
         return response_data, self.err
-

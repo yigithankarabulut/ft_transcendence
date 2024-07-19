@@ -1,6 +1,7 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement } from "../../utils/utils.js";
-const gameCreateUrl = "http://127.0.0.1:8000/game/room";
+import { gameCreateUrl } from "../../constants/urls.js";
+
 export async function fetchQuickplay() {
     const access_token = localStorage.getItem("access_token");
     if (!access_token) {
@@ -35,18 +36,21 @@ export async function fetchQuickplay() {
                     "Authorization": "Bearer " + access_token,
                 },
                 body: JSON.stringify(data),
-            }).then(response => {
-                if (!response.ok) {
-                    return response.json().then(errorData => {
+            }).then(res => {
+                if (!res.ok) {
+                    return res.json().then(errorData => {
                         throw errorData;
                     });
                 }
-                return response.json();
+                return res.json();
             }).then(data => {
                 localStorage.setItem("game_id", data.data.game_id);
                 navigateTo("/game");
             }).catch((err) => {
-                console.error(err.error);
+                if (err.error) {
+                    console.error(err.error);
+                    insertIntoElement('fields-warning', "Error: " + err.error);
+                }else if (err.non_field_errors)
                 insertIntoElement('fields-warning', "Error: " + err.error);
             });
         }
@@ -80,6 +84,7 @@ export async function fetchQuickplay() {
                         throw errorData;
                     });
                 }
+                return response.json();
             }).then(data => {
                 localStorage.setItem("game_id", data.data.game_id);
                 navigateTo("/game");

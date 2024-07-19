@@ -1,12 +1,8 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { userStatuses } from "../../utils/utils.js";
+import { userStatuses, goPagination } from "../../utils/utils.js";
+import { searchUrl, friendAdd, userDetailUrl, pictureUrl } from "../../constants/urls.js";
 
-const searchUrl = "http://127.0.0.1:8000/user/search";
-const friendAdd = "http://127.0.0.1:8000/friends/add";
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
-const pictureUrl = "http://localhost:8014/bucket/image/serve";
-
-
+let currentPage = 1;
 export async function fetchUsers() {
 
     const access_token = localStorage.getItem("access_token");
@@ -34,7 +30,7 @@ export async function fetchUsers() {
 
         document.getElementById("search-button").addEventListener("click", async () => {
             const searchValue = document.getElementById("search").value;
-            const response = await fetch(searchUrl + "?page=1" + "&limit=5" +"&key=" + searchValue, {
+            const response = await fetch(searchUrl + "?page=" + currentPage + "&limit=5" +"&key=" + searchValue, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -44,15 +40,15 @@ export async function fetchUsers() {
             const data = await response.json();
             const users = data[0].data;
 
+            let paginate_data = data[0].pagination;
+            let totalPages = paginate_data.total_pages;
+
             const tableBody = document.querySelector('.widget-26 tbody');
             tableBody.innerHTML = ''; // Clear previous content
             users.forEach(user => {
                 const userElement = document.createElement('tr');
                 let image = pictureUrl + "?id=" + user.id;
                 const user_status = userStatuses.includes(user.id) ? true : false;
-                console.log(user_status);
-                console.log(userStatuses);
-                console.log(user.id);
                 userElement.innerHTML = `
                     <td>
                         <div class="widget-26-job-emp-img">
@@ -111,12 +107,15 @@ export async function fetchUsers() {
                     });
                 });
             });
+            goPagination(totalPages, currentPage, async (newPage) => {
+                currentPage = newPage;
+                fetchUsers();
+            }, "pagination-container");
         });
 
     }
+
+
 }
-
-
-
 
 

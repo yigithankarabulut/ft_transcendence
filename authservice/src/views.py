@@ -1,45 +1,53 @@
-import logging
-from django import http
+import jwt
+import requests
+from datetime import datetime, timedelta, timezone
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import GenerateTokenSerializer
-import jwt
-from datetime import datetime, timedelta
+from .serializers import GenerateTokenSerializer, RefreshTokenSerializer
 from django.conf import settings
-import requests
+import logging
 
 
 def generate_access_token(user_id):
     payload = {
         'user_id': user_id,
-        'exp': datetime.utcnow() + timedelta(minutes=600),  # Access token expiration
-        'iat': datetime.utcnow()
+        'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=1),
+        'iat': datetime.now(tz=timezone.utc)
     }
     access_token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
-    return access_token
+    iat_seconds = payload['iat'].timestamp()
+    logging.error("------------------------------->>>>>>>>> %s", iat_seconds)
+    return access_token, iat_seconds
 
 
-def generate_refresh_token(user_id):
+def generate_refresh_token(user_id, exp, iat, access_token_iat):
+    if exp is None:
+        exp = datetime.now(tz=timezone.utc) + timedelta(days=7)
+    if iat is None:
+        iat = datetime.now(tz=timezone.utc)
     payload = {
         'user_id': user_id,
-        'exp': datetime.utcnow() + timedelta(days=7),  # Refresh token expiration
-        'iat': datetime.utcnow()
+        'acces_token_iat': access_token_iat,
+        'exp': exp,
+        'iat': iat,
     }
+
     refresh_token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
     return refresh_token
 
 
 class AuthHandler(viewsets.ViewSet):
     SECRET_KEY = settings.SECRET_KEY
+    verification_options = {"require": ["exp", "iat"], "verify_exp": True, "verify_iat": True, "verify_signature": True}
 
     def generate_tokens(self, request):
         req = GenerateTokenSerializer(data=request.query_params)
         if not req.is_valid():
             return Response(req.errors, status=400)
         user_id = req.validated_data['user_id']
-        access_token = generate_access_token(user_id)
-        refresh_token = generate_refresh_token(user_id)
+        access_token, acss_iat = generate_access_token(user_id)
+        refresh_token = generate_refresh_token(user_id, None, None, acss_iat)
         return Response({
             'access_token': access_token,
             'refresh_token': refresh_token
@@ -51,29 +59,51 @@ class AuthHandler(viewsets.ViewSet):
             return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             token = token.split(' ')[1]
-            decoded_token = jwt.decode(token, self.SECRET_KEY, algorithms=['HS256'])
+            decoded_token = jwt.decode(token, self.SECRET_KEY, algorithms=['HS256'], options=self.verification_options)
             return Response({'user_id': decoded_token['user_id']}, status=status.HTTP_200_OK)
         except jwt.ExpiredSignatureError:
             return Response({'error': 'Token has expired'}, status=status.HTTP_401_UNAUTHORIZED)
         except jwt.InvalidTokenError:
             return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def refresh_token(self, request):
-        token = request.headers.get('Authorization')
-        if not token:
+        access_token = request.headers.get('Authorization')
+        if not access_token:
             return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
+        req = RefreshTokenSerializer(data=request.data)
+        if not req.is_valid():
+            return Response(req.errors, status=status.HTTP_400_BAD_REQUEST)
+        refresh_token = req.validated_data['refresh_token']
+
         try:
-            token = token.split(' ')[1]
-            decoded_token = jwt.decode(token, self.SECRET_KEY, algorithms=['HS256'])
-            if 'exp' in decoded_token:
-                if decoded_token['exp'] < datetime.utcnow():
-                    return Response({'error': 'Refresh token has expired'}, status=status.HTTP_401_UNAUTHORIZED)
-            new_access_token = generate_access_token(decoded_token['user_id'])
-            return Response({'access_token': new_access_token}, status=status.HTTP_200_OK)
+            decoded_access_token = jwt.decode(access_token.split(' ')[1], self.SECRET_KEY, algorithms=['HS256'], options={'verify_exp': False})
         except jwt.ExpiredSignatureError:
-            return Response({'error': 'Refresh token has expired'}, status=status.HTTP_401_UNAUTHORIZED)
+            try:
+                accs_iat = decoded_access_token['iat']
+                refresh_token = refresh_token.split(' ')[1]
+                decoded_token = jwt.decode(refresh_token, self.SECRET_KEY, algorithms=['HS256'], options=self.verification_options)
+                refresh_accs_iat = decoded_token['acces_token_iat']
+                if accs_iat != refresh_accs_iat:
+                    return Response({'error': 'Access token and refresh token do not match'}, status=status.HTTP_400_BAD_REQUEST)
+                user_id = decoded_token['user_id']
+                new_access_token, access_iat = generate_access_token(user_id)
+                new_refresh_token = generate_refresh_token(user_id, decoded_token['exp'], decoded_token['iat'], access_iat)
+                return Response({
+                    'access_token': new_access_token,
+                    'refresh_token': new_refresh_token
+                }, status=status.HTTP_200_OK)
+            except jwt.ExpiredSignatureError:
+                return Response({'error': 'Token has expired'}, status=status.HTTP_401_UNAUTHORIZED)
+            except jwt.InvalidTokenError:
+                return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except jwt.InvalidTokenError:
-            return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'Invalids token'}, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def intra_oauth(self, request):
         return Response({'url': settings.INTRA_REDIRECT_URL}, status=status.HTTP_200_OK)
@@ -96,15 +126,14 @@ class AuthHandler(viewsets.ViewSet):
 
         user_creation_response = self.create_user(oauth_token)
         if user_creation_response.status_code != 201 and user_creation_response.status_code != 207:
-            logging.error("--------------> %s", user_creation_response.json())
             return Response(user_creation_response.json(), status=user_creation_response.status_code)
 
         response_data = user_creation_response.json().get('data')
         user_id = response_data[0].get('id')
-        token = generate_access_token(user_id)
-        refresh_token = generate_refresh_token(user_id)
+        token, access_iat = generate_access_token(user_id)
+        refresh_token = generate_refresh_token(user_id, None, None, access_iat)
 
-        # 207 status code is for username already exist. 
+        # 207 status code is for username already exist.
         # Redirect to frontend for update username. Otherwise, redirect to homepage
         if user_creation_response.status_code == 207:
             redirect_url = f"{settings.FRONTEND_URL}/uname?access_token={token}&refresh_token={refresh_token}"

@@ -1,19 +1,16 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { userStatuses } from "../../utils/utils.js";
+import { userStatuses, goPagination } from "../../utils/utils.js";
+import { friendList, friendDelete, userDetailUrl, singleUserDetailUrl, pictureUrl } from "../../constants/urls.js";
 
 
-const friendList = "http://127.0.0.1:8000/friends/list";
-const friendDelete = "http://127.0.0.1:8000/friends/delete";
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
-const singleUserDetailUrl = "http://127.0.0.1:8000/user/get/id";
-const pictureUrl = "http://localhost:8014/bucket/image/serve";
-
+let currentPage = 1;
 export async function fetchFriends() {
 
     const access_token = localStorage.getItem("access_token");
     if (!access_token) {
         console.log("No access token found");
         navigateTo("/login");
+        return;
     } else {
         const response_user = await fetch(userDetailUrl, {
             method: "GET",
@@ -30,7 +27,7 @@ export async function fetchFriends() {
         const currentUser = data_user[0].data[0];
         const currentUserId = currentUser.id;
 
-        const response = await fetch(friendList + "?page=1" + "&limit=10", {
+        const response = await fetch(friendList + "?page="+ currentPage + "&limit=5", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -40,7 +37,8 @@ export async function fetchFriends() {
         const data = await response.json();
 
         const users = data.data;
-
+        let paginate_data = data.pagination;
+        let totalPages = paginate_data.total_pages;
 
         const tableBody = document.querySelector('.widget-26 tbody');
         tableBody.innerHTML = ''; // Clear previous content
@@ -124,9 +122,17 @@ export async function fetchFriends() {
             });
         });
         });
+        goPagination(totalPages, currentPage, async (newPage) => {
+            currentPage = newPage;
+            fetchFriends();
+        }, "pagination-container");
 
     }
 }
+
+
+
+
 
 
 

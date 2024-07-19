@@ -1,8 +1,6 @@
 import requests
 from django.conf import settings
 from django.http import JsonResponse
-import logging
-
 
 class JWTAuthenticationMiddleware:
     def __init__(self, get_response):
@@ -22,8 +20,11 @@ class JWTAuthenticationMiddleware:
             return JsonResponse({'error': 'Missing token'}, status=401)
 
         response = requests.post(f"{settings.SERVICE_ROUTES['/auth']}/auth/token/validate", headers={'Authorization': token})
+
         if response.status_code != 200:
-            return JsonResponse({'error': 'Invalid token'}, status=401)
+            err_msg = response.json().get('error')
+            status = response.status_code
+            return JsonResponse({'error': err_msg}, status=status)
 
         request.user_id = response.json().get('user_id')
         return None

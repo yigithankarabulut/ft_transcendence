@@ -1,7 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement } from "../../utils/utils.js";
-
-const changeUrlBase = "http://localhost:8000/user/pwd/update";
+import { userPwdUpdateUrl } from "../../constants/urls.js";
 
 export async function fetchChangepassword() {
 	const access_token = localStorage.getItem("access_token");
@@ -35,7 +34,7 @@ export async function fetchChangepassword() {
 		}
 
 		try {
-			const response = await fetch(changeUrlBase, {
+			const response = await fetch(userPwdUpdateUrl, {
 				method: 'POST',
 				headers: {
 					"Content-Type": "application/json",

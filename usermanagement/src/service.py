@@ -16,7 +16,6 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 
-# TODO: All queries should be made email because email is unique. username sometimes can be null.
 class UserManagementService(IUserManagementService):
     def __init__(self, repository: IUserManagementRepository, oauth_repository: IOAuthUserRepository):
         self.repository = repository
@@ -168,7 +167,7 @@ class UserManagementService(IUserManagementService):
             'email_verify',
             kwargs={'uidb64': uid, 'token': encoded_token},
         )
-        verify_url = f"http://localhost:8004{verify_url}"
+        verify_url = f"${SERVICE_ROUTES['/auth']}{verify_url}"
         message = {
             'subject': 'Transcendence Email Verification',
             'body': {'email': user.email, 'verify_url': verify_url},
@@ -185,6 +184,8 @@ class UserManagementService(IUserManagementService):
         user = self.repository.get_by_email(req.email)
         if not user:
             return BaseResponse(True, "User not found", None).res()
+        if user.oauth_users > 0:
+            return BaseResponse(True, "User logged in with oauth provider", None).res()
         if user.password != sha256(req.password.encode()).hexdigest():
             return BaseResponse(True, "Invalid password", None).res()
         if not user.email_verified:
@@ -257,7 +258,7 @@ class UserManagementService(IUserManagementService):
         if not res:
             return BaseResponse(True, "Unknow error. Please try again later!", None).res()
 
-        reset_url = f"http://localhost:8004{reset_path}"
+        reset_url = f"${SERVICE_ROUTES['/auth']}{reset_path}"
         message = {
             'subject': 'Transcendence Password Reset Email',
             'body': {'email': email, 'reset_url': reset_url},

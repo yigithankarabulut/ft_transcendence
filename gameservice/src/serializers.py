@@ -1,12 +1,18 @@
 from rest_framework import serializers
-from datetime import datetime, timedelta
-from django.utils import timezone
-from .models import Game, Room, Player
-
 
 class CreateRoomSerializer(serializers.Serializer):
     room_limit = serializers.IntegerField(required=True, min_value=2, max_value=4)
     players = serializers.ListField(child=serializers.CharField(), required=True, min_length=1, max_length=3)
+
+    def validate(self, data):
+        if len(data['players']) != data['room_limit'] - 1:
+            raise serializers.ValidationError('Number of players must be equal to room limit')
+        tmp = []
+        for player in data['players']:
+            if player in tmp:
+                raise serializers.ValidationError('Players must be unique')
+            tmp.append(player)
+        return data
 
 
 class UpdateGameSerializer(serializers.Serializer):

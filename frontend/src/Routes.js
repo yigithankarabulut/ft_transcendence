@@ -19,8 +19,16 @@ import ForgotpasswordComponent from "./components/ForgotpasswordComponent.js"
 import ResetpasswordComponent from "./components/ResetpasswordComponent.js"
 import ChangepasswordComponent from "./components/ChangepasswordComponent.js"
 import ConflictusernameComponent from "./components/ConflictusernameComponent.js"
+import AoaComponent from "./components/AoaComponent.js"
+import AuthComponent from "./components/AuthComponent.js"
 
 export const routes = [
+    {
+        path:"/404",
+        htmlPath: "./src/routes/aoa/aoa.html",
+        js: "/src/routes/aoa/Aoa.js",
+        component: AoaComponent,
+    },
     {
         path:"/",
         htmlPath: "./src/routes/homepage/homepage.html",
@@ -146,5 +154,11 @@ export const routes = [
         htmlPath: "./src/routes/conflictusername/conflictusername.html",
         js: "/src/routes/conflictusername/Conflictusername.js",
         component: ConflictusernameComponent,
+    },
+    {
+        path:"/auth",
+        htmlPath: "./src/routes/auth/auth.html",
+        js: "/src/routes/auth/Auth.js",
+        component: AuthComponent,
     }
 ]

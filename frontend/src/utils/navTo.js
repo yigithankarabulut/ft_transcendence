@@ -1,5 +1,6 @@
 
 import { routes } from "../Routes.js";
+import { ws } from "../routes/game/Game.js";
 
 import { onlineStatus } from "./utils.js";
 
@@ -25,6 +26,7 @@ const route = {
     "/reset-password": "fetchResetpassword",
     "/change-password": "fetchChangepassword",
     "/uname": "fetchConflictusername",
+    "/404": "fetchAoa",
     // add more routes here.
 };
 
@@ -41,6 +43,7 @@ export const router = async () => {
             route: routes[0],
             isMatch: true
         }
+        document.getElementById("nav-bar").style.display = "none";
     }
 
     await onlineStatus();
@@ -61,6 +64,9 @@ export const router = async () => {
 }
 
 export const navigateTo = (url) => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close();
+    }
     history.pushState(null, null, url);
     router().then(() => console.log("Navigated to:", url));
 }
@@ -68,3 +74,9 @@ export const navigateTo = (url) => {
 
 window.addEventListener('popstate', router);
 window.addEventListener('DOMContentLoaded', router);
+window.addEventListener('popstate', () => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close();
+    }
+    router();
+});

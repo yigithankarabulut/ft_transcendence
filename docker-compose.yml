@@ -17,6 +17,10 @@ services:
       - authservice
       - mailservice
       - usermanagement
+    environment:
+      - SECRET_KEY=${ApiGateway_SECRET_KEY}
+      - DEBUG=True
+      - FRONTEND_URL=${FRONTEND_URL}
     volumes:
       - ./apigateway:/app
     ports:
@@ -25,8 +29,86 @@ services:
   authservice:
     container_name: authservice
     build: ./authservice
+    environment:
+      - SECRET_KEY=${AuthService_SECRET_KEY}
+      - DEBUG=${AuthService_DEBUG}
+      - INTRA_REDIRECT_URL=${INTRA_REDIRECT_URL}
+      - INTRA_UID=${INTRA_UID}
+      - INTRA_SECRET=${INTRA_SECRET}
+      - INTRA_API_URL=${INTRA_API_URL}
+      - INTRA_CALLBACK_URL=${INTRA_CALLBACK_URL}
+      - FRONTEND_URL=${FRONTEND_URL}
     volumes:
       - ./authservice:/app
+
+  bucketservice:
+    container_name: bucketservice
+    build: ./bucketservice
+    depends_on:
+      - bucketpostgres
+    environment:
+      - SECRET_KEY=${BucketService_SECRET_KEY}
+      - DEBUG=${BucketService_DEBUG}
+      - DB_NAME=${BucketService_DB_NAME}
+      - DB_USER=${BucketService_DB_USER}
+      - DB_PASSWORD=${BucketService_DB_PASSWORD}
+      - DB_HOST=${BucketService_DB_HOST}
+      - DB_PORT=${BucketService_DB_PORT}
+    volumes:
+      - ./bucketservice:/app
+    ports:
+      - "8014:8014"
+
+  friendservice:
+    container_name: friendservice
+    build: ./friendservice
+    depends_on:
+      - friendspostgres
+    environment:
+      - SECRET_KEY=${FriendService_SECRET_KEY}
+      - DEBUG=${FriendService_DEBUG}
+      - DB_NAME=${FriendService_DB_NAME}
+      - DB_USER=${FriendService_DB_USER}
+      - DB_PASSWORD=${FriendService_DB_PASSWORD}
+      - DB_HOST=${FriendService_DB_HOST}
+      - DB_PORT=${FriendService_DB_PORT}
+    volumes:
+      - ./friendservice:/app
+    ports:
+      - "8012:8012"
+
+  gameplayservice:
+    container_name: gameplayservice
+    build: ./gameplayservice
+    depends_on:
+      - redis
+    environment:
+      - SECRET_KEY=${GamePlayService_SECRET_KEY}
+      - DEBUG=${GamePlayService_DEBUG}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+    volumes:
+      - ./gameplayservice:/app
+    ports:
+      - "8011:8011"
+
+  gameservice:
+    container_name: gameservice
+    build: ./gameservice
+    depends_on:
+      - gamepostgres
+    environment:
+      - SECRET_KEY=${GameService_SECRET_KEY}
+      - DEBUG=${GameService_DEBUG}
+      - DB_NAME=${GameService_DB_NAME}
+      - DB_USER=${GameService_DB_USER}
+      - DB_PASSWORD=${GameService_DB_PASSWORD}
+      - DB_HOST=${GameService_DB_HOST}
+      - DB_PORT=${GameService_DB_PORT}
+    volumes:
+      - ./gameservice:/app
+    ports:
+      - "8010:8010"
 
   mailservice:
     container_name: mailservice
@@ -34,103 +116,128 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+    environment:
+      - SECRET_KEY=${MailService_SECRET_KEY}
+      - DEBUG=${MailService_DEBUG}
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+      - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_DEFAULT_VHOST}
+      - RABBITMQ_QUEUE_NAME=${RABBITMQ_QUEUE_NAME}
+      - EMAIL_HOST=${MailService_EMAIL_HOST}
+      - EMAIL_PORT=${MailService_EMAIL_PORT}
+      - EMAIL_USE_TLS=${MailService_EMAIL_USE_TLS}
+      - EMAIL_HOST_USER=${MailService_EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${MailService_EMAIL_HOST_PASSWORD}
     volumes:
       - ./mailservice:/app
 
-  userpostgres:
-    container_name: userpostgres
-    image: postgres:13
+  statusservice:
+    container_name: statusservice
+    build: ./statusservice
     environment:
-      POSTGRES_USER: yigit
-      POSTGRES_PASSWORD: yigit
-      POSTGRES_DB: usermanagement
+      - SECRET_KEY=${StatusService_SECRET_KEY}
+      - DEBUG=${StatusService_DEBUG}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+    volumes:
+      - ./statusservice:/app
     ports:
-      - "5432:5432"
-
-  gamepostgres:
-    container_name: gamepostgres
-    image: postgres:13
-    environment:
-      POSTGRES_USER: yigit
-      POSTGRES_PASSWORD: yigit
-      POSTGRES_DB: gamepostgres
-    ports:
-      - "5433:5432"
-
-  friendspostgres:
-    container_name: friendspostgres
-    image: postgres:13
-    environment:
-      POSTGRES_USER: yigit
-      POSTGRES_PASSWORD: yigit
-      POSTGRES_DB: friendspostgres
-    ports:
-      - "5434:5432"
-
-  ftbucketpostgres:
-    container_name: ftbucketpostgres
-    image: postgres:13
-    environment:
-      POSTGRES_USER: yigit
-      POSTGRES_PASSWORD: yigit
-      POSTGRES_DB: ftbucketpostgres
-    ports:
-      - "5435:5432"
+      - "8020:8020"
 
   usermanagement:
     container_name: usermanagement
     build: ./usermanagement
     depends_on:
       - userpostgres
+    environment:
+      - SECRET_KEY=${UserManagement_SECRET_KEY}
+      - DEBUG=${UserManagement_DEBUG}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - DB_NAME=${UserManagement_DB_NAME}
+      - DB_USER=${UserManagement_DB_USER}
+      - DB_PASSWORD=${UserManagement_DB_PASSWORD}
+      - DB_HOST=${UserManagement_DB_HOST}
+      - DB_PORT=${UserManagement_DB_PORT}
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+      - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_DEFAULT_VHOST}
+      - RABBITMQ_QUEUE_NAME=${RABBITMQ_QUEUE_NAME}
     volumes:
       - ./usermanagement:/app
     ports:
       - "8004:8004"
 
-  gameservice:
-    container_name: gameservice
-    build: ./gameservice
-    depends_on:
-      - gamepostgres
-    volumes:
-      - ./gameservice:/app
-    ports:
-      - "8010:8010"
-
-  friendservice:
-    container_name: friendservice
-    build: ./friends
-    depends_on:
-      - friendspostgres
-    volumes:
-      - ./friends:/app
-    ports:
-      - "8012:8012"
-  
-  ftbucketservice:
-    container_name: ftbucketservice
-    build: ./ftbucketservice
-    volumes:
-      - ./ftbucketservice:/app
-    ports:
-      - "8014:8014"
-
   rabbitmq:
-      container_name: rabbitmq
-      image: rabbitmq:3.8.17-management
-      ports:
-        - "5672:5672"
-        - "15672:15672"
-      healthcheck:
-        test: ["CMD", "rabbitmqctl", "node_health_check"]
-        interval: 30s
-        timeout: 10s
-        retries: 5
-
-  statusserver:
-    container_name: statusserver
-    build: ./statusserver
-    volumes:
-      - ./statusserver:/app
+    container_name: rabbitmq
+    image: rabbitmq:3.8.17-management
     ports:
-      - "8020:8020"
+      - "5672:${RABBITMQ_PORT}"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "node_health_check"]
+      interval: 30s
+      timeout: 10s
+      retries: 5 
+
+  redis:
+    container_name: redis
+    image: redis:6.2.5
+    ports:
+      - "6379:${REDIS_PORT}"
+
+  userpostgres:
+    container_name: userpostgres
+    image: postgres:13
+    environment:
+      POSTGRES_USER: ${UserManagement_DB_USER}
+      POSTGRES_PASSWORD: ${UserManagement_DB_PASSWORD}
+      POSTGRES_DB: ${UserManagement_DB_NAME}
+    ports:
+      - "5432:${UserManagement_DB_PORT}"
+
+  gamepostgres:
+    container_name: gamepostgres
+    image: postgres:13
+    environment:
+      POSTGRES_USER: ${GameService_DB_USER}
+      POSTGRES_PASSWORD: ${GameService_DB_PASSWORD}
+      POSTGRES_DB: ${GameService_DB_NAME}
+    ports:
+      - "5433:${GameService_DB_PORT}"
+
+  friendspostgres:
+    container_name: friendspostgres
+    image: postgres:13
+    environment:
+      POSTGRES_USER: ${FriendService_DB_USER}
+      POSTGRES_PASSWORD: ${FriendService_DB_PASSWORD}
+      POSTGRES_DB: ${FriendService_DB_NAME}
+    ports:
+      - "5434:${FriendService_DB_PORT}"
+
+  bucketpostgres:
+    container_name: bucketpostgres
+    image: postgres:13
+    environment:
+      POSTGRES_USER: ${BucketService_DB_USER}
+      POSTGRES_PASSWORD: ${BucketService_DB_PASSWORD}
+      POSTGRES_DB: ${BucketService_DB_NAME}
+    ports:
+      - "5435:${BucketService_DB_PORT}"
+
+
+
+
+
+  
+
+
+
+
