@@ -56,5 +56,4 @@ document.getElementById('FtButton').addEventListener("click", () => {
         });
     })
 });
-
 }

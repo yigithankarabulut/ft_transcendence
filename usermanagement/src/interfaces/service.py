@@ -6,7 +6,7 @@ from ..utils import BaseResponse
 class IUserManagementService(ABC):
 
     @abstractmethod
-    def get(self, id: int):
+    def get(self, id):
         pass
 
     @abstractmethod
@@ -14,7 +14,7 @@ class IUserManagementService(ABC):
         pass
 
     @abstractmethod
-    def update(self, user: dict) -> BaseResponse:
+    def update(self, user, id) -> BaseResponse:
         pass
 
     @abstractmethod
@@ -50,7 +50,7 @@ class IUserManagementService(ABC):
         pass
 
     @abstractmethod
-    def change_password(self, req: UserManagement) -> BaseResponse:
+    def change_password(self, req, id) -> BaseResponse:
         pass
     
     @abstractmethod

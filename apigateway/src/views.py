@@ -1,3 +1,5 @@
+import logging
+
 import requests
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -10,6 +12,9 @@ class APIGatewayView(APIView):
 
     def operations(self, request, path):
         headers = dict(request.headers)
+        if request.path.startswith('/user/email_verify'):
+            headers['Content-Type'] = 'application/json'
+            return pass_request_to_destination_service(request, path, headers)
         if not (settings.EXCLUDED_ROUTES and request.path in settings.EXCLUDED_ROUTES):
             headers['id'] = str(request.user_id)
         return pass_request_to_destination_service(request, path, headers)
@@ -40,12 +45,25 @@ def pass_request_to_destination_service(request, path, headers):
     if params:
         full_url += f"?{params.urlencode()}"
     method = request.method.lower()
-    response = requests.request(method, full_url, headers=headers, json=request.data)
+    try:
+        response = requests.request(method, full_url, headers=headers, json=request.data)
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error in request: {e}")
+        return Response({'error': 'Internal server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if path.startswith('auth/') and response.status_code == 200 or response.status_code == 207:
         json_response = response.json()
         if 'redirect_url' in json_response:
             return HttpResponseRedirect(json_response['redirect_url'])
+
+    if path.startswith('user/email_verify') and response.status_code == 200:
+        try:
+            json_response = response.json()
+            if 'redirect_url' in json_response:
+                return HttpResponseRedirect(json_response['redirect_url'])
+        except Exception as e:
+            logging.error(f"Error in request: {e}")
+            return Response({'error': 'Internal server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if response.headers.get('content-type') == 'application/json':
         return Response(response.json(), status=response.status_code)
