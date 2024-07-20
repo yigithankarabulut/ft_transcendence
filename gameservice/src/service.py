@@ -282,10 +282,16 @@ class GameService(IGameService):
         win_count = 0
         lose_count = 0
         for g in game:
-            if g.player1_score > g.player2_score:
-                win_count += 1
+            if g.player1 == user_id:
+                if g.player1_score > g.player2_score:
+                    win_count += 1
+                else:
+                    lose_count += 1
             else:
-                lose_count += 1
+                if g.player2_score > g.player1_score:
+                    win_count += 1
+                else:
+                    lose_count += 1
         stats = {
             "total_games": game.count(),
             "win_count": win_count,

@@ -32,7 +32,6 @@ export async function fetchLocaltournament() {
             ball: { x: 400, y: 200, dx: 5, dy: 5 },
             inProgress: false
         };
-        
         document.getElementById('start-tournement').addEventListener('click', () => {
             players = [
                 document.getElementById('player1').value,
