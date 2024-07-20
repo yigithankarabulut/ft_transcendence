@@ -189,12 +189,12 @@ class AuthHandler(viewsets.ViewSet):
         if err:
             logging.error("Email verification failed %s", res)
             return Response(res, status=500)
-        logging.info('Email verified successfully')
         redirect_url = f"{settings.FRONTEND_URL}/login"
         resp = {
             "redirect_url": redirect_url,
         }
-        return Response(resp, status=200, content_type='application/json', headers={'Access-Control-Allow-Origin': '*'})
+        logging.error('Email verified successfully %s', resp)
+        return Response(resp, status=200)#, content_type='application/json', headers={'Access-Control-Allow-Origin': '*'}
 
     def oauth_user_create(self, request):
         req = OauthCreateSerializer(data=request.data)
