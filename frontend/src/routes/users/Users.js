@@ -24,7 +24,7 @@ export async function fetchUsers() {
             throw new Error(errorData.error);
         }
         const data = await response.json();
-        const currentUser = data[0].data[0];
+        const currentUser = data.data[0];
         const currentUserId = currentUser.id;
         document.getElementById('search-form').addEventListener("submit", function(event) {
             event.preventDefault();
@@ -40,9 +40,9 @@ export async function fetchUsers() {
                 }
             });
             const data = await response.json();
-            const users = data[0].data;
+            const users = data.data;
 
-            let paginate_data = data[0].pagination;
+            let paginate_data = data.pagination;
             let totalPages = paginate_data.total_pages;
 
             const tableBody = document.querySelector('.widget-26 tbody');
