@@ -1,6 +1,9 @@
+import logging
+
 import requests
 from django.conf import settings
 from django.http import JsonResponse
+
 
 class JWTAuthenticationMiddleware:
     def __init__(self, get_response):
@@ -12,7 +15,12 @@ class JWTAuthenticationMiddleware:
         return response
 
     def process_view(self, request, view_func, view_args, view_kwargs):
+        if request.path.startswith('/api'):
+            request.path = request.path[4:]
         if request.path in self.paths_to_exclude:
+            return None
+
+        if request.path.startswith('/user/email_verify'):
             return None
 
         token = request.headers.get('Authorization')

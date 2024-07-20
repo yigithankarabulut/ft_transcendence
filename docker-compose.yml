@@ -3,12 +3,17 @@ version: '3.8'
 services:
   frontend:
     container_name: frontend
-    image: nginx
+    build: ./frontend
+    depends_on:
+      - apigateway
+      - bucketservice
+      - gameplayservice
+      - statusservice
     volumes:
       - ./frontend:/usr/share/nginx/html
       - ./frontend/nginx.conf:/etc/nginx/nginx.conf
     ports:
-      - "808:80"
+      - "443:443"
 
   apigateway:
     container_name: apigateway
@@ -40,6 +45,8 @@ services:
       - FRONTEND_URL=${FRONTEND_URL}
     volumes:
       - ./authservice:/app
+    ports:
+        - "8001:8001"
 
   bucketservice:
     container_name: bucketservice
@@ -132,6 +139,8 @@ services:
       - EMAIL_HOST_PASSWORD=${MailService_EMAIL_HOST_PASSWORD}
     volumes:
       - ./mailservice:/app
+    ports:
+      - "8005:8005"
 
   statusservice:
     container_name: statusservice
@@ -231,13 +240,4 @@ services:
       POSTGRES_DB: ${BucketService_DB_NAME}
     ports:
       - "5435:${BucketService_DB_PORT}"
-
-
-
-
-
-  
-
-
-
 

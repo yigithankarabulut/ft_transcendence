@@ -1,5 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
+import logging
 
 
 class Online(AsyncWebsocketConsumer):

@@ -29,6 +29,7 @@ GetUserByID_URL = "http://apigateway:8000/user/get/id"
 CheckGame_URL = "http://apigateway:8000/game/check"
 GameUpdate_URL = "http://apigateway:8000/game/update"
 
+
 class Pong(AsyncWebsocketConsumer):
 
     def __init__(self, *args, **kwargs):

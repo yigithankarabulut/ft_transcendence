@@ -99,6 +99,7 @@ class FriendsRepository(IFriendsRepository):
             res = Friends.objects.filter(receiver_id=user_id, state=0, deleted_at=None).all().values('sender_id')
         except:
             return ""
+        res = res.order_by('-created_at')
         return res
 
     def set_state(self, sender_id, receiver_id, state):

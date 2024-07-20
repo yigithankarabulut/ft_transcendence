@@ -6,7 +6,7 @@ from .utils import check_token_validity, make_hash_value, generate_2fa_code
 from .publisher import PublisherBase
 from .serializers import ManagementSerializer
 from .models import UserManagement, OAuthUser
-from usermanagement.settings import SERVICE_ROUTES
+from usermanagement.settings import SERVICE_ROUTES, FRONTEND_URL
 from django.core.paginator import Paginator, EmptyPage
 from django.db import transaction
 from .interfaces.service import IUserManagementService
@@ -21,14 +21,14 @@ class UserManagementService(IUserManagementService):
         self.repository = repository
         self.oauth_repository = oauth_repository
 
-    def get(self, id: int) -> BaseResponse:
+    def get(self, id) -> BaseResponse:
         user = self.repository.get(id)
         if not user:
             return BaseResponse(True, "User not found", None).res()
         res = ManagementSerializer().response([user])
         return BaseResponse(False, "User found", res).res()
 
-    def update(self, user: UserManagement, id) -> BaseResponse:
+    def update(self, user, id) -> BaseResponse:
         data = self.repository.get_by_id(id)
         if not data:
             return BaseResponse(True, "User not found", None).res()
@@ -106,8 +106,10 @@ class UserManagementService(IUserManagementService):
         paginator = Paginator(users, limit)
         try:
             pagineted_users = paginator.page(page)
-        except EmptyPage:
-            return BaseResponse(True, "There is no data on this page", None).res()
+        except Exception as e:
+            if e is EmptyPage:
+                return BaseResponse(False, "There is no data on this page", None).res()
+            return BaseResponse(True, "Failed to get users", None).res()
 
         if not pagineted_users:
             return BaseResponse(False, "No users found", None).res()
@@ -121,7 +123,7 @@ class UserManagementService(IUserManagementService):
         }
         return BaseResponse(False, "Users found", res, paginate_data).res()
 
-    def delete(self, id: int)-> BaseResponse:
+    def delete(self, id: int) -> BaseResponse:
         user = self.repository.get(id)
         if not user:
             return BaseResponse(True, "User not found", None).res()
@@ -167,7 +169,8 @@ class UserManagementService(IUserManagementService):
             'email_verify',
             kwargs={'uidb64': uid, 'token': encoded_token},
         )
-        verify_url = f"${SERVICE_ROUTES['/auth']}{verify_url}"
+
+        verify_url = f"{FRONTEND_URL}/api{verify_url}"
         message = {
             'subject': 'Transcendence Email Verification',
             'body': {'email': user.email, 'verify_url': verify_url},
@@ -258,7 +261,7 @@ class UserManagementService(IUserManagementService):
         if not res:
             return BaseResponse(True, "Unknow error. Please try again later!", None).res()
 
-        reset_url = f"${SERVICE_ROUTES['/auth']}{reset_path}"
+        reset_url = f"{FRONTEND_URL}/api{reset_path}"
         message = {
             'subject': 'Transcendence Password Reset Email',
             'body': {'email': email, 'reset_url': reset_url},
