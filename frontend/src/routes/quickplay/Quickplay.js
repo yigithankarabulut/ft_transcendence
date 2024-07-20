@@ -1,6 +1,7 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement } from "../../utils/utils.js";
-const gameCreateUrl = "http://127.0.0.1:8000/game/room";
+import { gameCreateUrl } from "../../contants/contants.js";
+
 export async function fetchQuickplay() {
     const access_token = localStorage.getItem("access_token");
     if (!access_token) {

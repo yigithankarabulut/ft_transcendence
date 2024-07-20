@@ -1,11 +1,8 @@
 import { navigateTo } from "../../utils/navTo.js";
+import { goPagination } from "../../utils/utils.js";
+import { userGetByIdUrl, userDetailUrl, requestsList, acceptUrl, rejectUrl } from "../../contants/contants.js";
 
-const userGetByIdUrl = "http://127.0.0.1:8000/user/get/id";
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
-const requestsList = "http://127.0.0.1:8000/friends/request";
-const acceptUrl = "http://127.0.0.1:8000/friends/accept";
-const rejectUrl = "http://127.0.0.1:8000/friends/reject";
-
+let currentPage = 1; // Current page
 
 export async function fetchFriendrequests() {
     const access_token = localStorage.getItem("access_token");
@@ -27,9 +24,7 @@ export async function fetchFriendrequests() {
     const data = await response_user.json();
     const user = data[0].data[0];
 
-
-
-    const response = await fetch(requestsList + "?page=1&limit=10" , {
+    const response = await fetch(requestsList + "?page=" + currentPage + "&limit=5" , {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -44,6 +39,9 @@ export async function fetchFriendrequests() {
 
     const requests_res = await response.json();
     const requests = requests_res.data
+    let pagination = requests_res.pagination;
+    let totalPages = pagination.total_pages;
+
 
     console.log(requests);
     const tbody = document.querySelector(".table tbody");
@@ -148,4 +146,8 @@ export async function fetchFriendrequests() {
                 console.error(error);
             });
     });
+    goPagination(totalPages, currentPage, async (newPage) => {
+        currentPage = newPage;
+        fetchFriendrequests();
+    }, "pagination-container");
 }

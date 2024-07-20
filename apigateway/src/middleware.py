@@ -1,7 +1,8 @@
+import logging
+
 import requests
 from django.conf import settings
 from django.http import JsonResponse
-import logging
 
 
 class JWTAuthenticationMiddleware:
@@ -14,7 +15,12 @@ class JWTAuthenticationMiddleware:
         return response
 
     def process_view(self, request, view_func, view_args, view_kwargs):
+        if request.path.startswith('/api'):
+            request.path = request.path[4:]
         if request.path in self.paths_to_exclude:
+            return None
+
+        if request.path.startswith('/user/email_verify'):
             return None
 
         token = request.headers.get('Authorization')
@@ -22,8 +28,11 @@ class JWTAuthenticationMiddleware:
             return JsonResponse({'error': 'Missing token'}, status=401)
 
         response = requests.post(f"{settings.SERVICE_ROUTES['/auth']}/auth/token/validate", headers={'Authorization': token})
+
         if response.status_code != 200:
-            return JsonResponse({'error': 'Invalid token'}, status=401)
+            err_msg = response.json().get('error')
+            status = response.status_code
+            return JsonResponse({'error': err_msg}, status=status)
 
         request.user_id = response.json().get('user_id')
         return None

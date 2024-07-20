@@ -1,13 +1,9 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { userStatuses } from "../../utils/utils.js";
+import { goPagination } from "../../utils/utils.js";
+import { friendList, friendDelete, userDetailUrl, singleUserDetailUrl, pictureUrl } from "../../contants/contants.js";
 
-
-const friendList = "http://127.0.0.1:8000/friends/list";
-const friendDelete = "http://127.0.0.1:8000/friends/delete";
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
-const singleUserDetailUrl = "http://127.0.0.1:8000/user/get/id";
-const pictureUrl = "http://localhost:8014/bucket/image/serve";
-
+let currentPage = 1; // Current page
 export async function fetchFriends() {
 
     const access_token = localStorage.getItem("access_token");
@@ -30,7 +26,7 @@ export async function fetchFriends() {
         const currentUser = data_user[0].data[0];
         const currentUserId = currentUser.id;
 
-        const response = await fetch(friendList + "?page=1" + "&limit=10", {
+        const response = await fetch(friendList + "?page=" + currentPage + "&limit=5", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -40,6 +36,8 @@ export async function fetchFriends() {
         const data = await response.json();
 
         const users = data.data;
+        const pagination = data.pagination;
+        const totalPages = pagination.total_pages;
 
 
         const tableBody = document.querySelector('.widget-26 tbody');
@@ -124,7 +122,10 @@ export async function fetchFriends() {
             });
         });
         });
-
+        goPagination(totalPages, currentPage, async (newPage) => {
+            currentPage = newPage;
+            fetchFriends();
+        }, "pagination-container");
     }
 }
 

@@ -1,18 +1,11 @@
 import { navigateTo } from "../../utils/navTo.js";
+import { goPagination, CheckAuth, RefreshToken} from "../../utils/utils.js";
+import { userDetailUrl, matchHistoryUrl, pictureUrl } from "../../contants/contants.js";
 
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
-const matchHistoryUrl = "http://127.0.0.1:8000/game/history";
-const pictureUrl = "http://localhost:8014/bucket/image/serve";
-const matchesPerPage = 3; // Number of matches per page
-let matches = []; // Match history data
 let currentPage = 1; // Current page
 
 export async function fetchProfile() {
-    const access_token = localStorage.getItem("access_token");
-    if (!access_token) {
-        navigateTo("/login");
-        return;
-    } else {
+
         console.log("Fetching user details");
         const response_user = await fetch(userDetailUrl, {
             method: "GET",
@@ -41,7 +34,7 @@ export async function fetchProfile() {
         }
 
         console.log("Fetching match history");
-        const response = await fetch(`${matchHistoryUrl}?username=${user.username}&page=${currentPage}&limit=${matchesPerPage}`, {
+        const response = await fetch(`${matchHistoryUrl}?username=${user.username}&page=${currentPage}&limit=3`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -53,8 +46,11 @@ export async function fetchProfile() {
             throw new Error(errorData.error);
         }
         const data = await response.json();
-        matches = data.data;
+        let matches = data.data;
+        let pagination = data.pagination;
+        let totalPages = pagination.total_pages;
         let stats = data.stats;
+
 
         document.getElementById("profile-pic").src = pictureUrl + "?id=" + user.id;
         document.getElementById('total-games').textContent = stats.total_games;
@@ -64,12 +60,9 @@ export async function fetchProfile() {
         const matchTableBody = document.querySelector("#match-history-table tbody");
         matchTableBody.innerHTML = "";
 
-        // Calculate start and end indices for the current page
-        const startIndex = (currentPage - 1) * matchesPerPage;
-        const endIndex = Math.min(startIndex + matchesPerPage, matches.length);
-        // Render match rows
-        for (let i = startIndex; i < endIndex; i++) {
-            const match = matches[i];
+
+        matches.forEach(match => {
+
             const date = new Date(match.date).toLocaleString();
             const row = document.createElement("tr");
             row.innerHTML = `
@@ -108,47 +101,9 @@ export async function fetchProfile() {
                 </tr>
             `;
             matchTableBody.appendChild(row);
-        }
-
-        const paginationContainer = document.getElementById("pagination");
-        paginationContainer.innerHTML = "";
-
-        const totalPages = Math.ceil(matches.length / matchesPerPage);
-
-        // Create previous button
-        const prevButton = document.createElement("li");
-        prevButton.innerHTML = `<li class="page-item ${currentPage === 1 ? "disabled" : ""}"><a href="#" class="page-link">&laquo;</a></li>`;
-        prevButton.addEventListener("click", async (event) => {
-            event.preventDefault();
-            if (currentPage > 1) {
-                currentPage--;
-                await fetchProfile();
-            }
         });
-        paginationContainer.appendChild(prevButton);
-
-        // Create page number buttons
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = document.createElement("li");
-            pageButton.innerHTML = `<li class="page-item ${i === currentPage ? "active" : ""}"><a href="#" class="page-link">${i}</a></li>`;
-            pageButton.addEventListener("click", async (event) => {
-                event.preventDefault();
-                currentPage = i;
-                await fetchProfile();
-            });
-            paginationContainer.appendChild(pageButton);
-        }
-
-        // Create next button
-        const nextButton = document.createElement("li");
-        nextButton.innerHTML = `<li class="page-item ${currentPage === totalPages ? "disabled" : ""}"><a href="#" class="page-link">&raquo;</a></li>`;
-        nextButton.addEventListener("click", async (event) => {
-            event.preventDefault();
-            if (currentPage < totalPages) {
-                currentPage++;
-                await fetchProfile();
-            }
-        });
-        paginationContainer.appendChild(nextButton);
-    }
+    goPagination(totalPages, currentPage, async (newPage) => {
+        currentPage = newPage;
+        fetchProfile();
+    }, "pagination-container");
 }

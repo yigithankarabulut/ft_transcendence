@@ -1,8 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import viewsets
 import logging
-import usermanagement.settings
-from django.http import HttpResponseRedirect
+from django.conf import settings
 from .service import UserManagementService
 from .repository import UserManagementRepository, OAuthUserRepository
 from .serializers import RegisterSerializer, OauthCreateSerializer, ResetPasswordSerializer
@@ -21,7 +20,9 @@ class UserManagementHandler(viewsets.ViewSet):
         user_id = request.headers.get('id')
         if not user_id:
             return Response({'error': 'User id is required'}, status=400)
-        res = self.service.get(user_id)
+        res, err = self.service.get(user_id)
+        if err:
+            return Response(res, status=500)
         return Response(res, status=200)
 
     def get_user_by_username(self, request):
@@ -53,7 +54,9 @@ class UserManagementHandler(viewsets.ViewSet):
         if not id:
             return Response({'error': 'Id is required'}, status=400)
         user = req.bind(req.validated_data)
-        res = self.service.update(user, id)
+        res, err = self.service.update(user, id)
+        if err:
+            return Response(res, status=500)
         return Response(res, status=200)
 
     def update_username(self, request):
@@ -80,7 +83,13 @@ class UserManagementHandler(viewsets.ViewSet):
         req = SearchUserToPaginationSerializer(data=request.query_params)
         if not req.is_valid():
             return Response(req.errors, status=400)
-        res = self.service.search(req.validated_data['key'], req.validated_data['page'], req.validated_data['limit'])
+        res, err = self.service.search(
+            req.validated_data['key'],
+            req.validated_data['page'],
+            req.validated_data['limit'],
+        )
+        if err:
+            return Response(res, status=500)
         return Response(res, status=200)
 
     def delete_user(self, request):
@@ -167,16 +176,25 @@ class AuthHandler(viewsets.ViewSet):
         res, err = self.service.redirect_reset_password(uidb64, token)
         if err:
             return Response(res, status=500)
-        return HttpResponseRedirect(usermanagement.settings.FRONTEND_URL + '/reset-password?uidb64=' + uidb64 + '&token=' + token)
+        redirect_url = f"{settings.FRONTEND_URL}/reset-password?uidb64={uidb64}&token={token}"
+        resp = {
+            "redirect_url": redirect_url,
+        }
+        return Response(resp, status=200)
 
     def email_verify(self, request, uidb64=None, token=None):
         if not uidb64 or not token:
             return Response({'error': 'invalid url'}, status=400)
         res, err = self.service.email_verify(request, uidb64, token)
         if err:
+            logging.error("Email verification failed %s", res)
             return Response(res, status=500)
         logging.info('Email verified successfully')
-        return HttpResponseRedirect(usermanagement.settings.FRONTEND_URL + '/login')
+        redirect_url = f"{settings.FRONTEND_URL}/login"
+        resp = {
+            "redirect_url": redirect_url,
+        }
+        return Response(resp, status=200, content_type='application/json', headers={'Access-Control-Allow-Origin': '*'})
 
     def oauth_user_create(self, request):
         req = OauthCreateSerializer(data=request.data)

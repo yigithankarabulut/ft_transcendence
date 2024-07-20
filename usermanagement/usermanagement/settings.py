@@ -21,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4+_=!fz64vf%cf-^@d_v$yoty&cd-bk^=*_9623**cn+0v0$q%'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG')
 
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'apigateway', 'usermanagement', 'authservice', '35.242.209.3']
 
@@ -58,13 +58,9 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 SERVICE_ROUTES = {
     '/auth': 'http://authservice:8001',
-    # '/auth': 'http://localhost:8001',
-    # '/friend': 'http://friend:8002',
-    # '/friend': 'http://localhost:8002',
-    # '/match': 'http://localhost:8008',
 }
 
-FRONTEND_URL = 'http://127.0.0.1:808'
+FRONTEND_URL = os.environ.get('FRONTEND_URL')
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 
@@ -100,11 +96,11 @@ WSGI_APPLICATION = 'usermanagement.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'usermanagement',
-        'USER': 'yigit',
-        'PASSWORD': 'yigit',
-        'HOST': 'userpostgres',
-        'PORT': '5432',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
 

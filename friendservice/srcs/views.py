@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
-from .serializers import BaseSerializer, GetByIdSerializer, PaginationSerializer, ReceiverSerializer
+from .serializers import PaginationSerializer, ReceiverSerializer
 from .service import FriendsService
 from .repository import FriendsRepository
 

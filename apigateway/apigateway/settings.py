@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#fvj*dfcvw*q5!$2)=29sw+z$)1w#f6#6u@k=r(x47(c+g657v'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = ['35.242.209.3', 'localhost', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = ['35.242.209.3', 'localhost', '127.0.0.1', '0.0.0.0', 'apigateway', 'usermanagement', 'authservice', 'gameservice', 'friendservice', 'statusservice', 'gameplayservice', '[::1]']
 
 
 # Application definition
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -58,19 +60,15 @@ CORS_ALLOW_ALL_HEADERS = True
 
 
 EXCLUDED_ROUTES = ['/user/login', '/user/register', '/user/2fa', '/user/pwd/forgot', 
-                   '/auth/intra', '/auth/intra/callback', '/favicon.ico', 
+                   '/auth/intra', '/auth/intra/callback', '/auth/token/validate', '/auth/token/refresh', 
                    '/user/oauth/create', '/user/email_verify', '/user/reset-password',
-                   '/user/pwd/change', '/user/image', '/user/image/serve']
+                   '/user/pwd/change', '/user/image', '/user/image/serve', '/favicon.ico']
 
 SERVICE_ROUTES = {
     '/auth': 'http://authservice:8001',
     '/friends': 'http://friendservice:8012',
     '/game': 'http://gameservice:8010',
     '/user': 'http://usermanagement:8004',
-    # '/auth': 'http://localhost:8001',
-    # '/user': 'http://localhost:8004',
-    # '/game': 'http://localhost:8010',
-    # '/friend': 'http://localhost:8002',
 }
 
 ROOT_URLCONF = 'apigateway.urls'

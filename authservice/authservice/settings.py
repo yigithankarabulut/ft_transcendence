@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,22 +21,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0-hyp+@u)+h6p0_34ug0npdb)th1se*6#it0x_g^97ul1_)o$4'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = ['35.242.209.3', 'localhost', '127.0.0.1', '0.0.0.0', 'authservice']
+ALLOWED_HOSTS = ['35.242.209.3', 'localhost', '127.0.0.1', '0.0.0.0', 'authservice', 'apigateway', 'usermanagement', 'gameservice', 'friendservice', 'statusservice', 'gameplayservice']
 
-INTRA_REDIRECT_URL = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-dc37cfd139ab23e08bf900d921dfd5e1aaa6d5d5884b8f2d701707e575cc6b36&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fauth%2Fintra%2Fcallback&response_type=code'
-INTRA_UID = 'u-s4t2ud-dc37cfd139ab23e08bf900d921dfd5e1aaa6d5d5884b8f2d701707e575cc6b36'
-INTRA_SECRET = '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'
-INTRA_API_URL = "https://api.intra.42.fr"
-INTRA_CALLBACK_URL = "http://localhost:8000/auth/intra/callback"
+INTRA_REDIRECT_URL = os.environ.get('INTRA_REDIRECT_URL')
+INTRA_UID = os.environ.get('INTRA_UID')
+INTRA_SECRET = os.environ.get('INTRA_SECRET')
+INTRA_API_URL = os.environ.get('INTRA_API_URL')
+INTRA_CALLBACK_URL = os.environ.get('INTRA_CALLBACK_URL')
 
-FRONTEND_URL = "http://127.0.0.1:808"
+
+FRONTEND_URL = os.environ.get('FRONTEND_URL')
 USER_MANAGEMENT_URL = "http://usermanagement:8004"
-# USER_MANAGEMENT_URL = "http://localhost:8004"
 
 # Application definition
 
@@ -70,10 +71,6 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",
-]
 
 ROOT_URLCONF = 'authservice.urls'
 

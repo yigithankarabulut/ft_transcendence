@@ -9,3 +9,4 @@ psycopg2
 psycopg
 daphne
 channels
+channels_redis

@@ -131,7 +131,6 @@ class GameService(IGameService):
         other_game1 = Game.objects.filter(room=room, status=0).first()
         other_game2 = Game.objects.filter(room=room, status=3).first()
         other_game = other_game1 or other_game2
-        logging.error("---------->>>>>> other_game %s", other_game)
         
         if game.player1_score > game.player2_score:
             new_game = Game.objects.create(room=room, status=0, player1=game.player1)
@@ -155,13 +154,16 @@ class GameService(IGameService):
 
     def list_invite(self, user_id, page, limit) -> BaseResponse:
         games = Game.objects.filter(player1=user_id, status=0) | Game.objects.filter(player2=user_id, status=0)
+        games = games.order_by('-created_at')
         paginator = Paginator(games, limit)
         try:
             games = paginator.page(page)
-        except EmptyPage:
-            return BaseResponse(False, 'There is no data in this page', None).res()
+        except Exception as e:
+            if e is EmptyPage:
+                return BaseResponse(False, 'No invites found', None).res()
+            return BaseResponse(True, str(e), None).res()
         if not games:
-            return BaseResponse(False, 'Invite list is empty', None).res()
+            return BaseResponse(False, 'No invites found', None).res()
         resp = []
         for game in games:
             room = Room.objects.get(id=game.room_id)
@@ -197,8 +199,17 @@ class GameService(IGameService):
         res = response.json()
         user = res['data'][0]
 
-        games = Game.objects.filter(status=2).filter(player1=user['id'])
-        games2 = Game.objects.filter(status=2).filter(player2=user['id'])
+        games = Game.objects.filter(status=2).filter(player1=user['id']) | Game.objects.filter(status=2).filter(player2=user['id'])
+        games = games.order_by('-updated_at')
+        paginator = Paginator(games, limit)
+        try:
+            games = paginator.page(page)
+        except Exception as e:
+            if e is EmptyPage:
+                return BaseResponse(False, 'No games found', None).res()
+            return BaseResponse(True, str(e), None).res()
+        if not games:
+            return BaseResponse(False, 'No games found', None).res()
         resp = []
         win_count = 0
         lose_count = 0
@@ -224,46 +235,24 @@ class GameService(IGameService):
                     "username": "Cancelled"
                 }
             resp.append({
-                "player1": username,
-                "player2": user['username'],
-                "player1_score": game.player1_score,
-                "player2_score": game.player2_score,
-                "date": game.updated_at,
-            })
-        for game in games2:
-            room = Room.objects.get(id=game.room_id)
-            players = Player.objects.filter(room=room)
-            player1 = players[0].user_id
-            if player1 != "Cancelled":
-                try:
-                    response = requests.get(f"{SERVICE_ROUTES['/user']}/user/get/id?id={player1}")
-                except Exception as e:
-                    return BaseResponse(True, str(e), None).res()
-                if response.status_code != 200:
-                    return BaseResponse(True, response.json()['error'], None).res()
-                res = response.json()
-                user = res['data'][0]
-                if game.player2_score > game.player1_score:
-                    win_count += 1
-                else:
-                    lose_count += 1
-            else:
-                user = {
-                    "username": "Cancelled"
-                }
-            resp.append({
-                "player1": user['username'],
-                "player2": username,
-                "player1_score": game.player1_score,
-                "player2_score": game.player2_score,
-                "date": game.updated_at,
-            })
+                    "player1": username,
+                    "player2": user['username'],
+                    "player1_score": game.player1_score,
+                    "player2_score": game.player2_score,
+                    "date": game.updated_at,
+                })
         stats = {
             "total_games": len(resp),
             "win_count": win_count,
             "lose_count": lose_count,
         }
-        return BaseResponse(False, 'List of games', resp, None, stats).res()
+        paginate_data = {
+            "current_page": page,
+            "page_size": limit,
+            "total_pages": paginator.num_pages,
+            "total_records": paginator.count
+        }
+        return BaseResponse(False, 'List of games', resp, paginate_data, stats).res()
 
     def check_game(self, user_id, game_id) -> BaseResponse:
         try:

@@ -1,8 +1,6 @@
 import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
 import  { navigateTo } from "../../utils/navTo.js";
-
-const loginUrl = "http://127.0.0.1:8000/user/login";
-const IntraOAuthUrl = "http://127.0.0.1:8000/auth/intra"
+import { loginUrl, IntraOAuthUrl } from "../../contants/contants.js";
 
 export async function fetchLogin() {
 
@@ -58,5 +56,4 @@ document.getElementById('FtButton').addEventListener("click", () => {
         });
     })
 });
-
 }

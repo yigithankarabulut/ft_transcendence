@@ -1,7 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement } from "../../utils/utils.js";
-
-const changeUrlBase = "http://localhost:8000/user/pwd/update";
+import { changeUrlBase } from "../../contants/contants.js"
 
 export async function fetchChangepassword() {
 	const access_token = localStorage.getItem("access_token");

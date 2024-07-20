@@ -1,5 +1,5 @@
 import { navigateTo } from "../../utils/navTo.js";
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
+import { userDetailUrl, GamePlaySocketUrl } from "../../contants/contants.js";
 
 export let ws;
 
@@ -25,7 +25,7 @@ export async function fetchGame() {
   }
 
   const data = await response.json();
-  const user = data[0].data[0];
+  const user = data[0];
 
   if (!game_id)
   {
@@ -33,8 +33,9 @@ export async function fetchGame() {
     return;
   }
 
-  var connection = "ws://localhost:8111/ws/game/" + "?room=" + game_id + "?token=" + access_token;
+  var connection = GamePlaySocketUrl + "?room=" + game_id + "?token=" + access_token;
   ws = new WebSocket(connection);
+
 
 
   ws.onopen = () => {

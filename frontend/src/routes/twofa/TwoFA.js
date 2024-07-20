@@ -1,8 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
-
-
-const url = "http://127.0.0.1:8000/user/2fa";
+import { twofaUrl } from "../../contants/contants.js";
 
 export async function fetch2FA() {
 
@@ -22,7 +20,7 @@ form.addEventListener("submit", (e) => {
     toggleHidden('2fa-code');
     toggleHidden('login-spinner');
 
-    fetch(url, {
+    fetch(twofaUrl, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

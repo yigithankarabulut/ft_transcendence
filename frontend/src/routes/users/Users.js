@@ -1,11 +1,9 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { userStatuses } from "../../utils/utils.js";
+import { goPagination } from "../../utils/utils.js";
+import { searchUrl, friendAdd, userDetailUrl, pictureUrl } from "../../contants/contants.js;
 
-const searchUrl = "http://127.0.0.1:8000/user/search";
-const friendAdd = "http://127.0.0.1:8000/friends/add";
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
-const pictureUrl = "http://localhost:8014/bucket/image/serve";
-
+let currentPage = 1; // Current page
 
 export async function fetchUsers() {
 
@@ -34,7 +32,7 @@ export async function fetchUsers() {
 
         document.getElementById("search-button").addEventListener("click", async () => {
             const searchValue = document.getElementById("search").value;
-            const response = await fetch(searchUrl + "?page=1" + "&limit=5" +"&key=" + searchValue, {
+            const response = await fetch(searchUrl + "?page=" + currentPage + "&limit=5" +"&key=" + searchValue, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -43,6 +41,7 @@ export async function fetchUsers() {
             });
             const data = await response.json();
             const users = data[0].data;
+            const totalPages = data[0].pagination.total_pages;
 
             const tableBody = document.querySelector('.widget-26 tbody');
             tableBody.innerHTML = ''; // Clear previous content
@@ -112,7 +111,10 @@ export async function fetchUsers() {
                 });
             });
         });
-
+        goPagination(totalPages, currentPage, async (newPage) => {
+            currentPage = newPage;
+            fetchUsers();
+        }, "pagination-container");
     }
 }
 

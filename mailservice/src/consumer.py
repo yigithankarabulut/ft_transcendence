@@ -3,21 +3,31 @@ import pika.exceptions
 import json
 import logging
 from .service import MailService
+from mailservice.settings import EMAIL_HOST_USER
 
 
 def send_reset_password_email(payload, mail_service):
-    mail_service.send_email('yigithannkarabulutt@gmail.com', payload['body']['email'], payload['subject'],
-                            f"Please click the link to reset your password. Link: {payload['body']['reset_url']}")
+    mail_service.send_email(EMAIL_HOST_USER,
+                            payload['body']['email'],
+                            payload['subject'],
+                            f"Please click the link to reset your password. Link: {payload['body']['reset_url']}",
+                            )
     logging.info(" [x] Done")
 
 def send_email_verification_email(payload, mail_service):
-    mail_service.send_email('yigithannkarabulutt@gmail.com', payload['body']['email'], payload['subject'],
-                            f"Please click the link to verify your email. Link: {payload['body']['verify_url']}")
+    mail_service.send_email(EMAIL_HOST_USER,
+                            payload['body']['email'],
+                            payload['subject'],
+                            f"Please click the link to verify your email. Link: {payload['body']['verify_url']}",
+                            )
     logging.info(" [x] Done")
 
 def send_2fa_email(payload, mail_service):
-    mail_service.send_email('yigithannkarabulutt@gmail.com', payload['body']['email'], payload['subject'],
-                            f"Your 2FA code is: {payload['body']['code']}")
+    mail_service.send_email(EMAIL_HOST_USER,
+                            payload['body']['email'],
+                            payload['subject'],
+                            f"Your 2FA code is: {payload['body']['code']}",
+                            )
     logging.info(" [x] Done")
 
 class RabbitMQConsumer:
@@ -52,15 +62,15 @@ class RabbitMQConsumer:
         try:
             self._channel.start_consuming()
         except pika.exceptions.ConnectionClosedByBroker as e:
-            print("Connection closed by broker")
+            logging.error("Error occurred while consuming messages:", e)
             self.connect()
             self.start_consuming()
         except Exception as e:
-            logging.info("Error:", e)
+            logging.error("Error:", e)
 
     def close_connection(self):
         try:
             self._connection.close()
         except Exception as e:
-            print("Error:", e)
+            logging.error("Error occurred while closing connection:", e)
         logging.info("Connection closed")

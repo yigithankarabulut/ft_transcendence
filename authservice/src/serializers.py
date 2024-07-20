@@ -6,4 +6,4 @@ class GenerateTokenSerializer(serializers.Serializer):
 
 
 class RefreshTokenSerializer(serializers.Serializer):
-    token = serializers.CharField(required=True)
+    refresh_token = serializers.CharField(required=True)
