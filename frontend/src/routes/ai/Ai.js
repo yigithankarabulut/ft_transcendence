@@ -167,6 +167,43 @@ export async function fetchAi() {
             }
         });
 
+        function finishGame() {
+            gameRunning = false;
+            startButton.style.display = 'block';
+            alert("VS AI is aborted!");
+        }
+
+        // Listen for navigation events
+        const originalPushState = history.pushState;
+        const originalReplaceState = history.replaceState;
+
+        history.pushState = function () {
+            if (gameRunning) {
+                finishGame();
+            }
+            return originalPushState.apply(history, arguments);
+        };
+
+        history.replaceState = function () {
+            if (gameRunning) {
+                finishGame();
+            }
+            return originalReplaceState.apply(history, arguments);
+        };
+
+        window.addEventListener('popstate', () => {
+            if (gameRunning) {
+                finishGame();
+            }
+        });
+
+        function navigateTo(url) {
+            if (gameRunning) {
+                finishGame();
+            }
+            originalNavigateTo(url);
+        }
+
         draw();
     }
 }

@@ -24,7 +24,7 @@ export async function fetchEdit() {
         }
 
         const data = await response.json();
-        const user = data[0].data[0];
+        const user = data.data[0];
 
         document.getElementById("profile-pic").src = pictureUrl + "?id=" + user.id;
 

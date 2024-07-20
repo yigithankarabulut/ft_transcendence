@@ -38,6 +38,7 @@ class Pong(AsyncWebsocketConsumer):
         self.access_token = None
 
     async def connect(self):
+        # burada oda idsi aliniyor url den yaninda kullanici adi alinacak sonuc olarak statlar frontende donulecek
         query_params = self.scope['query_string'].decode('utf-8')
         params = query_params.split('?')
 
@@ -48,7 +49,7 @@ class Pong(AsyncWebsocketConsumer):
         try:
             response = requests.get(
                 GetUserByID_URL,
-                headers={'Authorization': f'Bearer {access_token}'},
+                headers = {'Authorization': f'Bearer {access_token}'},
             )
             if response.status_code == 200:
                 res = response.json()
@@ -58,14 +59,14 @@ class Pong(AsyncWebsocketConsumer):
         except Exception as e:
             logging.error("Error: %s", str(e))
 
-        if tmp_player_name is None:
+        if tmp_player_name == None:
             await self.close()
             return
 
         try:
             response = requests.get(
                 f'{CheckGame_URL}?game_id={tmp_room_id}',
-                headers={'Authorization': f'Bearer {access_token}'},
+                headers = {'Authorization': f'Bearer {access_token}'},
             )
             if response.status_code != 200:
                 await self.close()
@@ -82,35 +83,38 @@ class Pong(AsyncWebsocketConsumer):
         await self.accept()
         logging.error("Room: %s", tmp_room_id)
         logging.error("Player: %s", tmp_player_name)
-        self.room_id = tmp_room_id
-        await self.channel_layer.group_add(
-            self.room_id,
-            self.channel_name
-        )
-        logging.error("Room id: %s", self.room_id)
-        if self.room_id not in rooms:
-            rooms[self.room_id] = {
-                'padd_left': {
-                    'player': self.channel_name,
-                    'info': padd_left.copy(),
-                    'username': tmp_player_name
-                }
-            }
-            self.username = tmp_player_name
-        elif 'padd_left' in rooms[self.room_id] and 'padd_right' not in rooms[self.room_id]:
-            if tmp_player_name == rooms[self.room_id]['padd_left']['username']:
-                await self.close()
-                return
-            rooms[self.room_id]['padd_right'] = {
-                'player': self.channel_name,
-                'info': padd_right.copy(),
-                'username': tmp_player_name
-            }
-            self.username = tmp_player_name
-            await self.start_game(self.room_id)
-        elif 'padd_right' in rooms[self.room_id]:
+        if tmp_room_id in rooms and 'padd_left' in rooms[tmp_room_id] and 'padd_right' in rooms[tmp_room_id]:
             await self.close()
             return
+        else:
+            self.room_id = tmp_room_id
+            await self.channel_layer.group_add(
+                self.room_id,
+                self.channel_name
+            )
+            logging.error("Room id: %s", self.room_id)
+            if self.room_id not in rooms:
+                rooms[self.room_id] = {
+                    'padd_left': {
+                        'player': self.channel_name,
+                        'info': padd_left.copy(),
+                        'username': tmp_player_name
+                    }
+                }
+                self.username = tmp_player_name
+                #rooms[self.room_id]['user_count'] = 1
+                logging.error(rooms[self.room_id])
+            elif len(rooms[self.room_id]) == 1:
+                if tmp_player_name == rooms[self.room_id]['padd_left']['username']:
+                    await self.close()
+                    return
+                rooms[self.room_id]['padd_right'] = {
+                    'player': self.channel_name,
+                    'info': padd_right.copy(),
+                    'username': tmp_player_name
+                }
+                self.username = tmp_player_name
+                await self.start_game(self.room_id)
 
     def init_game(self, room_id):
         rooms[room_id]['ball'] = {
@@ -125,6 +129,9 @@ class Pong(AsyncWebsocketConsumer):
         rooms[room_id]['padd_right']['info']['score'] = 0
         rooms[room_id]['game_status'] = 1
         rooms[room_id]['user_count'] = 2
+        tmp = rooms[room_id]['padd_left']
+        rooms[room_id]['padd_left'] = rooms[room_id]['padd_right']
+        rooms[room_id]['padd_right'] = tmp
 
     async def pong_message(self, event):
         if event['message'] == 'game_over':
@@ -238,10 +245,10 @@ class Pong(AsyncWebsocketConsumer):
         else:
             rooms[room_id]['ball']['speedY'] = 10
             rooms[room_id]['ball']['dir'] = True
-        rooms[room_id]['padd_left']['info']['positionX'] = 60
-        rooms[room_id]['padd_left']['info']['positionY'] = canvas_height / 2 - 100
-        rooms[room_id]['padd_right']['info']['positionX'] = canvas_width - 100
-        rooms[room_id]['padd_right']['info']['positionY'] = canvas_height / 2 - 100
+        #rooms[room_id]['padd_left']['info']['positionX'] = 60
+        #rooms[room_id]['padd_left']['info']['positionY'] = canvas_height / 2 - 100
+        #rooms[room_id]['padd_right']['info']['positionX'] = canvas_width - 100
+        #rooms[room_id]['padd_right']['info']['positionY'] = canvas_height / 2 - 100
 
     def BallCollision(self, room_id):
         if ((rooms[room_id]['ball']['positionX'] +
@@ -305,15 +312,25 @@ class Pong(AsyncWebsocketConsumer):
 
     async def receive(self, text_data=None, bytes_data=None):
         room_id = self.room_id
+        #if text_data == 'w':
+        #    if self.channel_name in rooms[room_id]['padd_left']['player']:
+        #        rooms[room_id]['padd_left']['info']['positionY'] -= rooms[room_id]['padd_left']['info']['speed']
+        #    elif self.channel_name in rooms[room_id]['padd_right']['player']:
+        #        rooms[room_id]['padd_right']['info']['positionY'] -= rooms[room_id]['padd_right']['info']['speed']
+        #elif text_data == 's':
+        #    if self.channel_name in rooms[room_id]['padd_left']['player']:
+        #        rooms[room_id]['padd_left']['info']['positionY'] += rooms[room_id]['padd_left']['info']['speed']
+        #    elif self.channel_name in rooms[room_id]['padd_right']['player']:
+        #        rooms[room_id]['padd_right']['info']['positionY'] += rooms[room_id]['padd_right']['info']['speed']
         if text_data == 'w':
-            if self.channel_name in rooms[room_id]['padd_left']['player']:
+            if self.username == rooms[room_id]['padd_left']['username']:
                 rooms[room_id]['padd_left']['info']['positionY'] -= rooms[room_id]['padd_left']['info']['speed']
-            elif self.channel_name in rooms[room_id]['padd_right']['player']:
+            elif self.username == rooms[room_id]['padd_right']['username']:
                 rooms[room_id]['padd_right']['info']['positionY'] -= rooms[room_id]['padd_right']['info']['speed']
         elif text_data == 's':
-            if self.channel_name in rooms[room_id]['padd_left']['player']:
+            if self.username == rooms[room_id]['padd_left']['username']:
                 rooms[room_id]['padd_left']['info']['positionY'] += rooms[room_id]['padd_left']['info']['speed']
-            elif self.channel_name in rooms[room_id]['padd_right']['player']:
+            elif self.username == rooms[room_id]['padd_right']['username']:
                 rooms[room_id]['padd_right']['info']['positionY'] += rooms[room_id]['padd_right']['info']['speed']
         self.paddleCollision(room_id)
 
@@ -348,8 +365,8 @@ class Pong(AsyncWebsocketConsumer):
                     body = {
                         'game_id': int(self.room_id),
                         'status': 2,
-                        'player1_score': int(rooms[room_id]['padd_left']['info']['score']),
-                        'player2_score': int(rooms[room_id]['padd_right']['info']['score']),
+                        'player1_score': int(rooms[room_id]['padd_right']['info']['score']),
+                        'player2_score': int(rooms[room_id]['padd_left']['info']['score']),
                     }
                     logging.error("------------+++++++++ line: 352, body: %s", body)
                     response = requests.put(
@@ -387,8 +404,8 @@ class Pong(AsyncWebsocketConsumer):
                 body = {
                     'game_id': int(self.room_id),
                     'status': 2,
-                    'player1_score': int(rooms[room_id]['padd_left']['info']['score']),
-                    'player2_score': int(rooms[room_id]['padd_right']['info']['score']),
+                    'player1_score': int(rooms[room_id]['padd_right']['info']['score']),
+                    'player2_score': int(rooms[room_id]['padd_left']['info']['score']),
                 }
                 response = requests.put(
                     GameUpdate_URL,

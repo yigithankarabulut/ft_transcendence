@@ -102,7 +102,7 @@ class UserManagementService(IUserManagementService):
     def search(self, key, page, limit) -> BaseResponse:
         users = self.repository.search(key)
         if not users:
-            return BaseResponse(True, "No users found", None).res()
+            return BaseResponse(False, "No users found", None).res()
         paginator = Paginator(users, limit)
         try:
             pagineted_users = paginator.page(page)

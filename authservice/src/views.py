@@ -14,7 +14,7 @@ def generate_access_token(user_id, jti):
     payload = {
         'user_id': user_id,
         'jti': jti,  # unique identifier for the token pair.
-        'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=100),
+        'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=1),
         'iat': datetime.now(tz=timezone.utc)
     }
     access_token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')

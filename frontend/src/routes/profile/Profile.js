@@ -1,11 +1,16 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { goPagination, CheckAuth, RefreshToken} from "../../utils/utils.js";
+import { goPagination } from "../../utils/utils.js";
 import { userDetailUrl, matchHistoryUrl, pictureUrl } from "../../contants/contants.js";
 
 let currentPage = 1; // Current page
-
+let total_pages = 1;
 export async function fetchProfile() {
-
+    const access_token = localStorage.getItem("access_token");
+    if (!access_token) {
+        navigateTo("/login");
+        return;
+    } else {
+        try {
         console.log("Fetching user details");
         const response_user = await fetch(userDetailUrl, {
             method: "GET",
@@ -20,7 +25,7 @@ export async function fetchProfile() {
         }
 
         const data_user = await response_user.json();
-        const user = data_user[0].data[0];
+        const user = data_user.data[0];
         console.log("User Data:", user);
 
         document.getElementById("full-name").textContent = `${user.first_name} ${user.last_name}`;
@@ -34,39 +39,43 @@ export async function fetchProfile() {
         }
 
         console.log("Fetching match history");
-        const response = await fetch(`${matchHistoryUrl}?username=${user.username}&page=${currentPage}&limit=3`, {
+        const matchResponse = await fetch(`${matchHistoryUrl}?username=${user.username}&page=${currentPage}&limit=3`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${access_token}`,
             }
         });
-        if (!response.ok) {
-            const errorData = await response.json();
+        if (!matchResponse.ok) {
+            const errorData = await matchResponse.json();
             throw new Error(errorData.error);
         }
-        const data = await response.json();
-        let matches = data.data;
-        let pagination = data.pagination;
-        let totalPages = pagination.total_pages;
-        let stats = data.stats;
+        const matchData = await matchResponse.json();
+        const matches = matchData.data;
+        const stats = matchData.stats;
+        const paginate_data = matchData.pagination;
 
+        if (paginate_data) {
+            total_pages = paginate_data.total_pages;
+        }
+
+        if (stats) {
+            document.getElementById('total-games').textContent = stats.total_games;
+            document.getElementById('win-count').textContent = stats.win_count;
+            document.getElementById('lose-count').textContent = stats.lose_count;
+        }
 
         document.getElementById("profile-pic").src = pictureUrl + "?id=" + user.id;
-        document.getElementById('total-games').textContent = stats.total_games;
-        document.getElementById('win-count').textContent = stats.win_count;
-        document.getElementById('lose-count').textContent = stats.lose_count;
-
         const matchTableBody = document.querySelector("#match-history-table tbody");
         matchTableBody.innerHTML = "";
 
 
-        matches.forEach(match => {
-
-            const date = new Date(match.date).toLocaleString();
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <tr>
+        if (matches) {
+            matches.forEach(match => {
+            if (match) {
+                const date = new Date(match.date).toLocaleString();
+                const row = document.createElement("tr");
+                row.innerHTML = `
                     <td>
                         <h6 class="h5 mb-0 text-black">${date}</h6>
                         <hr>
@@ -98,12 +107,19 @@ export async function fetchProfile() {
                             </div>
                         </div>
                     </td>
-                </tr>
-            `;
-            matchTableBody.appendChild(row);
-        });
-    goPagination(totalPages, currentPage, async (newPage) => {
-        currentPage = newPage;
-        fetchProfile();
-    }, "pagination-container");
+                `;
+                matchTableBody.appendChild(row);
+            }
+            goPagination(total_pages, currentPage, async (newPage) => {
+                currentPage = newPage;
+                fetchProfile();
+            }, "pagination-container");
+        })}
+
+          } catch (error) {
+            console.error(error);
+
+          }
+    }
 }
+

@@ -26,6 +26,7 @@ const route = {
     "/reset-password": "fetchResetpassword",
     "/change-password": "fetchChangepassword",
     "/uname": "fetchConflictusername",
+    "/404": "fetchAoa",
     // add more routes here.
 };
 
@@ -42,6 +43,7 @@ export const router = async () => {
             route: routes[0],
             isMatch: true
         }
+        document.getElementById("nav-bar").style.display = "none";
     }
 
     await onlineStatus();
@@ -55,7 +57,6 @@ export const router = async () => {
         if (routeFunction && module[routeFunction]) {
             module[routeFunction]();
         }
-        await onlineStatus().catch(err => console.error("WebSocket connection error:", err));
     } catch (err) {
         console.log("Error while render/routing component:", err);
     }

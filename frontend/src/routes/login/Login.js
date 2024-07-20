@@ -3,7 +3,7 @@ import  { navigateTo } from "../../utils/navTo.js";
 import { loginUrl, IntraOAuthUrl } from "../../contants/contants.js";
 
 export async function fetchLogin() {
-
+document.getElementById("nav-bar").style.display = "none";
 document.getElementById('login-form').addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("email").value;
@@ -56,4 +56,5 @@ document.getElementById('FtButton').addEventListener("click", () => {
         });
     })
 });
+
 }
