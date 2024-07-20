@@ -63,9 +63,10 @@ class UserManagementRepository(IUserManagementRepository):
     def list(self) -> list:
         return UserManagement.objects.all()
 
-    def search(self, key: str) -> list:
+    def search(self, key, id) -> list:
         try:
-            model = UserManagement.objects.filter(first_name__contains=key).all()
+            model = UserManagement.objects.filter(first_name__contains=key).all() | UserManagement.objects.filter(last_name__contains=key).all() | UserManagement.objects.filter(username__contains=key).all()
+            model = model.exclude(id=id)
             return model
         except Exception as e:
             return None

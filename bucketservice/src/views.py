@@ -25,7 +25,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         except requests.exceptions.RequestException as e:
             return Response({'error': 'Internal server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         if response.status_code != 200:
-            return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': response.json()['error']}, status=status.HTTP_401_UNAUTHORIZED)
         serializer = ImageSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

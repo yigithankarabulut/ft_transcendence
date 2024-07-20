@@ -24,7 +24,7 @@ export async function fetchEdit() {
         }
 
         const data = await response.json();
-        const user = data[0].data[0];
+        const user = data.data[0];
 
         document.getElementById("profile-pic").src = pictureUrl + "?id=" + user.id;
 
@@ -35,6 +35,7 @@ export async function fetchEdit() {
         document.querySelector("input[name='user-name']").value = user.username;
         document.querySelector("input[name='last-name']").value = user.last_name;
         document.querySelector("input[name='phone']").value = user.phone;
+        document.querySelector("input[name='email']").value = user.email;
 
         document.getElementById("save-button").addEventListener("click", async () => {
             const access_token = localStorage.getItem("access_token");
@@ -42,6 +43,7 @@ export async function fetchEdit() {
             const firstName = document.querySelector("input[name='first-name']").value;
             const lastName = document.querySelector("input[name='last-name']").value;
             const phone = document.querySelector("input[name='phone']").value;
+            const email = document.querySelector("input[name='email']").value;
             const fields_warning = document.getElementById('fields-warning');
 
             let body = {
@@ -49,7 +51,7 @@ export async function fetchEdit() {
                 last_name: lastName,
                 phone: phone,
                 username: userName,
-                email: user.email,
+                email: email,
             };
 
             try {
@@ -66,6 +68,11 @@ export async function fetchEdit() {
                     const errorData = await response.json();
                     throw errorData;
                 }
+                if (response.status === 207) {
+                    alert("Email updated successfully, please verify your email");
+                    document.getElementById("logout-button").click();
+                    return;
+                }
                 alert("Profile updated successfully");
                 navigateTo("/profile");
 
@@ -80,6 +87,8 @@ export async function fetchEdit() {
                         insertIntoElement('fields-warning', "First name error: " + err.first_name);
                     } else if (err.last_name) {
                         insertIntoElement('fields-warning', "Last name error: " + err.last_name);
+                    } else if (err.email) {
+                        insertIntoElement('fields-warning', "Email error: " + err.email);
                     } else {
                         insertIntoElement('fields-warning', "Error: internal server error");
                         console.log(err);

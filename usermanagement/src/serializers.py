@@ -19,13 +19,13 @@ class CreateManagementSerializer(serializers.Serializer):
 
 
 class PaginationSerializer(serializers.Serializer):
-    page = serializers.IntegerField(required=False, default=1, min_value=1, max_value=500)
-    limit = serializers.IntegerField(required=False, default=10, min_value=1, max_value=500)
+    page = serializers.IntegerField(required=False, default=1, min_value=1)
+    limit = serializers.IntegerField(required=False, default=10, min_value=1)
 
 
 class SearchUserToPaginationSerializer(serializers.Serializer):
-    page = serializers.IntegerField(required=False, default=1, min_value=1, max_value=500)
-    limit = serializers.IntegerField(required=False, default=10, min_value=1, max_value=500)
+    page = serializers.IntegerField(required=False, default=1, min_value=1)
+    limit = serializers.IntegerField(required=False, default=10, min_value=1)
     key = serializers.CharField(required=True, min_length=1, max_length=100)
 
 

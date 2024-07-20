@@ -41,7 +41,7 @@ class IUserManagementRepository(ABC):
         pass
 
     @abstractmethod
-    def search(self, key: str) -> list:
+    def search(self, key, id) -> list:
         pass
 
     @abstractmethod

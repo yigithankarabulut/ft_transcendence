@@ -21,6 +21,7 @@ class UpdateGameSerializer(serializers.Serializer):
     player1_score = serializers.IntegerField(required=True)
     player2_score = serializers.IntegerField(required=True)
 
+
 class PaginationSerializer(serializers.Serializer):
     page = serializers.IntegerField(required=False, default=1, min_value=1, max_value=500)
     limit = serializers.IntegerField(required=False, default=10, min_value=1, max_value=500)

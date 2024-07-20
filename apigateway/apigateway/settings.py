@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = ['35.242.209.3', 'localhost', '127.0.0.1', '0.0.0.0', 'apigateway', 'usermanagement', 'authservice', 'gameservice', 'friendservice', 'statusservice', 'gameplayservice']
+ALLOWED_HOSTS = ['35.242.209.3', 'localhost', '127.0.0.1', '0.0.0.0', 'apigateway', 'usermanagement', 'authservice', 'gameservice', 'friendservice', 'statusservice', 'gameplayservice', '[::1]']
 
 
 # Application definition
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

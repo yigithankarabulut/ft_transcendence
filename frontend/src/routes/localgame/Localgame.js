@@ -1,4 +1,12 @@
-import { navigateTo } from "../../utils/navTo.js";
+import { navigateTo as originalNavigateTo } from "../../utils/navTo.js";
+
+// Override navigateTo function to detect navigation changes
+function navigateTo(url) {
+    if (gameRunning) {
+        finishGame();
+    }
+    originalNavigateTo(url);
+}
 
 export async function fetchLocalgame() {
     const access_token = localStorage.getItem("access_token");
@@ -159,6 +167,36 @@ export async function fetchLocalgame() {
             }
         });
 
+        function finishGame() {
+            gameRunning = false;
+            startButton.style.display = 'block';
+            alert("Local Game is aborted!");
+        }
+
+        // Listen for navigation events
+        const originalPushState = history.pushState;
+        const originalReplaceState = history.replaceState;
+
+        history.pushState = function () {
+            if (gameRunning) {
+                finishGame();
+            }
+            return originalPushState.apply(history, arguments);
+        };
+
+        history.replaceState = function () {
+            if (gameRunning) {
+                finishGame();
+            }
+            return originalReplaceState.apply(history, arguments);
+        };
+
+        window.addEventListener('popstate', () => {
+            if (gameRunning) {
+                finishGame();
+            }
+        });
+
         draw();
     }
-  }
+}

@@ -35,8 +35,6 @@ def check_token_validity(token):
     timestamp = decoded_token.split("-")[-1]
     if not timestamp:
         return "Invalid token format"
-    if now().timestamp() - float(timestamp) > 21600:  # 6 hours in seconds
-        return "Token expired"
     return None
 
 

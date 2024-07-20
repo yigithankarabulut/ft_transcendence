@@ -29,6 +29,7 @@ GetUserByID_URL = "http://apigateway:8000/user/get/id"
 CheckGame_URL = "http://apigateway:8000/game/check"
 GameUpdate_URL = "http://apigateway:8000/game/update"
 
+
 class Pong(AsyncWebsocketConsumer):
 
     def __init__(self, *args, **kwargs):
@@ -128,6 +129,9 @@ class Pong(AsyncWebsocketConsumer):
         rooms[room_id]['padd_right']['info']['score'] = 0
         rooms[room_id]['game_status'] = 1
         rooms[room_id]['user_count'] = 2
+        tmp = rooms[room_id]['padd_left']
+        rooms[room_id]['padd_left'] = rooms[room_id]['padd_right']
+        rooms[room_id]['padd_right'] = tmp
 
     async def pong_message(self, event):
         if event['message'] == 'game_over':
@@ -241,10 +245,10 @@ class Pong(AsyncWebsocketConsumer):
         else:
             rooms[room_id]['ball']['speedY'] = 10
             rooms[room_id]['ball']['dir'] = True
-        rooms[room_id]['padd_left']['info']['positionX'] = 60
-        rooms[room_id]['padd_left']['info']['positionY'] = canvas_height / 2 - 100
-        rooms[room_id]['padd_right']['info']['positionX'] = canvas_width - 100
-        rooms[room_id]['padd_right']['info']['positionY'] = canvas_height / 2 - 100
+        #rooms[room_id]['padd_left']['info']['positionX'] = 60
+        #rooms[room_id]['padd_left']['info']['positionY'] = canvas_height / 2 - 100
+        #rooms[room_id]['padd_right']['info']['positionX'] = canvas_width - 100
+        #rooms[room_id]['padd_right']['info']['positionY'] = canvas_height / 2 - 100
 
     def BallCollision(self, room_id):
         if ((rooms[room_id]['ball']['positionX'] +
@@ -308,15 +312,25 @@ class Pong(AsyncWebsocketConsumer):
 
     async def receive(self, text_data=None, bytes_data=None):
         room_id = self.room_id
+        #if text_data == 'w':
+        #    if self.channel_name in rooms[room_id]['padd_left']['player']:
+        #        rooms[room_id]['padd_left']['info']['positionY'] -= rooms[room_id]['padd_left']['info']['speed']
+        #    elif self.channel_name in rooms[room_id]['padd_right']['player']:
+        #        rooms[room_id]['padd_right']['info']['positionY'] -= rooms[room_id]['padd_right']['info']['speed']
+        #elif text_data == 's':
+        #    if self.channel_name in rooms[room_id]['padd_left']['player']:
+        #        rooms[room_id]['padd_left']['info']['positionY'] += rooms[room_id]['padd_left']['info']['speed']
+        #    elif self.channel_name in rooms[room_id]['padd_right']['player']:
+        #        rooms[room_id]['padd_right']['info']['positionY'] += rooms[room_id]['padd_right']['info']['speed']
         if text_data == 'w':
-            if self.channel_name in rooms[room_id]['padd_left']['player']:
+            if self.username == rooms[room_id]['padd_left']['username']:
                 rooms[room_id]['padd_left']['info']['positionY'] -= rooms[room_id]['padd_left']['info']['speed']
-            elif self.channel_name in rooms[room_id]['padd_right']['player']:
+            elif self.username == rooms[room_id]['padd_right']['username']:
                 rooms[room_id]['padd_right']['info']['positionY'] -= rooms[room_id]['padd_right']['info']['speed']
         elif text_data == 's':
-            if self.channel_name in rooms[room_id]['padd_left']['player']:
+            if self.username == rooms[room_id]['padd_left']['username']:
                 rooms[room_id]['padd_left']['info']['positionY'] += rooms[room_id]['padd_left']['info']['speed']
-            elif self.channel_name in rooms[room_id]['padd_right']['player']:
+            elif self.username == rooms[room_id]['padd_right']['username']:
                 rooms[room_id]['padd_right']['info']['positionY'] += rooms[room_id]['padd_right']['info']['speed']
         self.paddleCollision(room_id)
 
@@ -351,8 +365,8 @@ class Pong(AsyncWebsocketConsumer):
                     body = {
                         'game_id': int(self.room_id),
                         'status': 2,
-                        'player1_score': int(rooms[room_id]['padd_left']['info']['score']),
-                        'player2_score': int(rooms[room_id]['padd_right']['info']['score']),
+                        'player1_score': int(rooms[room_id]['padd_right']['info']['score']),
+                        'player2_score': int(rooms[room_id]['padd_left']['info']['score']),
                     }
                     logging.error("------------+++++++++ line: 352, body: %s", body)
                     response = requests.put(
@@ -390,8 +404,8 @@ class Pong(AsyncWebsocketConsumer):
                 body = {
                     'game_id': int(self.room_id),
                     'status': 2,
-                    'player1_score': int(rooms[room_id]['padd_left']['info']['score']),
-                    'player2_score': int(rooms[room_id]['padd_right']['info']['score']),
+                    'player1_score': int(rooms[room_id]['padd_right']['info']['score']),
+                    'player2_score': int(rooms[room_id]['padd_left']['info']['score']),
                 }
                 response = requests.put(
                     GameUpdate_URL,

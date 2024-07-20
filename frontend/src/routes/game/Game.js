@@ -1,5 +1,5 @@
 import { navigateTo } from "../../utils/navTo.js";
-const userDetailUrl = "http://127.0.0.1:8000/user/details";
+import { userDetailUrl, GamePlaySocketUrl } from "../../contants/contants.js";
 
 export let ws;
 
@@ -25,7 +25,7 @@ export async function fetchGame() {
   }
 
   const data = await response.json();
-  const user = data[0].data[0];
+  const user = data[0];
 
   if (!game_id)
   {
@@ -33,8 +33,9 @@ export async function fetchGame() {
     return;
   }
 
-  var connection = "ws://127.0.0.1:8011/ws/game/" + "?room=" + game_id + "?token=" + access_token;
+  var connection = GamePlaySocketUrl + "?room=" + game_id + "?token=" + access_token;
   ws = new WebSocket(connection);
+
 
 
   ws.onopen = () => {
@@ -49,10 +50,11 @@ export async function fetchGame() {
     ctx.fillRect(paddRight.positionX, paddRight.positionY, paddRight.sizeX, paddRight.sizeY);
 
     ctx.font = '30px Arial';
-    ctx.fillText(paddRight.score, 50, 50);
-    ctx.fillText(paddLeft.score, canvas.width - 50, 50);
-    ctx.fillText(paddLeftUsername, canvas.width - 150, 50);
-    ctx.fillText(paddRightUsername, 75, 50);
+    ctx.fillText(paddRight.score, 150, 50);
+    ctx.fillText(paddRightUsername, 320, 50);
+
+    ctx.fillText(paddLeft.score, canvas.width - 180, 50);
+    ctx.fillText(paddLeftUsername, canvas.width - 420, 50);
   }
 
   function drawBall(ball) {
@@ -65,31 +67,6 @@ export async function fetchGame() {
 
   ws.onmessage = (message) => {
     let items = JSON.parse(message.data);
-
-    /*
-    if (items.message === "game_over") {
-      const requestBody = JSON.stringify(items);
-      const requestHeaders = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${access_token}`
-      };
-      fetch("http://localhost:8000/game/save", {
-        method: "POST",
-        headers: requestHeaders,
-        body: requestBody,
-      }).then((response) => {
-        console.log("Sunucudan gelen yanıt:", response);
-        if (!response.ok) {
-          throw new Error("Error saving game");
-        }
-        return response.json();
-      }).then((data) => {
-        console.log("Sunucudan gelen veri:", data);
-      }).catch((error) => {
-        console.log(error);
-      });
-      navigateTo("/");
-    }*/
 
     console.log(items);
 

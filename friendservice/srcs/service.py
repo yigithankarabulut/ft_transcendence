@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 from .serializers import FriendsSerializer, FriendReqListSerializer
 from .utils import BaseResponse
 
+
 class IFriendsService(ABC):
     @abstractmethod
     def add_friend(self, sender_id, receiver_id) -> BaseResponse:
@@ -29,6 +30,7 @@ class IFriendsService(ABC):
     @abstractmethod
     def get_friends(self, user_id, page, limit) -> BaseResponse:
         pass
+
 
 class FriendsService(IFriendsService):
     def __init__(self, repository: IFriendsRepository):

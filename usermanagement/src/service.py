@@ -6,7 +6,7 @@ from .utils import check_token_validity, make_hash_value, generate_2fa_code
 from .publisher import PublisherBase
 from .serializers import ManagementSerializer
 from .models import UserManagement, OAuthUser
-from usermanagement.settings import SERVICE_ROUTES
+from usermanagement.settings import SERVICE_ROUTES, FRONTEND_URL
 from django.core.paginator import Paginator, EmptyPage
 from django.db import transaction
 from .interfaces.service import IUserManagementService
@@ -21,14 +21,14 @@ class UserManagementService(IUserManagementService):
         self.repository = repository
         self.oauth_repository = oauth_repository
 
-    def get(self, id: int) -> BaseResponse:
+    def get(self, id) -> BaseResponse:
         user = self.repository.get(id)
         if not user:
             return BaseResponse(True, "User not found", None).res()
         res = ManagementSerializer().response([user])
         return BaseResponse(False, "User found", res).res()
 
-    def update(self, user: UserManagement, id) -> BaseResponse:
+    def update(self, user, id) -> BaseResponse:
         data = self.repository.get_by_id(id)
         if not data:
             return BaseResponse(True, "User not found", None).res()
@@ -40,14 +40,56 @@ class UserManagementService(IUserManagementService):
             new_user = self.repository.get_by_phone(user.phone)
             if new_user:
                 return BaseResponse(True, "Phone already exists", None).res()
+        if data.email != user.email:
+            if data.oauth_users > 0:
+                return BaseResponse(True, "You logged in with oauth provider. You can't change your email", None).res()
+            new_user = self.repository.get_by_email(user.email)
+            if new_user:
+                return BaseResponse(True, "Email already exists", None).res()
+        old_mail = data.email
         data.first_name = user.first_name
         data.last_name = user.last_name
         data.username = user.username
         data.phone = user.phone
-        new_user = self.repository.update(data)
-        if not new_user:
+        data.email = user.email
+        new_users = self.repository.update(data)
+        if not new_users:
             return BaseResponse(True, "User update failed", None).res()
-        res = ManagementSerializer().response([new_user])
+        if old_mail != new_users.email:
+            new_users.email_verified = False
+            new_users.email_verify_token = None
+            encoded_token = urlsafe_base64_encode(
+                force_bytes(
+                    make_hash_value(
+                        new_users,
+                        now().timestamp(),
+                    )
+                )
+            )
+            new_users.email_verify_token = encoded_token
+
+            uid = urlsafe_base64_encode(force_bytes(new_users.email))
+            verify_url = reverse(
+                'email_verify',
+                kwargs={'uidb64': uid, 'token': encoded_token},
+            )
+
+            verify_url = f"{FRONTEND_URL}/api{verify_url}"
+            message = {
+                'subject': 'Transcendence Email Verification',
+                'body': {'email': new_users.email, 'verify_url': verify_url},
+                'type': 'email_verify'
+            }
+            publisher = PublisherBase('mail-service')
+            err = publisher.publish_message(message)
+            if err is not True:
+                return BaseResponse(True, "Email verification mail sending failed, but user updated successfully.", None).res()
+            publisher.close_connection()
+            new_user = self.repository.update(new_users)
+
+        res = ManagementSerializer().response([new_users])
+        if old_mail != new_users.email:
+            return BaseResponse(False, "User updated successfully. Email verification mail sent to your email", res).res()
         return BaseResponse(False, "User updated successfully", res).res()
 
     def list(self, page, limit) -> BaseResponse:
@@ -99,15 +141,17 @@ class UserManagementService(IUserManagementService):
             return BaseResponse(True, "Username update failed", None).res()
         return BaseResponse(False, "Username updated successfully", None).res()
 
-    def search(self, key, page, limit) -> BaseResponse:
-        users = self.repository.search(key)
+    def search(self, key, page, limit, id) -> BaseResponse:
+        users = self.repository.search(key, id)
         if not users:
-            return BaseResponse(True, "No users found", None).res()
+            return BaseResponse(False, "No users found", None).res()
         paginator = Paginator(users, limit)
         try:
             pagineted_users = paginator.page(page)
-        except EmptyPage:
-            return BaseResponse(True, "There is no data on this page", None).res()
+        except Exception as e:
+            if e is EmptyPage:
+                return BaseResponse(False, "There is no data on this page", None).res()
+            return BaseResponse(True, "Failed to get users", None).res()
 
         if not pagineted_users:
             return BaseResponse(False, "No users found", None).res()
@@ -121,7 +165,7 @@ class UserManagementService(IUserManagementService):
         }
         return BaseResponse(False, "Users found", res, paginate_data).res()
 
-    def delete(self, id: int)-> BaseResponse:
+    def delete(self, id: int) -> BaseResponse:
         user = self.repository.get(id)
         if not user:
             return BaseResponse(True, "User not found", None).res()
@@ -167,7 +211,8 @@ class UserManagementService(IUserManagementService):
             'email_verify',
             kwargs={'uidb64': uid, 'token': encoded_token},
         )
-        verify_url = f"${SERVICE_ROUTES['/auth']}{verify_url}"
+
+        verify_url = f"{FRONTEND_URL}/api{verify_url}"
         message = {
             'subject': 'Transcendence Email Verification',
             'body': {'email': user.email, 'verify_url': verify_url},
@@ -258,7 +303,7 @@ class UserManagementService(IUserManagementService):
         if not res:
             return BaseResponse(True, "Unknow error. Please try again later!", None).res()
 
-        reset_url = f"${SERVICE_ROUTES['/auth']}{reset_path}"
+        reset_url = f"{FRONTEND_URL}/api{reset_path}"
         message = {
             'subject': 'Transcendence Password Reset Email',
             'body': {'email': email, 'reset_url': reset_url},

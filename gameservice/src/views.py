@@ -43,7 +43,11 @@ class GameHandler(viewsets.ViewSet):
         user_id = request.headers.get('id')
         if not user_id:
             return Response({'error': 'User id is required'}, status=400)
-        res, err = self.service.list_invite(user_id, req.validated_data['page'], req.validated_data['limit'])
+        res, err = self.service.list_invite(
+            user_id,
+            req.validated_data['page'],
+            req.validated_data['limit'],
+        )
         if err:
             return Response(res, status=500)
         return Response(res, status=200)
@@ -64,7 +68,11 @@ class GameHandler(viewsets.ViewSet):
         username = request.query_params.get('username')
         if not username:
             return Response({'error': 'username is required'}, status=400)
-        res, err = self.service.list_history(username, req.validated_data['page'], req.validated_data['limit'])
+        res, err = self.service.list_history(
+            username,
+            req.validated_data['page'],
+            req.validated_data['limit'],
+        )
         if err:
             return Response(res, status=500)
         return Response(res, status=200)

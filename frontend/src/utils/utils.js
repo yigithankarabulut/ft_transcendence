@@ -1,4 +1,4 @@
-import{ ValidateAccessToken, ValidateRefreshToken, userDetailUrl } from "../contants/contants.js";
+import{ ValidateAccessToken, ValidateRefreshToken, userDetailUrl, StatusServiceSocketUrl } from "../contants/contants.js";
 
 export const insertIntoElement = (elementId, element) => {
     const el = document.getElementById(elementId);
@@ -28,10 +28,11 @@ export const toggleHidden = (elementId) => {
 }
 
 export let socket = null;
-export let userStatuses = {};
+export let userStatuses = [];
 
 export async function onlineStatus() {
-    let userId = CheckAuth();
+    let userId = await CheckAuth();
+    console.log('User ID: ', userId);
     if (!userId) {
         return;
     }
@@ -43,7 +44,7 @@ export async function onlineStatus() {
         socket.send(JSON.stringify({ type: 'getOnlineUsers' }));
         return;
     }
-    socket = new WebSocket(`ws://localhost:8020/ws/status/?user_id=${userId}`);
+    socket = new WebSocket(StatusServiceSocketUrl + "?user_id=" + userId);
     socket.onopen = function (event) {
         console.log('Connected to WebSocket');
         localStorage.setItem('status', 'Online');
@@ -67,7 +68,7 @@ export async function onlineStatus() {
     });
     window.addEventListener('online', function () {
         if (socket.readyState === WebSocket.CLOSED) {
-            socket = new WebSocket(`ws://localhost:8020/ws/status/?user_id=${userId}`);
+            socket = new WebSocket(StatusServiceSocketUrl + "?user_id=" + userId);
         }
     });
     window.addEventListener('offline', function () {
@@ -144,13 +145,14 @@ export async function CheckAuth() {
         return false;
     }
     const data = await auth_response.json();
-    if (data.user_id) {
+    if (data && data.user_id) {
         return data.user_id;
     }
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     return false;
 }
+
 export async function RefreshToken() {
     const refresh_token = localStorage.getItem("refresh_token");
     const access_token = localStorage.getItem("access_token");
@@ -180,5 +182,10 @@ export async function RefreshToken() {
     }
     localStorage.setItem("access_token", data.access_token);
     localStorage.setItem("refresh_token", data.refresh_token);
-    return refresh_response.data.user_id;
+
+    if (data && data.user_id) {
+        return data.user_id;
+    } else {
+        return false;
+    }
 }

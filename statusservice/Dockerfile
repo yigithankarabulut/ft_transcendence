@@ -12,6 +12,4 @@ RUN pip3 install --upgrade pip
 
 RUN pip3 install -r requirements.txt
 
-RUN python3 manage.py makemigrations
-
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8020"]
+CMD ["daphne", "statusservice.asgi:application", "-b", "0.0.0.0", "-p", "8020"]
