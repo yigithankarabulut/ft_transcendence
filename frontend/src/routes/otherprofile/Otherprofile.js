@@ -1,5 +1,5 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { userStatuses, goPagination } from "../../utils/utils.js";
+import { userStatuses } from "../../utils/utils.js";
 import { userGetByIdUrl, matchHistoryUrl, pictureUrl } from "../../contants/contants.js";
 const access_token = localStorage.getItem("access_token");
 
@@ -60,6 +60,7 @@ export async function fetchOtherprofile() {
         const paginate_data = matchData.pagination;
         const totalPages = paginate_data.total_pages;
 
+        document.getElementById("profile-pic").src = pictureUrl + "?id=" + user.id;
         document.getElementById('total-games').textContent = stats.total_games;
         document.getElementById('win-count').textContent = stats.win_count;
         document.getElementById('lose-count').textContent = stats.lose_count;
@@ -110,7 +111,6 @@ export async function fetchOtherprofile() {
             `;
             matchTableBody.appendChild(row);
         })
-
         goPagination(totalPages, currentPage, async (newPage) => {
             currentPage = newPage;
             fetchOtherProfile();

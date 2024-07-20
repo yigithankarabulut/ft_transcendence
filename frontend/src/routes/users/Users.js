@@ -1,8 +1,10 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { userStatuses, goPagination } from "../../utils/utils.js";
+import { userStatuses } from "../../utils/utils.js";
+import { goPagination } from "../../utils/utils.js";
 import { searchUrl, friendAdd, userDetailUrl, pictureUrl } from "../../contants/contants.js";
 
-let currentPage = 1;
+let currentPage = 1; // Current page
+
 export async function fetchUsers() {
 
     const access_token = localStorage.getItem("access_token");

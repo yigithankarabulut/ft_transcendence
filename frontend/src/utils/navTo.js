@@ -74,6 +74,7 @@ export const navigateTo = (url) => {
 
 window.addEventListener('popstate', router);
 window.addEventListener('DOMContentLoaded', router);
+
 window.addEventListener('popstate', () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
         ws.close();

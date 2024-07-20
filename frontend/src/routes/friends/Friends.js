@@ -3,13 +3,14 @@ import { userStatuses } from "../../utils/utils.js";
 import { goPagination } from "../../utils/utils.js";
 import { friendList, friendDelete, userDetailUrl, singleUserDetailUrl, pictureUrl } from "../../contants/contants.js";
 
-let currentPage = 1; // Current page
+let currentPage = 1;
 export async function fetchFriends() {
 
     const access_token = localStorage.getItem("access_token");
     if (!access_token) {
         console.log("No access token found");
         navigateTo("/login");
+        return;
     } else {
         const response_user = await fetch(userDetailUrl, {
             method: "GET",
