@@ -56,7 +56,7 @@ export async function fetchProfile() {
         const paginate_data = matchData.pagination;
 
         if (paginate_data) {
-            const total_pages = paginate_data.total_pages;
+            total_pages = paginate_data.total_pages;
         }
 
         if (stats) {
@@ -110,12 +110,12 @@ export async function fetchProfile() {
                 `;
                 matchTableBody.appendChild(row);
             }
+            goPagination(total_pages, currentPage, async (newPage) => {
+                currentPage = newPage;
+                fetchProfile();
+            }, "pagination-container");
         })}
 
-        goPagination(total_pages, currentPage, async (newPage) => {
-            currentPage = newPage;
-            fetchProfile();
-        }, "pagination-container");
           } catch (error) {
             console.error(error);
 
