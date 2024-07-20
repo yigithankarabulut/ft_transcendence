@@ -1,5 +1,5 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { userStatuses } from "../../utils/utils.js";
+import { userStatuses, goPagination } from "../../utils/utils.js";
 import { userGetByIdUrl, matchHistoryUrl, pictureUrl } from "../../contants/contants.js";
 const access_token = localStorage.getItem("access_token");
 
@@ -37,10 +37,8 @@ export async function fetchOtherprofile() {
         document.getElementById("profile-first-name").textContent = user.first_name;
         document.getElementById("profile-last-name").textContent = user.last_name;
         document.getElementById("phone").textContent = user.phone;
+        document.getElementById("profile-status").textContent = user_status ? "Online" : "Offline";
 
-        if (localStorage.getItem("status")) {
-            document.getElementById("profile-status").textContent = localStorage.getItem("status");
-        }
 
         console.log("Fetching match history");
         const matchResponse = await fetch(`${matchHistoryUrl}?username=${user.username}&page=${currentPage}&limit=3`, {
@@ -113,7 +111,7 @@ export async function fetchOtherprofile() {
         })
         goPagination(totalPages, currentPage, async (newPage) => {
             currentPage = newPage;
-            fetchOtherProfile();
+            fetchOtherprofile();
         }, "pagination-container");
     } catch (err) {
         console.log(err);

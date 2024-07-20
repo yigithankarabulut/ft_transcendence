@@ -28,7 +28,7 @@ export const toggleHidden = (elementId) => {
 }
 
 export let socket = null;
-export let userStatuses = {};
+export let userStatuses = [];
 
 export async function onlineStatus() {
     let userId = await CheckAuth();
@@ -145,7 +145,7 @@ export async function CheckAuth() {
         return false;
     }
     const data = await auth_response.json();
-    if (data.user_id) {
+    if (data && data.user_id) {
         return data.user_id;
     }
     localStorage.removeItem("access_token");
@@ -182,5 +182,10 @@ export async function RefreshToken() {
     }
     localStorage.setItem("access_token", data.access_token);
     localStorage.setItem("refresh_token", data.refresh_token);
-    return refresh_response.data.user_id;
+
+    if (data && data.user_id) {
+        return data.user_id;
+    } else {
+        return false;
+    }
 }
