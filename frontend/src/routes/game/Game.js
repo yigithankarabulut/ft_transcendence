@@ -50,10 +50,11 @@ export async function fetchGame() {
     ctx.fillRect(paddRight.positionX, paddRight.positionY, paddRight.sizeX, paddRight.sizeY);
 
     ctx.font = '30px Arial';
-    ctx.fillText(paddRight.score, 50, 50);
-    ctx.fillText(paddLeft.score, canvas.width - 50, 50);
-    ctx.fillText(paddLeftUsername, canvas.width - 150, 50);
-    ctx.fillText(paddRightUsername, 75, 50);
+    ctx.fillText(paddRight.score, 150, 50);
+    ctx.fillText(paddRightUsername, 320, 50);
+
+    ctx.fillText(paddLeft.score, canvas.width - 180, 50);
+    ctx.fillText(paddLeftUsername, canvas.width - 420, 50);
   }
 
   function drawBall(ball) {
