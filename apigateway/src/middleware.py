@@ -20,7 +20,7 @@ class JWTAuthenticationMiddleware:
         if request.path in self.paths_to_exclude:
             return None
 
-        if request.path.startswith('/user/email_verify'):
+        if request.path.startswith('/user/email_verify') or request.path.startswith('/user/reset-password') or request.path.startswith('/user/pwd/change'):
             return None
 
         token = request.headers.get('Authorization')
