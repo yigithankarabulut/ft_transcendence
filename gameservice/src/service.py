@@ -198,8 +198,11 @@ class GameService(IGameService):
             return BaseResponse(True, response.json()['error'], None).res()
         res = response.json()
         user = res['data'][0]
+        owner_id = user['id']
 
-        games = Game.objects.filter(status=2).filter(player1=user['id']) | Game.objects.filter(status=2).filter(player2=user['id'])
+        games = Game.objects.filter(status=2).filter(player1=user['id'])
+        games2 = Game.objects.filter(status=2).filter(player2=user['id'])
+        games = games | games2
         games = games.order_by('-updated_at')
         paginator = Paginator(games, limit)
         try:
@@ -217,6 +220,8 @@ class GameService(IGameService):
             room = Room.objects.get(id=game.room_id)
             players = Player.objects.filter(room=room)
             player2 = players[1].user_id
+            if player2 == owner_id:
+                player2 = players[0].user_id
             if player2 != "Cancelled":
                 try:
                     response = requests.get(f"{SERVICE_ROUTES['/user']}/user/get/id?id={player2}")
@@ -234,18 +239,23 @@ class GameService(IGameService):
                 user = {
                     "username": "Cancelled"
                 }
-            resp.append({
+            if players[0].user_id == owner_id:
+                resp.append({
                     "player1": username,
                     "player2": user['username'],
                     "player1_score": game.player1_score,
                     "player2_score": game.player2_score,
                     "date": game.updated_at,
                 })
-        stats = {
-            "total_games": len(resp),
-            "win_count": win_count,
-            "lose_count": lose_count,
-        }
+            else:
+                resp.append({
+                    "player1":  user['username'],
+                    "player2": username,
+                    "player1_score": game.player1_score,
+                    "player2_score": game.player2_score,
+                    "date": game.updated_at,
+                })
+        stats = self.games_stats(owner_id)
         paginate_data = {
             "current_page": page,
             "page_size": limit,
@@ -264,3 +274,21 @@ class GameService(IGameService):
         if game.player1 == user_id or game.player2 == user_id:
             return BaseResponse(False, 'Game found', None).res()
         return BaseResponse(True, 'You are not part of this game', None).res()
+
+    def games_stats(self, user_id):
+        game = Game.objects.filter(status=2).filter(player1=user_id)
+        game2 = Game.objects.filter(status=2).filter(player2=user_id)
+        game = game | game2
+        win_count = 0
+        lose_count = 0
+        for g in game:
+            if g.player1_score > g.player2_score:
+                win_count += 1
+            else:
+                lose_count += 1
+        stats = {
+            "total_games": game.count(),
+            "win_count": win_count,
+            "lose_count": lose_count,
+        }
+        return stats
