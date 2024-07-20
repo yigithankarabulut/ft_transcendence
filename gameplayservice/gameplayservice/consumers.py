@@ -365,8 +365,8 @@ class Pong(AsyncWebsocketConsumer):
                     body = {
                         'game_id': int(self.room_id),
                         'status': 2,
-                        'player1_score': int(rooms[room_id]['padd_left']['info']['score']),
-                        'player2_score': int(rooms[room_id]['padd_right']['info']['score']),
+                        'player1_score': int(rooms[room_id]['padd_right']['info']['score']),
+                        'player2_score': int(rooms[room_id]['padd_left']['info']['score']),
                     }
                     logging.error("------------+++++++++ line: 352, body: %s", body)
                     response = requests.put(
@@ -404,8 +404,8 @@ class Pong(AsyncWebsocketConsumer):
                 body = {
                     'game_id': int(self.room_id),
                     'status': 2,
-                    'player1_score': int(rooms[room_id]['padd_left']['info']['score']),
-                    'player2_score': int(rooms[room_id]['padd_right']['info']['score']),
+                    'player1_score': int(rooms[room_id]['padd_right']['info']['score']),
+                    'player2_score': int(rooms[room_id]['padd_left']['info']['score']),
                 }
                 response = requests.put(
                     GameUpdate_URL,
