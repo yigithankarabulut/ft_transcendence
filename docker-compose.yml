@@ -15,9 +15,6 @@ services:
       - bucketservice
       - gameplayservice
       - statusservice
-    volumes:
-      - ./frontend:/usr/share/nginx/html
-      - ./frontend/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - "443:443"
     networks:
@@ -34,8 +31,6 @@ services:
       - SECRET_KEY=${ApiGateway_SECRET_KEY}
       - DEBUG=${ApiGateway_DEBUG}
       - FRONTEND_URL=${FRONTEND_URL}
-    volumes:
-      - ./apigateway:/app
     networks:
       - backend
       - frontend
@@ -52,8 +47,6 @@ services:
       - INTRA_API_URL=${INTRA_API_URL}
       - INTRA_CALLBACK_URL=${INTRA_CALLBACK_URL}
       - FRONTEND_URL=${FRONTEND_URL}
-    volumes:
-      - ./authservice:/app
     networks:
       - backend
 
@@ -70,8 +63,6 @@ services:
       - DB_PASSWORD=${BucketService_DB_PASSWORD}
       - DB_HOST=${BucketService_DB_HOST}
       - DB_PORT=${BucketService_DB_PORT}
-    volumes:
-      - ./bucketservice:/app
     networks:
       - backend
       - frontend
@@ -89,8 +80,6 @@ services:
       - DB_PASSWORD=${FriendService_DB_PASSWORD}
       - DB_HOST=${FriendService_DB_HOST}
       - DB_PORT=${FriendService_DB_PORT}
-    volumes:
-      - ./friendservice:/app
     networks:
       - backend
 
@@ -104,8 +93,6 @@ services:
       - DEBUG=${GamePlayService_DEBUG}
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
-    volumes:
-      - ./gameplayservice:/app
     networks:
       - backend
       - frontend
@@ -123,8 +110,6 @@ services:
       - DB_PASSWORD=${GameService_DB_PASSWORD}
       - DB_HOST=${GameService_DB_HOST}
       - DB_PORT=${GameService_DB_PORT}
-    volumes:
-      - ./gameservice:/app
     networks:
       - backend
 
@@ -148,8 +133,6 @@ services:
       - EMAIL_USE_TLS=${MailService_EMAIL_USE_TLS}
       - EMAIL_HOST_USER=${MailService_EMAIL_HOST_USER}
       - EMAIL_HOST_PASSWORD=${MailService_EMAIL_HOST_PASSWORD}
-    volumes:
-      - ./mailservice:/app
     networks:
       - backend
 
@@ -161,8 +144,6 @@ services:
       - DEBUG=${StatusService_DEBUG}
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
-    volumes:
-      - ./statusservice:/app
     networks:
       - backend
       - frontend
@@ -187,8 +168,6 @@ services:
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
       - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_DEFAULT_VHOST}
       - RABBITMQ_QUEUE_NAME=${RABBITMQ_QUEUE_NAME}
-    volumes:
-      - ./usermanagement:/app
     networks:
       - backend
       - frontend

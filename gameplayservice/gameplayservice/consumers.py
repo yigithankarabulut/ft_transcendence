@@ -39,7 +39,6 @@ class Pong(AsyncWebsocketConsumer):
         self.username = None
 
     async def connect(self):
-        # burada oda idsi aliniyor url den yaninda kullanici adi alinacak sonuc olarak statlar frontende donulecek
         query_params = self.scope['query_string'].decode('utf-8')
         params = query_params.split('?')
 
@@ -104,7 +103,6 @@ class Pong(AsyncWebsocketConsumer):
                 }
                 rooms[self.room_id]['game_status'] = 0
                 self.username = tmp_player_name
-                #rooms[self.room_id]['user_count'] = 1
                 logging.error(rooms[self.room_id])
             elif len(rooms[self.room_id]) > 1:
                 if tmp_player_name == rooms[self.room_id]['padd_left']['username']:
@@ -247,10 +245,6 @@ class Pong(AsyncWebsocketConsumer):
         else:
             rooms[room_id]['ball']['speedY'] = 10
             rooms[room_id]['ball']['dir'] = True
-        #rooms[room_id]['padd_left']['info']['positionX'] = 60
-        #rooms[room_id]['padd_left']['info']['positionY'] = canvas_height / 2 - 100
-        #rooms[room_id]['padd_right']['info']['positionX'] = canvas_width - 100
-        #rooms[room_id]['padd_right']['info']['positionY'] = canvas_height / 2 - 100
 
     def BallCollision(self, room_id):
         if ((rooms[room_id]['ball']['positionX'] +
@@ -306,7 +300,6 @@ class Pong(AsyncWebsocketConsumer):
                     if response.status_code == 200:
                         res = response.json()
                         logging.error(res)
-                        # data = res['data']
                 except Exception as e:
                     logging.error(str(e))
                 del rooms[self.room_id]
@@ -314,16 +307,6 @@ class Pong(AsyncWebsocketConsumer):
 
     async def receive(self, text_data=None, bytes_data=None):
         room_id = self.room_id
-        #if text_data == 'w':
-        #    if self.channel_name in rooms[room_id]['padd_left']['player']:
-        #        rooms[room_id]['padd_left']['info']['positionY'] -= rooms[room_id]['padd_left']['info']['speed']
-        #    elif self.channel_name in rooms[room_id]['padd_right']['player']:
-        #        rooms[room_id]['padd_right']['info']['positionY'] -= rooms[room_id]['padd_right']['info']['speed']
-        #elif text_data == 's':
-        #    if self.channel_name in rooms[room_id]['padd_left']['player']:
-        #        rooms[room_id]['padd_left']['info']['positionY'] += rooms[room_id]['padd_left']['info']['speed']
-        #    elif self.channel_name in rooms[room_id]['padd_right']['player']:
-        #        rooms[room_id]['padd_right']['info']['positionY'] += rooms[room_id]['padd_right']['info']['speed']
         if rooms[room_id]['game_status'] != 1:
             return
         if text_data == 'w':
@@ -372,7 +355,6 @@ class Pong(AsyncWebsocketConsumer):
                         'player1_score': int(rooms[room_id]['padd_right']['info']['score']),
                         'player2_score': int(rooms[room_id]['padd_left']['info']['score']),
                     }
-                    logging.error("------------+++++++++ line: 352, body: %s", body)
                     response = requests.put(
                         GameUpdate_URL,
                         data=json.dumps(body),
@@ -422,7 +404,6 @@ class Pong(AsyncWebsocketConsumer):
                 if response.status_code == 200:
                     res = response.json()
                     logging.error(res)
-                    #data = res['data']
             except Exception as e:
                 logging.error(str(e))
             await self.channel_layer.group_send(
@@ -439,7 +420,6 @@ class Pong(AsyncWebsocketConsumer):
                 del rooms[room_id]
                 break
             await asyncio.sleep(0.025)
-    # status 0 waiting status 1 playing status 2 finished status 3 canceled
     async def disconnect_message(self, event):
         room_id = event['message']
         disconnected_user = rooms[room_id]['disconnected_username']
