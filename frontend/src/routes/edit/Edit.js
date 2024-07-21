@@ -106,6 +106,11 @@ export async function fetchEdit() {
 
         document.getElementById("update-avatar").addEventListener("click", async () => {
             const image = document.getElementById("avatar-image").files[0];
+            if (!image)
+            {
+                alert("U need select image first!!");
+                return;
+            }
             const formData = new FormData();
             formData.append('image', image);
 

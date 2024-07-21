@@ -27,7 +27,7 @@ padd_right = {
 
 GetUserByID_URL = "http://apigateway:8000/user/get/id"
 CheckGame_URL = "http://apigateway:8000/game/check"
-GameUpdate_URL = "http://apigateway:8000/game/update"
+GameUpdate_URL = "http://gameservice:8010/game/update"
 
 
 class Pong(AsyncWebsocketConsumer):

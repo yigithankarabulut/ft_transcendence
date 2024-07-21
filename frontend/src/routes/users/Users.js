@@ -33,6 +33,8 @@ export async function fetchUsers() {
 
         document.getElementById("search-button").addEventListener("click", async () => {
             const searchValue = document.getElementById("search").value;
+            if (searchValue == "")
+                return;
             const response = await fetch(searchUrl + "?page=" + currentPage + "&limit=5" +"&key=" + searchValue, {
                 method: "GET",
                 headers: {
