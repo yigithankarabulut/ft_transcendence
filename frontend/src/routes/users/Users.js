@@ -100,7 +100,7 @@ export async function fetchUsers() {
                         <td>
                             <div class="widget-26-job-title">
                                 <a data-nav href="/otherprofile?id=${user.id}">${user.username}</a>
-                                <p class="m-0"><a data-nav href="#" class="employer-name">${user.first_name} ${user.last_name}</a></p>
+                                <p class="m-0"><a data-nav href="otherprofile?id=${user.id}" class="employer-name">${user.first_name} ${user.last_name}</a></p>
                             </div>
                         </td>
                         <td>
@@ -109,7 +109,9 @@ export async function fetchUsers() {
                                 <span>${user_status ? 'Online' : 'Offline'}</span>
                             </div>
                         </td>
-
+                        <td>
+                            <div class="widget-26-job-salary">${user.email}</div>
+                        </td>
                     `;
                     if (userRelations.data[user.id] == 0) //pending
                     {

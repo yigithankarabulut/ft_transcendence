@@ -78,11 +78,14 @@ export async function fetchFriends() {
                         <td>
                             <div class="widget-26-job-title">
                                 <a data-nav href="/otherprofile?id=${user_res.id}">${user_res.username}</a>
-                                <p class="m-0"><a data-nav href="#" class="employer-name">${user_res.first_name} ${user_res.last_name}</a></p>
+                                <p class="m-0"><a data-nav href="/otherprofile?id=${user_res.id}" class="employer-name">${user_res.first_name} ${user_res.last_name}</a></p>
                             </div>
                         </td>
                         <td>
                             <div class="widget-26-job-salary">ID: ${user_res.id}</div>
+                        </td>
+                        <td>
+                            <div class="widget-26-job-salary">${user_res.email}</div>
                         </td>
                         <td>
                             <div class="widget-26-job-category ${user_status ? 'bg-soft-success' : 'bg-soft-danger'}">

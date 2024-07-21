@@ -84,10 +84,6 @@ export async function fetchEdit() {
                             }
                             document.getElementById("logout-button").click();
                             return;
-                        } else if (response.status === 207) {
-                            alert("Email updated successfully, please verify your email");
-                            document.getElementById("logout-button").click();
-                            return;
                         } else if (response.status === 500) {
                             throw errorData;
                         } else {
@@ -95,6 +91,11 @@ export async function fetchEdit() {
                         }
                     });
                 }
+                if (response.status === 207) {
+                    alert("Email updated successfully, please verify your email");
+                    document.getElementById("logout-button").click();
+                    return;
+                } 
                 return response.json();
             };
 
