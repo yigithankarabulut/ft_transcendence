@@ -23,7 +23,7 @@ export async function fetchUsers() {
 
     async function fetchUserSearch(searchValue) {
         try {
-            const response = await fetch(searchUrl + "?page=" + currentPage + "&limit=2" + "&key=" + searchValue, {
+            const response = await fetch(searchUrl + "?page=" + currentPage + "&limit=5" + "&key=" + searchValue, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

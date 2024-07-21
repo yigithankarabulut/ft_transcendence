@@ -27,53 +27,85 @@ export const toggleHidden = (elementId) => {
     }
 }
 
+
 export let socket = null;
 export let userStatuses = [];
+let userId;
 
 export async function onlineStatus() {
-    let userId = await CheckAuth();
-    if (!userId) {
-        return;
-    }
-    // Eğer mevcut bir WebSocket bağlantısı varsa yeni bir bağlantı kurmayın
-    if (socket && socket.readyState === WebSocket.OPEN) {
-        console.log('WebSocket connection already exists');
+    try {
+        const response = await fetch(userDetailUrl, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
+            }
+        });
 
-        // Server'dan online_users listesini iste
-        socket.send(JSON.stringify({ type: 'getOnlineUsers' }));
-        return;
-    }
-    socket = new WebSocket(StatusServiceSocketUrl + "?user_id=" + userId);
-    socket.onopen = function (event) {
-        console.log('Connected to WebSocket');
-        localStorage.setItem('status', 'Online');
-
-    };
-    socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        console.log('Message from server: ', data);
-        userStatuses = data.online_users;
-        console.log('Online users: ', userStatuses);
-    };
-    socket.onclose = function (event) {
-        console.log('WebSocket connection closed');
-    };
-    socket.onerror = function (error) {
-        console.error('WebSocket error: ', error);
-    };
-    window.addEventListener('beforeunload', function () {
-        localStorage.setItem('status', 'Offline');
-        socket.close();
-    });
-    window.addEventListener('online', function () {
-        if (socket.readyState === WebSocket.CLOSED) {
-            socket = new WebSocket(StatusServiceSocketUrl + "?user_id=" + userId);
+        if (!response.ok) {
+            const errorData = await response.json();
+            if (errorData.error === 'Token has expired') {
+                console.log('Token expired, refreshing...');
+                await RefreshToken();
+                return onlineStatus(); // Retry after token refresh
+            } else {
+                throw new Error(errorData.error);
+            }
         }
-    });
-    window.addEventListener('offline', function () {
-        localStorage.setItem('status', 'Offline');
-        socket.close();
-    });
+
+        const data = await response.json();
+        const user = data.data[0];
+        console.log('User ID: ', user.id);
+        userId = user.id;
+
+                // Eğer mevcut bir WebSocket bağlantısı varsa yeni bir bağlantı kurmayın
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            console.log('WebSocket connection already exists');
+
+            // Server'dan online_users listesini iste
+            socket.send(JSON.stringify({ type: 'getOnlineUsers' }));
+            return;
+        }
+        socket = new WebSocket(StatusServiceSocketUrl + "?user_id=" + userId);
+        socket.onopen = function (event) {
+            console.log('Connected to WebSocket');
+            localStorage.setItem('status', 'Online');
+
+        };
+        socket.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+            console.log('Message from server: ', data);
+            userStatuses = data.online_users;
+            console.log('Online users: ', userStatuses);
+        };
+        socket.onclose = function (event) {
+            console.log('WebSocket connection closed');
+        };
+        socket.onerror = function (error) {
+            console.error('WebSocket error: ', error);
+        };
+        window.addEventListener('beforeunload', function () {
+            localStorage.setItem('status', 'Offline');
+            socket.close();
+        });
+        window.addEventListener('online', function () {
+            if (socket.readyState === WebSocket.CLOSED) {
+                socket = new WebSocket(StatusServiceSocketUrl + "?user_id=" + userId);
+            }
+        });
+        window.addEventListener('offline', function () {
+            localStorage.setItem('status', 'Offline');
+            socket.close();
+        });
+
+    } catch (error) {
+        console.error('Error: ', error);
+        if (error.message === 'Token has expired') {
+            console.log('Token expired, refreshing...');
+            await RefreshToken();
+            return onlineStatus(); // Retry after token refresh
+        }
+    }
 }
 
 
@@ -165,6 +197,7 @@ export async function CheckAuth() {
     }
     const data = await auth_response.json();
     if (data && data.user_id) {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>User authenticated');
         return data.user_id;
     }
     localStorage.removeItem("access_token");
