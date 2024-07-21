@@ -1,6 +1,6 @@
 import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
 import  { navigateTo } from "../../utils/navTo.js";
-import { loginUrl, IntraOAuthUrl } from "../../contants/contants.js";
+import { loginUrl, IntraOAuthUrl } from "../../constants/constants.js";
 
 export async function fetchLogin() {
 document.getElementById("nav-bar").style.display = "none";

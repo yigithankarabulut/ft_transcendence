@@ -1,8 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 
 export async function fetchAuth() {
-    console.log("fetchAuth");
-
     const urlParams = new URLSearchParams(window.location.search);
     const access_token = urlParams.get("access_token");
     const refresh_token = urlParams.get("refresh_token");
@@ -12,7 +10,6 @@ export async function fetchAuth() {
         localStorage.setItem("refresh_token", refresh_token);
         navigateTo("/");
     } else {
-        console.log("No access token found");
         navigateTo("/login");
     }
 }

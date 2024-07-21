@@ -69,7 +69,7 @@ class FriendsService(IFriendsService):
             return BaseResponse(True, "Friendship not found", None).res()
         if fr.state != 1:
             return BaseResponse(True, "Friendship not accepted", None).res()
-        if not self.repository.delete(fr.sender_id, fr.receiver_id):
+        if self.repository.delete(fr.sender_id, fr.receiver_id) is False:
             return BaseResponse(True, "Failed to delete friendship", None).res()
         return BaseResponse(False, "Friendship deleted successfully", None).res()
 
@@ -140,12 +140,10 @@ class FriendsService(IFriendsService):
         return BaseResponse(False, "Friends found", res, paginate_data).res()
 
     def get_relationships(self, id, players) -> BaseResponse:
-        res = []
+        res = {}
         for player in players:
             friendship = self.repository.get_state_by_id(id, player)
             if friendship == -1:
                 return BaseResponse(True, "Failed to get relationship", None).res()
-            res.append({
-                player: friendship
-            })
+            res[player] = friendship
         return BaseResponse(False, "Relationships found", res).res()

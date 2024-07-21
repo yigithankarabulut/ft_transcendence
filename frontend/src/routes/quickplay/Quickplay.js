@@ -1,15 +1,14 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { insertIntoElement } from "../../utils/utils.js";
-import { gameCreateUrl } from "../../contants/contants.js";
+import { RefreshToken, insertIntoElement } from "../../utils/utils.js";
+import { gameCreateUrl } from "../../constants/constants.js";
 
 export async function fetchQuickplay() {
-    const access_token = localStorage.getItem("access_token");
-    if (!access_token) {
+
+    if (!localStorage.getItem("access_token")) {
         navigateTo("/login");
         return;
     }
     else {
-    console.log("fetchingquickplay");
     const form = document.querySelector(".requires-validation2");
     form.addEventListener("submit", function (event) {
         event.preventDefault();
@@ -29,35 +28,50 @@ export async function fetchQuickplay() {
                     user4
                 ]
             };
-            fetch(gameCreateUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + access_token,
-                },
-                body: JSON.stringify(data),
-            }).then(res => {
-                if (!res.ok) {
-                    return res.json().then(errorData => {
-                        throw errorData;
+            const postGameCreate = () => {
+                return fetch(gameCreateUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + localStorage.getItem("access_token"),
+                    },
+                    body: JSON.stringify(data),
+                });
+            };
+            const handleResponse = response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        if (response.status === 401 && errorData.error === "Token has expired") {
+                            return RefreshToken().then(() => {
+                                return postGameCreate().then(handleResponse);
+                            });
+                        } else {
+                            throw errorData;
+                        }
                     });
                 }
-                return res.json();
-            }).then(data => {
+                return response.json();
+            };
+            postGameCreate()
+            .then(handleResponse)
+            .then(data => {
                 localStorage.setItem("game_id", data.data.game_id);
                 navigateTo("/game");
-            }).catch((err) => {
-                if (err.error) {
-                    console.error(err.error);
-                    insertIntoElement('fields-warning', "Error: " + err.error);
-                }else if (err.non_field_errors)
-                insertIntoElement('fields-warning', "Error: " + err.error);
+            })
+            .catch(err => {
+                console.error(err.error);
+                insertIntoElement('fields-warning-one', "Error: " + err.error);
+            })
+            .finally(() => {
+                form.classList.add('was-validated');
             });
-        }
-        form.classList.add('was-validated');
-    }, false);
+        } else {
+                form.classList.add('was-validated');
+            }
+        }, false);
 
     const form2 = document.querySelector(".requires-validation");
+
     form2.addEventListener("submit", function (event) {
         event.preventDefault();
         event.stopPropagation();
@@ -71,29 +85,49 @@ export async function fetchQuickplay() {
                     user5
                 ]
             };
-            fetch(gameCreateUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + access_token,
-                },
-                body: JSON.stringify(data),
-            }).then(response => {
+
+            const postGameCreate = () => {
+                return fetch(gameCreateUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + localStorage.getItem("access_token"),
+                    },
+                    body: JSON.stringify(data),
+                });
+            };
+
+            const handleResponse = response => {
                 if (!response.ok) {
                     return response.json().then(errorData => {
-                        throw errorData;
+                        if (response.status === 401 && errorData.error === "Token has expired") {
+                            return RefreshToken().then(() => {
+                                return postGameCreate().then(handleResponse);
+                            });
+                        } else {
+                            throw errorData;
+                        }
                     });
                 }
                 return response.json();
-            }).then(data => {
-                localStorage.setItem("game_id", data.data.game_id);
-                navigateTo("/game");
-            }).catch((err) => {
-            console.error(err.error);
-            insertIntoElement('fields-warning-one', "Error: " + err.error);
-            });
+            };
+            postGameCreate()
+                .then(handleResponse)
+                .then(data => {
+                    localStorage.setItem("game_id", data.data.game_id);
+                    navigateTo("/game");
+                })
+                .catch(err => {
+                    console.error(err.error);
+                    insertIntoElement('fields-warning-one', "Error: " + err.error);
+                })
+                .finally(() => {
+                    form2.classList.add('was-validated');
+                });
+        } else {
+            form2.classList.add('was-validated');
         }
-        form2.classList.add('was-validated');
     }, false);
+
 }
 }

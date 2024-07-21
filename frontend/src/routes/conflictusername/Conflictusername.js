@@ -1,6 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
-import { changeUsernameUrl } from "../../contants/contants.js";
+import { changeUsernameUrl } from "../../constants/constants.js";
 
 
 export async function fetchConflictusername() {
@@ -41,7 +41,6 @@ export async function fetchConflictusername() {
             localStorage.setItem("refresh_token", refresh_token);
             navigateTo("/");
         } catch (err) {
-            console.log("123123123123123", err);
             if (err.error) {
                 insertIntoElement('fields-warning', "Error: " + err.error);
             } else if (err.username) {

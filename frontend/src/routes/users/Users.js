@@ -1,47 +1,48 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { userStatuses } from "../../utils/utils.js";
-import { goPagination } from "../../utils/utils.js";
-import { searchUrl, friendAdd, userDetailUrl, pictureUrl } from "../../contants/contants.js";
+import { userStatuses, RefreshToken, goPagination } from "../../utils/utils.js";
+import { searchUrl, friendAdd, pictureUrl, friendRelationshipUrl } from "../../constants/constants.js";
 
 let currentPage = 1; // Current page
 let total_pages = 1;
 
 export async function fetchUsers() {
+    if (!localStorage.getItem("access_token")) {
 
-    const access_token = localStorage.getItem("access_token");
-    if (!access_token) {
-        console.log("No access token found");
         navigateTo("/login");
-    } else {
-        const response = await fetch(userDetailUrl, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${access_token}`,
-            }
-        });
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error);
-        }
-        const data = await response.json();
-        const currentUser = data.data[0];
-        const currentUserId = currentUser.id;
-        document.getElementById('search-form').addEventListener("submit", function(event) {
-            event.preventDefault();
-        });
+        return;
+    }
 
-        document.getElementById("search-button").addEventListener("click", async () => {
-            const searchValue = document.getElementById("search").value;
-            if (searchValue == "")
-                return;
-            const response = await fetch(searchUrl + "?page=" + currentPage + "&limit=5" +"&key=" + searchValue, {
+    document.getElementById('search-form').addEventListener("submit", function(event) {
+        event.preventDefault();
+    });
+
+    document.getElementById("search-button").addEventListener("click", async () => {
+        const searchValue = document.getElementById("search").value;
+        if (searchValue == "")//TODO: Test Edilecek
+        return;
+        await fetchUserSearch(searchValue);
+    });
+
+    async function fetchUserSearch(searchValue) {
+        try {
+            const response = await fetch(searchUrl + "?page=" + currentPage + "&limit=5" + "&key=" + searchValue, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${access_token}`,
+                    "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
                 }
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                if (errorData.error === 'Token has expired') {
+                    await RefreshToken();
+                    return fetchUserSearch(searchValue); // Retry fetching after token refresh
+                } else {
+                    throw new Error(errorData.error);
+                }
+            }
+
             const data = await response.json();
             const users = data.data;
 
@@ -52,6 +53,22 @@ export async function fetchUsers() {
 
             const tableBody = document.querySelector('.widget-26 tbody');
             tableBody.innerHTML = ''; // Clear previous content
+            const  postData = users.map(user => user.id);
+            console.log(postData);
+            const resp = await fetch(friendRelationshipUrl, { //TODO: Access Token
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
+                },
+                body: JSON.stringify({players:postData})
+            });
+            if (!resp.ok)
+            {
+                console.log("error!");
+            }
+
+            const userRelations = await resp.json();
             if (users) {
                 users.forEach(user => {
                     const userElement = document.createElement('tr');
@@ -76,55 +93,100 @@ export async function fetchUsers() {
                             </div>
                         </td>
                         <td>
-                        <div class="widget-26-job-category ${user_status === false ?  'bg-soft-danger' : 'bg-soft-success' }">
-                                <i class="indicator ${user_status === false ?  ' bg-danger' : 'bg-success' }"></i>
-                                <span>${user_status === true ? 'Online' : 'Offline' }</span>
+                            <div class="widget-26-job-category ${user_status ? 'bg-soft-success' : 'bg-soft-danger'}">
+                                <i class="indicator ${user_status ? 'bg-success' : 'bg-danger'}"></i>
+                                <span>${user_status ? 'Online' : 'Offline'}</span>
                             </div>
                         </td>
+
+                    `;
+                    if (userRelations.data[user.id] == 0) //pending
+                    {
+                        userElement.innerHTML += `
+                            <td>
+                                <div class="widget-26-job-starred" style="background-color:yellow; text-align:center; padding:5px; border-radius:15px;">
+                                    Pending!
+                                </div>
+                            </td>
+                        `;
+                        tableBody.appendChild(userElement);
+                    } else if (userRelations.data[user.id] == 1) //accepted
+                    {
+                        userElement.innerHTML += `
                         <td>
+                            <div class="widget-26-job-starred" style="background-color:green; text-align:center; padding:5px; border-radius:15px;">
+                                Friend!
+                            </div>
+                        </td>
+                        `;
+                        tableBody.appendChild(userElement);
+                    } else if (userRelations.data[user.id] == 5) // non relationship
+                    {
+                        userElement.innerHTML += `
+                            <td>
                             <div class="widget-26-job-starred">
                                 <button id="add-friend-button-${user.id}">Add Friend</button>
                             </div>
-                        </td>
-                    `;
-                    tableBody.appendChild(userElement);
-                    document.getElementById(`add-friend-button-${user.id}`).addEventListener("click", function(event) {
-                        event.preventDefault();
-                        fetch(friendAdd,{
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${access_token}`
-                            },
-                            body: JSON.stringify({
-                                receiver_id: user.id
-                            })
-                        }).then(response => {
-                            if (!response.ok) {
-                                return response.json().then(error => {
-                                    // If the error message is "Cannot add yourself as a friend", throw an error
-                                        throw new Error(error.error);
-                                });
-                            }
-                            return response.json();
-                        }).then(data => {
-                            navigateTo("/users");
-                        }).catch(error => {
-                            // If an error was thrown, display an alert with the error message
-                            alert(error.message);
-                        });
-                    });
-                    goPagination(total_pages, currentPage, async (newPage) => {
-                        currentPage = newPage;
-                        fetchUsers();
-                    }, "pagination-container");
-                });
-            }
-        });
+                            </td>
+                        `;
+                        tableBody.appendChild(userElement);
 
+
+                        document.getElementById(`add-friend-button-${user.id}`).addEventListener("click", function(event) {
+                            event.preventDefault();
+                            const button = document.getElementById(`add-friend-button-${user.id}`);
+                            button.value = "Pending";
+                            button.disabled = true; // Butonu tıklanamaz hale getirme
+                            button.style.backgroundColor = "yellow"; // Arka planı sarı yapma
+                            button.style.color = "black"; // Metin rengini siyah yapma
+                            addUser(user.id);
+                        });
+                    }
+                });
+                goPagination(total_pages, currentPage, async (newPage) => {
+                    currentPage = newPage;
+                    fetchUserSearch(searchValue);
+                }, "pagination-container");
+            }
+        } catch (error) {
+            console.error(error);
+            if (error.message === 'Token has expired') {
+                await RefreshToken();
+                return fetchUserSearch(searchValue); // Retry fetching after token refresh
+            } else {
+                alert(error.message);
+            }
+        }
     }
 
+    async function addUser(userId) {
+        try {
+            const response = await fetch(friendAdd, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("access_token")}`
+                },
+                body: JSON.stringify({
+                    receiver_id: userId
+                })
+            });
 
+            if (!response.ok) {
+                const errorData = await response.json();
+                if (errorData.error === 'Token has expired') {
+                    await RefreshToken();
+                    return addUser(userId); // Retry adding after token refresh
+                } else {
+                    throw new Error(errorData.error);
+                }
+            }
+
+            await response.json();
+            navigateTo("/users");
+        } catch (error) {
+            console.error(error);
+            alert(error.message);
+        }
+    }
 }
-
-

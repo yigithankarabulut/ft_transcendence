@@ -1,6 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
-import { twofaUrl } from "../../contants/contants.js";
+import { twofaUrl } from "../../constants/constants.js";
 
 export async function fetch2FA() {
 

@@ -1,37 +1,45 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { userStatuses, goPagination } from "../../utils/utils.js";
-import { userGetByIdUrl, matchHistoryUrl, pictureUrl } from "../../contants/contants.js";
-const access_token = localStorage.getItem("access_token");
+import { userStatuses, goPagination, RefreshToken } from "../../utils/utils.js";
+import { userGetByIdUrl, matchHistoryUrl, pictureUrl } from "../../constants/constants.js";
 
 let currentPage = 1; // Current page
-
-
+let total_pages = 1;
 export async function fetchOtherprofile() {
-    if (!access_token) {
+    if (!localStorage.getItem("access_token")) {
         navigateTo("/login");
         return;
     }
     try {
-        console.log("Fetching user details");
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
         const user_status = userStatuses.includes(id) ? true : false;
-        const userResponse = await fetch(userGetByIdUrl + "?id=" + id, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${access_token}`,
-            }
-        });
-        if (!userResponse.ok) {
-            const errorData = await userResponse.json();
-            throw new Error(errorData.error);
-        }
-        const userData = await userResponse.json();
-        const user = userData.data[0];
-        console.log(user);
 
-        document.getElementById("profile-pic").src = pictureUrl + "?id=" + user.id;
+        // Fetch user details
+        const fetchUserDetails = async () => {
+            const response = await fetch(userGetByIdUrl + "?id=" + id, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
+                }
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                if (errorData.error === 'Token has expired') {
+                    await RefreshToken();
+                    return fetchUserDetails(); // Retry fetching user details after token refresh
+                } else {
+                    throw new Error(errorData.error);
+                }
+            }
+            return response.json();
+        };
+
+        const userData = await fetchUserDetails();
+        const user = userData.data[0];
+
+        // Populate user profile
+        document.getElementById("profile-pic").src = pictureUrl + "?id=" + user.id + "&timestamp=" + new Date().getTime();
         document.getElementById("full-name").textContent = `${user.first_name} ${user.last_name}`;
         document.getElementById("user-name").textContent = user.username;
         document.getElementById("profile-first-name").textContent = user.first_name;
@@ -39,39 +47,49 @@ export async function fetchOtherprofile() {
         document.getElementById("phone").textContent = user.phone;
         document.getElementById("profile-status").textContent = user_status ? "Online" : "Offline";
 
-
-        console.log("Fetching match history");
-        const matchResponse = await fetch(`${matchHistoryUrl}?username=${user.username}&page=${currentPage}&limit=3`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${access_token}`,
+        // Fetch match history
+        const fetchMatchHistory = async () => {
+            const response = await fetch(`${matchHistoryUrl}?username=${user.username}&page=${currentPage}&limit=3`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
+                }
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                if (errorData.error === 'Token has expired') {
+                    await RefreshToken();
+                    return fetchMatchHistory();
+                } else {
+                    throw new Error(errorData.error);
+                }
             }
-        });
-        if (!matchResponse.ok) {
-            const errorData = await matchResponse.json();
-            throw new Error(errorData.error);
-        }
-        const matchData = await matchResponse.json();
+            return response.json();
+        };
+
+        const matchData = await fetchMatchHistory();
         const matches = matchData.data;
         const stats = matchData.stats;
         const paginate_data = matchData.pagination;
-        const totalPages = paginate_data.total_pages;
 
-        document.getElementById("profile-pic").src = pictureUrl + "?id=" + user.id;
-        document.getElementById('total-games').textContent = stats.total_games;
-        document.getElementById('win-count').textContent = stats.win_count;
-        document.getElementById('lose-count').textContent = stats.lose_count;
+        if (paginate_data) {
+            total_pages = paginate_data.total_pages;
+        }
 
+        if (stats) {
+            document.getElementById('total-games').textContent = stats.total_games;
+            document.getElementById('win-count').textContent = stats.win_count;
+            document.getElementById('lose-count').textContent = stats.lose_count;
+        }
+
+        // Render match history
         const matchTableBody = document.querySelector("#match-history-table tbody");
         matchTableBody.innerHTML = "";
 
-
-
-
-        // Render match rows
-
-         matches.forEach(match => {
+        if (!matches)
+            return;
+        matches.forEach(match => {
             const date = new Date(match.date).toLocaleString();
             const row = document.createElement("tr");
             row.innerHTML = `
@@ -108,12 +126,21 @@ export async function fetchOtherprofile() {
                 </td>
             `;
             matchTableBody.appendChild(row);
-        })
-        goPagination(totalPages, currentPage, async (newPage) => {
+        });
+
+        // Setup pagination
+        goPagination(total_pages, currentPage, async (newPage) => {
             currentPage = newPage;
             fetchOtherprofile();
         }, "pagination-container");
     } catch (err) {
-        console.log(err);
+        console.error(err);
+        if (err.message === 'Token has expired') {
+            await RefreshToken();
+            return fetchOtherprofile();
+
+        } else {
+            alert(err.message);
+        }
     }
 }

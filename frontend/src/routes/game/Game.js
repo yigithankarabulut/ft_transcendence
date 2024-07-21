@@ -1,22 +1,19 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { userDetailUrl, GamePlaySocketUrl } from "../../contants/contants.js";
+import { userDetailUrl, GamePlaySocketUrl } from "../../constants/constants.js";
 
 export let ws;
 
 export async function fetchGame() {
-  console.log("fetchGame");
   const canvas = document.getElementById("canvas-pong");
   const ctx = canvas.getContext("2d");
   const game_id = localStorage.getItem("game_id");
   localStorage.removeItem("game_id");
-  console.log("Gameid: " + game_id);
 
-  const access_token = localStorage.getItem("access_token");
   const response = await fetch(userDetailUrl, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${access_token}`,
+      "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
     }
   });
   if (!response.ok) {
@@ -33,7 +30,7 @@ export async function fetchGame() {
     return;
   }
 
-  var connection = GamePlaySocketUrl + "?room=" + game_id + "?token=" + access_token;
+  var connection = GamePlaySocketUrl + "?room=" + game_id + "?token=" + localStorage.getItem("access_token");
   ws = new WebSocket(connection);
 
 
@@ -68,15 +65,12 @@ export async function fetchGame() {
   ws.onmessage = (message) => {
     let items = JSON.parse(message.data);
 
-    console.log(items);
 
     if (items.message === "game_over" && items.winner) {
       ctx.font = '30px Arial';
       ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2);
       var winner = "Player " + items.winner + " wins!";
-      console.log("winner: ", winner);
       ctx.fillText(winner, canvas.width / 2 - 100, canvas.height / 2 + 50);
-      document.removeEventListener("keydown", gameKeys);
       if (items.newGame)
       {
         localStorage.setItem("game_id", items.newGame);
@@ -95,17 +89,14 @@ export async function fetchGame() {
   }
 
   ws.onerror = () => {
-    console.log("Error connecting to server");
+    console.error("Error connecting to server");
   }
 
-  function gameKeys(event)
-  {
+  document.addEventListener("keydown", function (event) {
     if (event.key === "w" || event.key === "s") {
       ws.send(keys[event.keyCode]);
     }
-  }
-
-  document.addEventListener("keydown", gameKeys);
+  });
 
   const keys = {
     87: "w",

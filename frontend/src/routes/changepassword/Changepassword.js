@@ -1,11 +1,10 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { insertIntoElement } from "../../utils/utils.js";
-import { changeUrlBase } from "../../contants/contants.js"
+import { insertIntoElement, RefreshToken } from "../../utils/utils.js";
+import { changeUrlBase } from "../../constants/constants.js"
 
 export async function fetchChangepassword() {
-	const access_token = localStorage.getItem("access_token");
-	if (!access_token) {
-		console.log("No access token found");
+	if (!localStorage.getItem("access_token")) {
+
 		navigateTo("/login");
 	}else
 	{
@@ -33,35 +32,47 @@ export async function fetchChangepassword() {
 			"old_password": currentPassword,
 		}
 
-		try {
-			const response = await fetch(changeUrlBase, {
+		const postChangePasswordRequest = () => {
+			return fetch(changeUrlBase, {
 				method: 'POST',
 				headers: {
 					"Content-Type": "application/json",
-					"Authorization": `Bearer ${access_token}`,
+					"Authorization": `Bearer ${localStorage.getItem("access_token")}`,
 				},
 				body: JSON.stringify(body),
 			});
+		};
 
+		const handleResponse = response => {
 			if (!response.ok) {
-				const err = await response.json();
-				throw err;
+				return response.json().then(errorData => {
+					if (response.status === 401 && errorData.error === "Token has expired") {
+						return RefreshToken().then(() => {
+							return postChangePasswordRequest().then(handleResponse);
+						});
+					} else {
+						throw errorData;
+					}
+				});
 			}
+			return response.json();
+		};
 
-			const data = await response.json();
-			setTimeout(() => {
-				alert("Password changed successfully");
-				navigateTo("/");
-			}, 500);
-
-		} catch (err) {
-			if (err.error) {
-				insertIntoElement('fields-warning', "Error: " + err.error);
-
-			} else if (err.new_password) {
-				insertIntoElement('fields-warning', "Password error: " + err.new_password[0]);
-			}
-		}
+		postChangePasswordRequest()
+			.then(handleResponse)
+			.then(data => {
+				setTimeout(() => {
+					alert("Password changed successfully");
+					navigateTo("/");
+				}, 500);
+			})
+			.catch(err => {
+				if (err.error) {
+					insertIntoElement('fields-warning', "Error: " + err.error);
+				} else if (err.new_password) {
+					insertIntoElement('fields-warning', "Password error: " + err.new_password[0]);
+				}
+			});
 	});
 }
 }
