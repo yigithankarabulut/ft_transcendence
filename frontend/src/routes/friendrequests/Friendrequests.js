@@ -20,15 +20,25 @@ export async function fetchFriendrequests() {
         });
         if (!response_user.ok) {
             const errorData = await response_user.json();
-            if (errorData.error === 'Token has expired') {
-                await RefreshToken();
-                return fetchFriendrequests(); // Retry fetching after token refresh
-            } else {
-                throw new Error(errorData.error);
+            if (response_user.status === 401) {
+                if (errorData.error === "Token has expired") {
+                    await RefreshToken();
+                    return fetchFriendrequests();
+                }
+                document.getElementById("logout-button").click();
+                return;
             }
+            if (response_user.status === 500) {
+                let message = "error: " + errorData.error;
+                alert(message);
+                navigateTo("/"); // redirect to home page
+                return;
+            }
+            throw new Error(errorData.error);
         }
         const data = await response_user.json();
         const user = data.data[0];
+
 
         const response = await fetch(requestsList + "?page=" + currentPage + "&limit=5", {
             method: "GET",
@@ -39,13 +49,19 @@ export async function fetchFriendrequests() {
         });
         if (!response.ok) {
             const errorData = await response.json();
-            if (errorData.error === 'Token has expired') {
-                await RefreshToken();
-                return fetchFriendrequests(); // Retry fetching after token refresh
+            if (response.status === 401) {
+                if (errorData.error === "Token has expired") {
+                    await RefreshToken();
+                    return fetchFriendrequests();
+                }
+                document.getElementById("logout-button").click();
+                return;
             } else {
                 throw new Error(errorData.error);
             }
         }
+
+
 
         const requests_res = await response.json();
         const requests = requests_res.data;

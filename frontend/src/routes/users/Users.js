@@ -35,16 +35,24 @@ export async function fetchUsers() {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                if (errorData.error === 'Token has expired') {
-                    await RefreshToken();
-                    return fetchUserSearch(searchValue); // Retry fetching after token refresh
-                } else {
-                    throw new Error(errorData.error);
+                if (response.status === 401) {
+                    if (errorData.error === 'Token has expired') {
+                        await RefreshToken();
+                        return fetchUserSearch(searchValue); // Retry fetching after token refresh
+                    } else {
+                        document.getElementById("logout-button").click();
+                        return;
+                    }
                 }
+                throw new Error(errorData.error);
             }
 
             const data = await response.json();
             const users = data.data;
+            if (!users) {
+                alert("No users found");
+                return;
+            }
 
             let paginate_data = data.pagination;
             if (paginate_data) {
@@ -65,7 +73,16 @@ export async function fetchUsers() {
             });
             if (!resp.ok)
             {
-                console.log("error!");
+                if (resp.status === 401) {
+                    if (errorData.error === 'Token has expired') {
+                        await RefreshToken();
+                        return fetchUserSearch(searchValue); // Retry fetching after token refresh
+                    } else {
+                        document.getElementById("logout-button").click();
+                        return;
+                    }
+                }
+                throw new Error(errorData.error);
             }
 
             const userRelations = await resp.json();
@@ -168,15 +185,19 @@ export async function fetchUsers() {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                if (errorData.error === 'Token has expired') {
-                    await RefreshToken();
-                    return addUser(userId); // Retry adding after token refresh
-                } else {
-                    throw new Error(errorData.error);
+                if (response.status === 401) {
+                    if (errorData.error === 'Token has expired') {
+                        await RefreshToken();
+                        return addUser(userId); // Retry adding after token refresh
+                    }
+                    document.getElementById("logout-button").click();
+                    return;
                 }
+                throw new Error(errorData.error);
             }
 
             await response.json();
+            alert("Friend request sent successfully");
             navigateTo("/users");
         } catch (error) {
             console.error(error);

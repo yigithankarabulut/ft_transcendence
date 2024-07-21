@@ -22,12 +22,15 @@ export async function fetchJoin() {
 
         if (!response.ok) {
             const errorData = await response.json();
-            if (errorData.error === 'Token has expired') {
-                await RefreshToken();
-                return fetchJoin(); // Retry fetching invites after token refresh
-            } else {
-                throw new Error(errorData.error);
+                if (response.status === 401) {
+                    if (errorData.error === 'Token has expired') {
+                        await RefreshToken();
+                        return fetchJoin(); // Retry fetching invites after token refresh
+                    }
+                    document.getElementById("logout-button").click();
+                    return;
             }
+            throw new Error(errorData.error);
         }
 
         const invites_res = await response.json();
@@ -80,24 +83,28 @@ export async function fetchJoin() {
                     const handleResponse = response => {
                         if (!response.ok) {
                             return response.json().then(data => {
-                                if (response.status === 401 && data.error === "Token has expired") {
-                                    return RefreshToken().then(() => {
-                                        return postJoinRequest().then(handleResponse);
-                                    });
-                                } else {
-                                    throw new Error(data.error);
+                                if (response.status === 401) {
+                                    if (data.error === 'Token has expired') {
+                                        return RefreshToken().then(() => {
+                                            return postJoinRequest().then(handleResponse);
+                                        });
+                                    }
+                                    document.getElementById("logout-button").click();
+                                    return;
                                 }
+                                throw new Error(data.error);
                             });
                         }
                         return response.json();
                     };
-
                     postJoinRequest()
                         .then(handleResponse)
-                        .then(data => {
-                            alert("Joined game successfully");
-                            localStorage.setItem("game_id", data.data.game_id);
-                            navigateTo("/game");
+                        .then((data) => {
+                            if (!data.error) {
+                                alert("Joined game successfully");
+                                localStorage.setItem("game_id", data.data.game_id);
+                                navigateTo("/game");
+                            }
                         })
                         .catch(error => {
                             alert(error.message);

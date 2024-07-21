@@ -1,73 +1,61 @@
-import { navigateTo } from "../../utils/navTo.js";
+import { navigateTo as originalNavigateTo } from "../../utils/navTo.js";
 
 export async function fetchAi() {
-    if (!localStorage.getItem("access_token")) {
+    const access_token = localStorage.getItem("access_token");
+    if (!access_token) {
+        console.log("No access token found");
         navigateTo("/login");
     } else {
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreBoard = document.getElementById('scoreBoard');
         const startButton = document.getElementById('startButton');
-
         const paddleHeight = 100;
         const paddleWidth = 10;
         const ballSize = 10;
-
         let leftPaddleY = canvas.height / 2 - paddleHeight / 2;
         let rightPaddleY = canvas.height / 2 - paddleHeight / 2;
         let ballX = canvas.width / 2;
         let ballY = canvas.height / 2;
         let ballSpeedX = 5;
         let ballSpeedY = 5;
-
         let leftScore = 0;
         let rightScore = 0;
-
         let gameRunning = false;
-
         function drawRect(x, y, width, height, color) {
             ctx.fillStyle = color;
             ctx.fillRect(x, y, width, height);
         }
-
         function drawCircle(x, y, radius, color) {
             ctx.fillStyle = color;
             ctx.beginPath();
             ctx.arc(x, y, radius, 0, Math.PI * 2, false);
             ctx.fill();
         }
-
         function drawNet() {
             for (let i = 0; i < canvas.height; i += 40) {
                 drawRect(canvas.width / 2 - 1, i, 2, 20, '#fff');
             }
         }
-
         function draw() {
             // Clear canvas
             drawRect(0, 0, canvas.width, canvas.height, '#000');
-
             // Draw paddles
             drawRect(0, leftPaddleY, paddleWidth, paddleHeight, '#fff');
             drawRect(canvas.width - paddleWidth, rightPaddleY, paddleWidth, paddleHeight, '#fff');
-
             // Draw ball
             drawCircle(ballX, ballY, ballSize, '#fff');
-
             // Draw net
             drawNet();
         }
-
         function update() {
             // Move ball
             ballX += ballSpeedX;
             ballY += ballSpeedY;
-
             // Ball collision with top and bottom walls
             if (ballY - ballSize < 0 || ballY + ballSize > canvas.height) {
                 ballSpeedY = -ballSpeedY * 1.05;
             }
-
             // Ball collision with paddles
             if (
                 (ballX - ballSize < paddleWidth && ballY > leftPaddleY && ballY < leftPaddleY + paddleHeight) ||
@@ -75,7 +63,6 @@ export async function fetchAi() {
             ) {
                 ballSpeedX = -ballSpeedX * 1.05;
             }
-
             // Score points
             if (ballX < 0) {
                 rightScore++;
@@ -84,10 +71,8 @@ export async function fetchAi() {
                 leftScore++;
                 resetBall();
             }
-
             // Update score display
             scoreBoard.textContent = `Player 1: ${leftScore} | AI: ${rightScore}`;
-
             // Check for game over
             if (leftScore === 5 || rightScore === 5) {
                 const winner = leftScore === 5 ? "Player 1" : "AI";
@@ -99,15 +84,12 @@ export async function fetchAi() {
                 navigateTo("/ai");
             }
         }
-
         function resetBall() {
                 ballX = canvas.width / 2;
                 ballY = canvas.height / 2;
                 ballSpeedX = -ballSpeedX;
                 ballSpeedY = Math.random() > 0.5 ? 5 : -5;
         }
-
-
         function gameLoop() {
             if (gameRunning) {
                 handleInput();
@@ -116,18 +98,14 @@ export async function fetchAi() {
                 requestAnimationFrame(gameLoop);
             }
         }
-
         // Keyboard controls
         const keys = {};
-
         document.addEventListener('keydown', (e) => {
             keys[e.key] = true;
         });
-
         document.addEventListener('keyup', (e) => {
             keys[e.key] = false;
         });
-
         function handleInput() {
             // Left paddle
             if (keys['w'] && leftPaddleY > 0) {
@@ -136,7 +114,6 @@ export async function fetchAi() {
             if (keys['s'] && leftPaddleY < canvas.height - paddleHeight) {
                 leftPaddleY += 5;
             }
-
             // AI controlled right paddle
             const aiSpeed = 5 + Math.random() * 2; // AI speed varies between 3 and 5
             if (rightPaddleY + paddleHeight / 2 < ballY) {
@@ -144,7 +121,6 @@ export async function fetchAi() {
             } else if (rightPaddleY + paddleHeight / 2 > ballY) {
                 rightPaddleY -= aiSpeed;
             }
-
             // Ensure AI paddle stays within canvas bounds
             if (rightPaddleY < 0) {
                 rightPaddleY = 0;
@@ -152,7 +128,6 @@ export async function fetchAi() {
                 rightPaddleY = canvas.height - paddleHeight;
             }
         }
-
         startButton.addEventListener('click', () => {
             if (!gameRunning) {
                 gameRunning = true;
@@ -164,45 +139,37 @@ export async function fetchAi() {
                 gameLoop();
             }
         });
-
         function finishGame() {
             gameRunning = false;
             startButton.style.display = 'block';
             alert("VS AI is aborted!");
         }
-
         // Listen for navigation events
         const originalPushState = history.pushState;
         const originalReplaceState = history.replaceState;
-
         history.pushState = function () {
             if (gameRunning) {
                 finishGame();
             }
             return originalPushState.apply(history, arguments);
         };
-
         history.replaceState = function () {
             if (gameRunning) {
                 finishGame();
             }
             return originalReplaceState.apply(history, arguments);
         };
-
         window.addEventListener('popstate', () => {
             if (gameRunning) {
                 finishGame();
             }
         });
-
         function navigateTo(url) {
             if (gameRunning) {
                 finishGame();
             }
             originalNavigateTo(url);
         }
-
         draw();
     }
 }
-

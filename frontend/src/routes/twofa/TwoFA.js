@@ -32,7 +32,8 @@ form.addEventListener("submit", (e) => {
     })
     .then(res => {
         if (!res.ok) {
-            fields_warning.innerText = "invalid code";
+            errorData = res.json();
+            fields_warning.innerText = errorData.error;
             throw new Error("couldn't log in");
         }
         document.getElementById('nav-bar').style.display = 'flex';

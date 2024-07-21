@@ -50,6 +50,8 @@ export async function fetchChangepassword() {
 						return RefreshToken().then(() => {
 							return postChangePasswordRequest().then(handleResponse);
 						});
+					} else if (response.status === 401 && errorData.error) {
+						document.getElementById("logout-button").click();
 					} else {
 						throw errorData;
 					}
@@ -61,6 +63,10 @@ export async function fetchChangepassword() {
 		postChangePasswordRequest()
 			.then(handleResponse)
 			.then(data => {
+				if (data.error) {
+					insertIntoElement('fields-warning', "Error: " + data.error);
+					return;
+				}
 				setTimeout(() => {
 					alert("Password changed successfully");
 					navigateTo("/");

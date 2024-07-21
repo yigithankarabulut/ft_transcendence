@@ -25,12 +25,15 @@ export async function fetchOtherprofile() {
             });
             if (!response.ok) {
                 const errorData = await response.json();
-                if (errorData.error === 'Token has expired') {
-                    await RefreshToken();
-                    return fetchUserDetails(); // Retry fetching user details after token refresh
-                } else {
-                    throw new Error(errorData.error);
+                if (response.status === 401) {
+                    if (errorData.error === 'Token has expired') {
+                        await RefreshToken();
+                        return fetchUserDetails(); // Retry fetching user details after token refresh
+                    }
+                    document.getElementById("logout-button").click();
+                    return;
                 }
+                throw new Error(errorData.error);
             }
             return response.json();
         };
@@ -58,12 +61,15 @@ export async function fetchOtherprofile() {
             });
             if (!response.ok) {
                 const errorData = await response.json();
-                if (errorData.error === 'Token has expired') {
-                    await RefreshToken();
-                    return fetchMatchHistory();
-                } else {
-                    throw new Error(errorData.error);
+                if (response.status === 401) {
+                    if (errorData.error === 'Token has expired') {
+                        await RefreshToken();
+                        return fetchMatchHistory();
+                    }
+                    document.getElementById("logout-button").click();
+                    return;
                 }
+                throw new Error(errorData.error);
             }
             return response.json();
         };

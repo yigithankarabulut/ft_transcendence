@@ -1,17 +1,9 @@
 import { navigateTo as originalNavigateTo } from "../../utils/navTo.js";
 
-// Override navigateTo function to detect navigation changes
-function navigateTo(url) {
-    if (gameRunning) {
-        finishGame();
-    }
-    originalNavigateTo(url);
-}
-
 export async function fetchLocalgame() {
     const access_token = localStorage.getItem("access_token");
     if (!access_token) {
-
+        console.log("No access token found");
         navigateTo("/login");
     } else {
         const canvas = document.getElementById('gameCanvas');
@@ -196,6 +188,14 @@ export async function fetchLocalgame() {
                 finishGame();
             }
         });
+
+        // Override navigateTo function to detect navigation changes
+        function navigateTo(url) {
+            if (gameRunning) {
+                finishGame();
+            }
+            originalNavigateTo(url);
+        }
 
         draw();
     }

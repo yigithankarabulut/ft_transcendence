@@ -18,11 +18,23 @@ export async function fetchGame() {
   });
   if (!response.ok) {
     const errorData = await response.json();
+    if (response.status === 401) {
+      if (errorData.error === "Token has expired") {
+        await RefreshToken();
+        return fetchGame();
+      }
+      document.getElementById("logout-button").click();
+      return;
+    }
+    if (response.status === 500) {
+      let message = "error: " + errorData.error;
+      alert(message);
+      navigateTo("/");
+      return;
+    }
     throw new Error(errorData.error);
   }
 
-  const data = await response.json();
-  const user = data[0];
 
   if (!game_id)
   {

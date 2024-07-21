@@ -28,12 +28,15 @@ export const toggleHidden = (elementId) => {
 }
 
 
+
+
+
 export let socket = null;
 export let userStatuses = [];
 let userId;
 
 export async function onlineStatus() {
-    if (!localStorage.getItem("access_token")) {
+    if (!localStorage.getItem('access_token')) {
         return;
     }
     try {
@@ -44,28 +47,34 @@ export async function onlineStatus() {
                 "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
             }
         });
-
         if (!response.ok) {
             const errorData = await response.json();
-            if (errorData.error === 'Token has expired') {
-                await RefreshToken();
-                return onlineStatus(); // Retry after token refresh
+            if (response.status === 401) {
+                if (errorData.error === 'Token has expired') {
+                    await RefreshToken();
+                    return onlineStatus();
+                }
+                document.getElementById("logout-button").click();
+                return;
             } else {
                 throw new Error(errorData.error);
             }
         }
-
         const data = await response.json();
         const user = data.data[0];
         userId = user.id;
 
-                // Eğer mevcut bir WebSocket bağlantısı varsa yeni bir bağlantı kurmayın
+        // Eğer mevcut bir WebSocket bağlantısı varsa yeni bir bağlantı kurmayın
         if (socket && socket.readyState === WebSocket.OPEN) {
             // Server'dan online_users listesini iste
             socket.send(JSON.stringify({ type: 'getOnlineUsers' }));
             return;
         }
         socket = new WebSocket(StatusServiceSocketUrl + "?user_id=" + userId);
+        socket.onopen = function (event) {
+            localStorage.setItem('status', 'Online');
+
+        };
         socket.onmessage = function (event) {
             const data = JSON.parse(event.data);
             userStatuses = data.online_users;
@@ -74,6 +83,7 @@ export async function onlineStatus() {
             console.error('WebSocket error: ', error);
         };
         window.addEventListener('beforeunload', function () {
+            localStorage.setItem('status', 'Offline');
             socket.close();
         });
         window.addEventListener('online', function () {
@@ -82,17 +92,14 @@ export async function onlineStatus() {
             }
         });
         window.addEventListener('offline', function () {
+            localStorage.setItem('status', 'Offline');
             socket.close();
         });
 
     } catch (error) {
         console.error('Error: ', error);
         if (error.message === 'Token has expired') {
-            await RefreshToken().then((is_valid) => {
-                if (!is_valid) {
-                    navigateTo("/login");
-                }
-            });
+            await RefreshToken();
             return onlineStatus(); // Retry after token refresh
         }
     }

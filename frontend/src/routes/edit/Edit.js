@@ -19,6 +19,20 @@ export async function fetchEdit() {
 
         if (!response.ok) {
             const errorData = await response.json();
+            if (response.status === 401) {
+                if (errorData.error === "Token has expired") {
+                    await RefreshToken();
+                    return fetchEdit();
+                }
+                document.getElementById("logout-button").click();
+                return;
+            }
+            if (response.status === 500) {
+                let message = "error: " + errorData.error;
+                alert(message);
+                navigateTo("/"); // redirect to home page
+                return;
+            }
             throw new Error(errorData.error);
         }
 
@@ -62,16 +76,21 @@ export async function fetchEdit() {
             const handleResponse = response => {
                 if (!response.ok) {
                     return response.json().then(errorData => {
-                        if (response.status === 401 && errorData.error === "Token has expired") {
-                            return RefreshToken().then(() => {
-                                return postUpdateUserRequest().then(handleResponse);
-                            });
+                        if (response.status === 401) {
+                            if (errorData.error === "Token has expired") {
+                                return RefreshToken().then(() => {
+                                    return postUpdateUserRequest().then(handleResponse);
+                                });
+                            }
+                            document.getElementById("logout-button").click();
+                            return;
                         } else if (response.status === 207) {
                             alert("Email updated successfully, please verify your email");
                             document.getElementById("logout-button").click();
                             return;
-                        }
-                        else {
+                        } else if (response.status === 500) {
+                            throw errorData;
+                        } else {
                             throw errorData;
                         }
                     });
@@ -81,9 +100,12 @@ export async function fetchEdit() {
 
             postUpdateUserRequest()
                 .then(handleResponse)
-                .then(() => {
-                    alert("Profile updated successfully");
-                    navigateTo("/profile");
+                .then((data) => {
+                    if (!data.error) {
+                        alert("Profile updated successfully");
+                        navigateTo("/profile");
+                        return;
+                    }
                 })
                 .catch(err => {
                     if (err.error) {
@@ -133,12 +155,16 @@ export async function fetchEdit() {
             const handleResponse = response => {
                 if (!response.ok) {
                     return response.json().then(errorData => {
-                        if (response.status === 401 && errorData.error === "Token has expired") {
-                            return RefreshToken().then(() => {
-                                return postAvatarUpdate().then(handleResponse);
-                            });
+                        if (response.status === 401) {
+                            if (errorData.error === "Token has expired") {
+                                return RefreshToken().then(() => {
+                                    return postAvatarUpdate().then(handleResponse);
+                                });
+                            }
+                            document.getElementById("logout-button").click();
+                            return;
                         } else {
-                            throw new Error("Couldn't update avatar");
+                            throw errorData;
                         }
                     });
                 }
@@ -147,11 +173,15 @@ export async function fetchEdit() {
             postAvatarUpdate()
                 .then(handleResponse)
                 .then(data => {
-                    alert("Avatar updated successfully");
-                    navigateTo("/profile");
+                    if (!data.error) {
+                        alert("Avatar updated successfully");
+                        navigateTo("/profile");
+                    }
                 })
                 .catch(error => {
-                    console.error(error);
+                    if (error.error) {
+                        insertIntoElement('fields-warning', "Error: " + error.error);
+                    }
                 });
         });
 

@@ -7,7 +7,6 @@ let total_pages = 1;
 
 export async function fetchFriends() {
     if (!localStorage.getItem("access_token")) {
-
         navigateTo("/login");
         return;
     }
@@ -23,9 +22,13 @@ export async function fetchFriends() {
 
         if (!response.ok) {
             const errorData = await response.json();
-            if (errorData.error === 'Token has expired') {
-                await RefreshToken();
-                return fetchFriends(); // Retry fetching after token refresh
+            if (response.status === 401) {
+                if (errorData.error === 'Token has expired') {
+                    await RefreshToken();
+                    return fetchFriends(); // Retry fetching after token refresh
+                }
+                document.getElementById("logout-button").click();
+                return;
             } else {
                 throw new Error(errorData.error);
             }
@@ -51,7 +54,13 @@ export async function fetchFriends() {
                     }
                 }).then(response => {
                     if (!response.ok) {
-                        throw new Error("Failed to fetch user details");
+                        if (response.status === 401) {
+                            if (errorData.error === 'Token has expired') {
+                                throw new Error('Token has expired');
+                            }
+                            throw new Error('Unauthorized');
+                        }
+                        throw new Error('Failed to fetch user details');
                     }
                     return response.json();
                 }).then(data => {
@@ -98,11 +107,13 @@ export async function fetchFriends() {
                 }).catch((error) => {
                     console.error(error);
                     if (error.message === 'Token has expired') {
-                        RefreshToken().then(() => {
-                            fetchFriends();
-                        });
+                        return fetchFriends(); // Retry fetching after token refresh
+                    } else if (error.message === 'Unauthorized') {
+                        document.getElementById("logout-button").click();
+                        return;
                     } else {
                         alert(error.message);
+                        return;
                     }
                 });
             });
@@ -138,14 +149,17 @@ async function deleteUser(userId) {
 
         if (!response.ok) {
             const errorData = await response.json();
-            if (errorData.error === 'Token has expired') {
-                await RefreshToken();
-                return deleteUser(userId); // Retry deleting after token refresh
+            if (response.status === 401) {
+                if (errorData.error === 'Token has expired') {
+                    await RefreshToken();
+                    return deleteUser(userId); // Retry deleting after token refresh
+                }
+                document.getElementById("logout-button").click();
+                return;
             } else {
                 throw new Error(errorData.error);
             }
         }
-
         await response.json();
         navigateTo("/friends");
     } catch (error) {
@@ -153,8 +167,3 @@ async function deleteUser(userId) {
         alert(error.message);
     }
 }
-
-
-
-
-

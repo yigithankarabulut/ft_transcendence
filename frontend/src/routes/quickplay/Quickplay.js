@@ -45,9 +45,11 @@ export async function fetchQuickplay() {
                             return RefreshToken().then(() => {
                                 return postGameCreate().then(handleResponse);
                             });
-                        } else {
-                            throw errorData;
+                        } else if (response.status === 401 && errorData.error) {
+                            document.getElementById("logout-button").click();
+                            return;
                         }
+                        throw errorData;
                     });
                 }
                 return response.json();
@@ -104,9 +106,11 @@ export async function fetchQuickplay() {
                             return RefreshToken().then(() => {
                                 return postGameCreate().then(handleResponse);
                             });
-                        } else {
-                            throw errorData;
+                        } else if (response.status === 401 && errorData.error) {
+                            document.getElementById("logout-button").click();
+                            return;
                         }
+                        throw errorData;
                     });
                 }
                 return response.json();
