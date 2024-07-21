@@ -78,5 +78,4 @@ window.addEventListener('popstate', () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
         ws.close();
     }
-    router();
 });
