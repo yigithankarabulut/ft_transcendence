@@ -12,4 +12,6 @@ RUN pip3 install --upgrade pip
 
 RUN pip3 install -r requirements.txt
 
+EXPOSE 8020
+
 CMD ["daphne", "statusservice.asgi:application", "-b", "0.0.0.0", "-p", "8020"]

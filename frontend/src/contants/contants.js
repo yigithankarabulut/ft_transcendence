@@ -1,4 +1,4 @@
-const BASE_DOMAIN = "127.0.0.1:443";
+const BASE_DOMAIN = window.location.origin.split('/')[2];
 const BASE_URL = "https://" + BASE_DOMAIN;
 export const changeUrlBase = BASE_URL + "/api/user/pwd/update";
 export const changeUsernameUrl = BASE_URL + "/api/user/username";

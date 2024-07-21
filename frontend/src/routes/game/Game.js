@@ -76,6 +76,7 @@ export async function fetchGame() {
       var winner = "Player " + items.winner + " wins!";
       console.log("winner: ", winner);
       ctx.fillText(winner, canvas.width / 2 - 100, canvas.height / 2 + 50);
+      document.removeEventListener("keydown", gameKeys);
       if (items.newGame)
       {
         localStorage.setItem("game_id", items.newGame);
@@ -97,11 +98,14 @@ export async function fetchGame() {
     console.log("Error connecting to server");
   }
 
-  document.addEventListener("keydown", function (event) {
+  function gameKeys(event)
+  {
     if (event.key === "w" || event.key === "s") {
       ws.send(keys[event.keyCode]);
     }
-  });
+  }
+
+  document.addEventListener("keydown", gameKeys);
 
   const keys = {
     87: "w",

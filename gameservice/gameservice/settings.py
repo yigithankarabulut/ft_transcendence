@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = ['35.242.209.3', 'localhost', '127.0.0.1', '0.0.0.0', 'apigateway', 'usermanagement', 'authservice', 'gameservice', 'friendservice', 'statusservice', 'gameplayservice']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -45,10 +45,6 @@ INSTALLED_APPS = [
 SERVICE_ROUTES = {
     '/auth': 'http://authservice:8001',
     '/user': 'http://usermanagement:8004',
-    # '/user': 'http://localhost:8004',
-    # '/friend': 'http://friend:8002',
-    # '/friend': 'http://localhost:8002',
-    # '/match': 'http://localhost:8008',
 }
 
 MIDDLEWARE = [

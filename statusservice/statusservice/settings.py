@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '*']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -78,21 +78,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'statusservice.wsgi.application'
 ASGI_APPLICATION = "statusservice.asgi.application"
-
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels.layers.InMemoryChannelLayer',
-#     },
-# }
-
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels.layers.RedisChannelLayer',
-#         'CONFIG': {
-#             'hosts': [(os.environ.get('REDIS_HOST'), os.environ.get('REDIS_PORT'))],
-#         },
-#     },
-# }
 
 CHANNEL_LAYERS = {
     "default": {

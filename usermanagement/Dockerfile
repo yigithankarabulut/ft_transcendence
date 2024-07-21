@@ -16,6 +16,8 @@ COPY start.sh /app/start.sh
 
 RUN chmod +x /app/start.sh
 
+EXPOSE 8004
+
 ENTRYPOINT ["sh", "./start.sh"]
 
 CMD ["python3", "manage.py", "runserver", "0.0.0.0:8004"]

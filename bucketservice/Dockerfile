@@ -16,6 +16,7 @@ COPY start.sh /app/start.sh
 
 RUN chmod +x /app/start.sh
 
+EXPOSE 8014
 
 ENTRYPOINT ["sh", "./start.sh"]
 

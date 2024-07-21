@@ -3,7 +3,11 @@ version: '3.8'
 services:
   frontend:
     container_name: frontend
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NGINX_SSL_CN=${NGINX_SSL_CN}
     depends_on:
       - apigateway
       - bucketservice
@@ -14,6 +18,8 @@ services:
       - ./frontend/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - "443:443"
+    networks:
+      - frontend
 
   apigateway:
     container_name: apigateway
@@ -24,12 +30,13 @@ services:
       - usermanagement
     environment:
       - SECRET_KEY=${ApiGateway_SECRET_KEY}
-      - DEBUG=True
+      - DEBUG=${ApiGateway_DEBUG}
       - FRONTEND_URL=${FRONTEND_URL}
     volumes:
       - ./apigateway:/app
-    ports:
-      - "8000:8000"
+    networks:
+      - backend
+      - frontend
 
   authservice:
     container_name: authservice
@@ -45,8 +52,8 @@ services:
       - FRONTEND_URL=${FRONTEND_URL}
     volumes:
       - ./authservice:/app
-    ports:
-        - "8001:8001"
+    networks:
+      - backend
 
   bucketservice:
     container_name: bucketservice
@@ -63,8 +70,9 @@ services:
       - DB_PORT=${BucketService_DB_PORT}
     volumes:
       - ./bucketservice:/app
-    ports:
-      - "8014:8014"
+    networks:
+      - backend
+      - frontend
 
   friendservice:
     container_name: friendservice
@@ -81,8 +89,8 @@ services:
       - DB_PORT=${FriendService_DB_PORT}
     volumes:
       - ./friendservice:/app
-    ports:
-      - "8012:8012"
+    networks:
+      - backend
 
   gameplayservice:
     container_name: gameplayservice
@@ -96,8 +104,9 @@ services:
       - REDIS_PORT=${REDIS_PORT}
     volumes:
       - ./gameplayservice:/app
-    ports:
-      - "8011:8011"
+    networks:
+      - backend
+      - frontend
 
   gameservice:
     container_name: gameservice
@@ -114,8 +123,8 @@ services:
       - DB_PORT=${GameService_DB_PORT}
     volumes:
       - ./gameservice:/app
-    ports:
-      - "8010:8010"
+    networks:
+      - backend
 
   mailservice:
     container_name: mailservice
@@ -139,8 +148,8 @@ services:
       - EMAIL_HOST_PASSWORD=${MailService_EMAIL_HOST_PASSWORD}
     volumes:
       - ./mailservice:/app
-    ports:
-      - "8005:8005"
+    networks:
+      - backend
 
   statusservice:
     container_name: statusservice
@@ -152,8 +161,9 @@ services:
       - REDIS_PORT=${REDIS_PORT}
     volumes:
       - ./statusservice:/app
-    ports:
-      - "8020:8020"
+    networks:
+      - backend
+      - frontend
 
   usermanagement:
     container_name: usermanagement
@@ -177,8 +187,9 @@ services:
       - RABBITMQ_QUEUE_NAME=${RABBITMQ_QUEUE_NAME}
     volumes:
       - ./usermanagement:/app
-    ports:
-      - "8004:8004"
+    networks:
+      - backend
+      - frontend
 
   rabbitmq:
     container_name: rabbitmq
@@ -193,13 +204,17 @@ services:
       test: ["CMD", "rabbitmqctl", "node_health_check"]
       interval: 30s
       timeout: 10s
-      retries: 5 
+      retries: 5
+    networks:
+      - backend 
 
   redis:
     container_name: redis
     image: redis:6.2.5
     ports:
       - "6379:${REDIS_PORT}"
+    networks:
+      - backend
 
   userpostgres:
     container_name: userpostgres
@@ -210,6 +225,8 @@ services:
       POSTGRES_DB: ${UserManagement_DB_NAME}
     ports:
       - "5432:${UserManagement_DB_PORT}"
+    networks:
+      - backend
 
   gamepostgres:
     container_name: gamepostgres
@@ -220,6 +237,8 @@ services:
       POSTGRES_DB: ${GameService_DB_NAME}
     ports:
       - "5433:${GameService_DB_PORT}"
+    networks:
+      - backend
 
   friendspostgres:
     container_name: friendspostgres
@@ -230,6 +249,8 @@ services:
       POSTGRES_DB: ${FriendService_DB_NAME}
     ports:
       - "5434:${FriendService_DB_PORT}"
+    networks:
+      - backend
 
   bucketpostgres:
     container_name: bucketpostgres
@@ -240,4 +261,12 @@ services:
       POSTGRES_DB: ${BucketService_DB_NAME}
     ports:
       - "5435:${BucketService_DB_PORT}"
+    networks:
+      - backend
 
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge

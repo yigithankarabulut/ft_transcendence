@@ -24,16 +24,19 @@ export async function fetchJoin() {
         throw new Error(errorData.error);
     }
 
+    const tbody = document.querySelector(".table tbody");
+    tbody.innerHTML = ""; // Clear existing rows
 
     const invites_res = await response.json();
+    if (invites_res.data == null)
+        return;
     const invites = invites_res.data
     let pagination = invites_res.pagination;
     let totalPages = pagination.total_pages;
 
 
     console.log(invites);
-    const tbody = document.querySelector(".table tbody");
-    tbody.innerHTML = ""; // Clear existing rows
+
 
     invites.forEach((invite, index) => {
         const row = document.createElement("tr");

@@ -101,10 +101,11 @@ class Pong(AsyncWebsocketConsumer):
                         'username': tmp_player_name
                     }
                 }
+                rooms[self.room_id]['game_status'] = 0
                 self.username = tmp_player_name
                 #rooms[self.room_id]['user_count'] = 1
                 logging.error(rooms[self.room_id])
-            elif len(rooms[self.room_id]) == 1:
+            elif len(rooms[self.room_id]) > 1:
                 if tmp_player_name == rooms[self.room_id]['padd_left']['username']:
                     await self.close()
                     return
@@ -322,6 +323,8 @@ class Pong(AsyncWebsocketConsumer):
         #        rooms[room_id]['padd_left']['info']['positionY'] += rooms[room_id]['padd_left']['info']['speed']
         #    elif self.channel_name in rooms[room_id]['padd_right']['player']:
         #        rooms[room_id]['padd_right']['info']['positionY'] += rooms[room_id]['padd_right']['info']['speed']
+        if rooms[room_id]['game_status'] != 1:
+            return
         if text_data == 'w':
             if self.username == rooms[room_id]['padd_left']['username']:
                 rooms[room_id]['padd_left']['info']['positionY'] -= rooms[room_id]['padd_left']['info']['speed']
