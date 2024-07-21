@@ -1,6 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { goPagination, RefreshToken } from "../../utils/utils.js";
-import { userGetByIdUrl, userDetailUrl, requestsList, acceptUrl, rejectUrl } from "../../contants/contants.js";
+import { userGetByIdUrl, userDetailUrl, requestsList, acceptUrl, rejectUrl } from "../../constants/constants.js";
 
 let currentPage = 1; // Current page
 let total_pages = 1;
@@ -21,7 +21,6 @@ export async function fetchFriendrequests() {
         if (!response_user.ok) {
             const errorData = await response_user.json();
             if (errorData.error === 'Token has expired') {
-                console.log('Token expired, refreshing...');
                 await RefreshToken();
                 return fetchFriendrequests(); // Retry fetching after token refresh
             } else {
@@ -41,7 +40,6 @@ export async function fetchFriendrequests() {
         if (!response.ok) {
             const errorData = await response.json();
             if (errorData.error === 'Token has expired') {
-                console.log('Token expired, refreshing...');
                 await RefreshToken();
                 return fetchFriendrequests(); // Retry fetching after token refresh
             } else {
@@ -55,8 +53,6 @@ export async function fetchFriendrequests() {
         if (paginate_data) {
             total_pages = paginate_data.total_pages;
         }
-
-        console.log(requests);
         const tbody = document.querySelector(".table tbody");
         tbody.innerHTML = "";
         if (requests) {
@@ -200,7 +196,6 @@ export async function fetchFriendrequests() {
     } catch (error) {
         console.error(error);
         if (error.message === 'Token has expired') {
-            console.log('Token expired, refreshing...');
             await RefreshToken();
             return fetchFriendrequests(); // Retry fetching after token refresh
         } else {

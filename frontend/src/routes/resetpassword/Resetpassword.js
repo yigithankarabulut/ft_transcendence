@@ -1,6 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
-import { resetUrlBase } from "../../contants/contants.js";
+import { resetUrlBase } from "../../constants/constants.js";
 
 export async function fetchResetpassword() {
 	document.querySelector('form').addEventListener('submit', async function(event) {

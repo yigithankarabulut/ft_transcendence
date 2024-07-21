@@ -3,7 +3,7 @@ import { navigateTo } from "../../utils/navTo.js";
 export async function fetchLocalgame() {
     const access_token = localStorage.getItem("access_token");
     if (!access_token) {
-        console.log("No access token found");
+
         navigateTo("/login");
     } else {
         const canvas = document.getElementById('gameCanvas');

@@ -1,6 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, RefreshToken } from "../../utils/utils.js";
-import { userDetailUrl, updateUserUrl, pictureUrl, avatarUpdateUrl } from "../../contants/contants.js";
+import { userDetailUrl, updateUserUrl, pictureUrl, avatarUpdateUrl } from "../../constants/constants.js";
 
 export async function fetchEdit() {
     if (!localStorage.getItem("access_token")) {
@@ -94,7 +94,7 @@ export async function fetchEdit() {
                         insertIntoElement('fields-warning', "Last name error: " + err.last_name);
                     } else {
                         insertIntoElement('fields-warning', "Error: internal server error");
-                        console.log(err);
+                        console.error(err);
                     }
                 });
         });
@@ -144,11 +144,11 @@ export async function fetchEdit() {
                     navigateTo("/profile");
                 })
                 .catch(error => {
-                    console.log(error);
+                    console.error(error);
                 });
         });
 
     } catch (err) {
-        console.log(err);
+        console.error(err);
     }
 }

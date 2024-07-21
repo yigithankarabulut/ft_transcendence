@@ -1,4 +1,4 @@
-import{ ValidateAccessToken, ValidateRefreshToken, userDetailUrl, StatusServiceSocketUrl } from "../contants/contants.js";
+import{ ValidateAccessToken, ValidateRefreshToken, userDetailUrl, StatusServiceSocketUrl } from "../constants/constants.js";
 
 export const insertIntoElement = (elementId, element) => {
     const el = document.getElementById(elementId);
@@ -45,7 +45,6 @@ export async function onlineStatus() {
         if (!response.ok) {
             const errorData = await response.json();
             if (errorData.error === 'Token has expired') {
-                console.log('Token expired, refreshing...');
                 await RefreshToken();
                 return onlineStatus(); // Retry after token refresh
             } else {
@@ -55,31 +54,22 @@ export async function onlineStatus() {
 
         const data = await response.json();
         const user = data.data[0];
-        console.log('User ID: ', user.id);
         userId = user.id;
 
                 // Eğer mevcut bir WebSocket bağlantısı varsa yeni bir bağlantı kurmayın
         if (socket && socket.readyState === WebSocket.OPEN) {
-            console.log('WebSocket connection already exists');
-
             // Server'dan online_users listesini iste
             socket.send(JSON.stringify({ type: 'getOnlineUsers' }));
             return;
         }
         socket = new WebSocket(StatusServiceSocketUrl + "?user_id=" + userId);
         socket.onopen = function (event) {
-            console.log('Connected to WebSocket');
             localStorage.setItem('status', 'Online');
 
         };
         socket.onmessage = function (event) {
             const data = JSON.parse(event.data);
-            console.log('Message from server: ', data);
             userStatuses = data.online_users;
-            console.log('Online users: ', userStatuses);
-        };
-        socket.onclose = function (event) {
-            console.log('WebSocket connection closed');
         };
         socket.onerror = function (error) {
             console.error('WebSocket error: ', error);
@@ -101,7 +91,6 @@ export async function onlineStatus() {
     } catch (error) {
         console.error('Error: ', error);
         if (error.message === 'Token has expired') {
-            console.log('Token expired, refreshing...');
             await RefreshToken();
             return onlineStatus(); // Retry after token refresh
         }
@@ -197,7 +186,6 @@ export async function CheckAuth() {
     }
     const data = await auth_response.json();
     if (data && data.user_id) {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>User authenticated');
         return data.user_id;
     }
     localStorage.removeItem("access_token");

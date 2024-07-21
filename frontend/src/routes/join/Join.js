@@ -1,6 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { goPagination, RefreshToken } from "../../utils/utils.js";
-import { gameDetailUrl, joinUrl } from "../../contants/contants.js";
+import { gameDetailUrl, joinUrl } from "../../constants/constants.js";
 
 let currentPage = 1; // Current page
 let total_pages = 1;
@@ -23,7 +23,6 @@ export async function fetchJoin() {
         if (!response.ok) {
             const errorData = await response.json();
             if (errorData.error === 'Token has expired') {
-                console.log('Token expired, refreshing...');
                 await RefreshToken();
                 return fetchJoin(); // Retry fetching invites after token refresh
             } else {
@@ -114,7 +113,6 @@ export async function fetchJoin() {
     } catch (error) {
         console.error(error);
         if (error.message === 'Token has expired') {
-            console.log('Token expired, refreshing...');
             await RefreshToken();
             return fetchJoin(); // Retry fetching invites after token refresh
         } else {

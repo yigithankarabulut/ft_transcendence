@@ -1,10 +1,10 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, RefreshToken } from "../../utils/utils.js";
-import { changeUrlBase } from "../../contants/contants.js"
+import { changeUrlBase } from "../../constants/constants.js"
 
 export async function fetchChangepassword() {
 	if (!localStorage.getItem("access_token")) {
-		console.log("No access token found");
+
 		navigateTo("/login");
 	}else
 	{

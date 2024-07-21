@@ -1,6 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { goPagination, RefreshToken } from "../../utils/utils.js";
-import { userDetailUrl, matchHistoryUrl, pictureUrl } from "../../contants/contants.js";
+import { userDetailUrl, matchHistoryUrl, pictureUrl } from "../../constants/constants.js";
 
 let currentPage = 1; // Current page
 let total_pages = 1;
@@ -11,7 +11,6 @@ export async function fetchProfile() {
         return;
     } else {
         try {
-            console.log("Fetching user details");
             const response_user = await fetch(userDetailUrl, {
                 method: "GET",
                 headers: {
@@ -26,8 +25,6 @@ export async function fetchProfile() {
 
             const data_user = await response_user.json();
             const user = data_user.data[0];
-            console.log("User Data:", user);
-
             document.getElementById("full-name").textContent = `${user.first_name} ${user.last_name}`;
             document.getElementById("user-name").textContent = user.username;
             document.getElementById("profile-first-name").textContent = user.first_name;
@@ -39,7 +36,6 @@ export async function fetchProfile() {
             }
 
             async function fetchMatches() {
-                console.log("Fetching match history");
                 const matchResponse = await fetch(`${matchHistoryUrl}?username=${user.username}&page=${currentPage}&limit=3`, {
                     method: "GET",
                     headers: {
@@ -51,7 +47,6 @@ export async function fetchProfile() {
                 if (!matchResponse.ok) {
                     const errorData = await matchResponse.json();
                     if (errorData.error === 'Token has expired') {
-                        console.log('Token expired, refreshing...');
                         await RefreshToken();
                         return fetchMatches(); // Retry fetching matches after token refresh
                     } else {
@@ -128,7 +123,6 @@ export async function fetchProfile() {
         } catch (error) {
             console.error(error);
             if (error.message === 'Token expired') {
-                console.log('Token expired, refreshing...');
                 await RefreshToken();
                 fetchProfile();
             } else {

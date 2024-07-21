@@ -1,6 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { RefreshToken, insertIntoElement } from "../../utils/utils.js";
-import { gameCreateUrl } from "../../contants/contants.js";
+import { gameCreateUrl } from "../../constants/constants.js";
 
 export async function fetchQuickplay() {
 
@@ -9,7 +9,6 @@ export async function fetchQuickplay() {
         return;
     }
     else {
-    console.log("fetchingquickplay");
     const form = document.querySelector(".requires-validation2");
     form.addEventListener("submit", function (event) {
         event.preventDefault();

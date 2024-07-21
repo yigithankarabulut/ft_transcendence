@@ -1,6 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { userStatuses, goPagination, RefreshToken } from "../../utils/utils.js";
-import { userGetByIdUrl, matchHistoryUrl, pictureUrl } from "../../contants/contants.js";
+import { userGetByIdUrl, matchHistoryUrl, pictureUrl } from "../../constants/constants.js";
 
 let currentPage = 1; // Current page
 
@@ -11,7 +11,6 @@ export async function fetchOtherprofile() {
     }
 
     try {
-        console.log("Fetching user details");
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
         const user_status = userStatuses.includes(id) ? true : false;
@@ -28,7 +27,6 @@ export async function fetchOtherprofile() {
             if (!response.ok) {
                 const errorData = await response.json();
                 if (errorData.error === 'Token has expired') {
-                    console.log('Token expired, refreshing...');
                     await RefreshToken();
                     return fetchUserDetails(); // Retry fetching user details after token refresh
                 } else {
@@ -40,7 +38,6 @@ export async function fetchOtherprofile() {
 
         const userData = await fetchUserDetails();
         const user = userData.data[0];
-        console.log(user);
 
         // Populate user profile
         document.getElementById("profile-pic").src = pictureUrl + "?id=" + user.id + "&timestamp=" + new Date().getTime();
@@ -50,8 +47,6 @@ export async function fetchOtherprofile() {
         document.getElementById("profile-last-name").textContent = user.last_name;
         document.getElementById("phone").textContent = user.phone;
         document.getElementById("profile-status").textContent = user_status ? "Online" : "Offline";
-
-        console.log("Fetching match history");
 
         // Fetch match history
         const fetchMatchHistory = async () => {
@@ -65,9 +60,8 @@ export async function fetchOtherprofile() {
             if (!response.ok) {
                 const errorData = await response.json();
                 if (errorData.error === 'Token has expired') {
-                    console.log('Token expired, refreshing...');
                     await RefreshToken();
-                    return fetchMatchHistory(); // Retry fetching match history after token refresh
+                    return fetchMatchHistory();
                 } else {
                     throw new Error(errorData.error);
                 }
@@ -135,11 +129,11 @@ export async function fetchOtherprofile() {
             fetchOtherprofile();
         }, "pagination-container");
     } catch (err) {
-        console.log(err);
+        console.error(err);
         if (err.message === 'Token has expired') {
-            console.log('Token expired, refreshing...');
             await RefreshToken();
-            return fetchOtherprofile(); // Retry fetching profile after token refresh
+            return fetchOtherprofile();
+
         } else {
             alert(err.message);
         }

@@ -1,13 +1,13 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { userStatuses, RefreshToken, goPagination } from "../../utils/utils.js";
-import { searchUrl, friendAdd, pictureUrl } from "../../contants/contants.js";
+import { searchUrl, friendAdd, pictureUrl } from "../../constants/constants.js";
 
 let currentPage = 1; // Current page
 let total_pages = 1;
 
 export async function fetchUsers() {
     if (!localStorage.getItem("access_token")) {
-        console.log("No access token found");
+
         navigateTo("/login");
         return;
     }
@@ -34,7 +34,6 @@ export async function fetchUsers() {
             if (!response.ok) {
                 const errorData = await response.json();
                 if (errorData.error === 'Token has expired') {
-                    console.log('Token expired, refreshing...');
                     await RefreshToken();
                     return fetchUserSearch(searchValue); // Retry fetching after token refresh
                 } else {
@@ -103,7 +102,6 @@ export async function fetchUsers() {
         } catch (error) {
             console.error(error);
             if (error.message === 'Token has expired') {
-                console.log('Token expired, refreshing...');
                 await RefreshToken();
                 return fetchUserSearch(searchValue); // Retry fetching after token refresh
             } else {
@@ -128,7 +126,6 @@ export async function fetchUsers() {
             if (!response.ok) {
                 const errorData = await response.json();
                 if (errorData.error === 'Token has expired') {
-                    console.log('Token expired, refreshing...');
                     await RefreshToken();
                     return addUser(userId); // Retry adding after token refresh
                 } else {

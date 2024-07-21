@@ -1,6 +1,6 @@
 import { navigateTo } from "../../utils/navTo.js";
 import { insertIntoElement, toggleHidden } from "../../utils/utils.js";
-import { registerUrl } from "../../contants/contants.js";
+import { registerUrl } from "../../constants/constants.js";
 
 const form = document.getElementById("register");
 
@@ -72,7 +72,7 @@ form.addEventListener("submit", (e) => {
             insertIntoElement('fields-warning', "Last name error: " + err.last_name[0]);
         } else {
             insertIntoElement('fields-warning', "Error: internal server error");
-            console.log(err);
+            console.error(err);
         }
         // toggleHidden('fields-warning');
         toggleHidden('register');

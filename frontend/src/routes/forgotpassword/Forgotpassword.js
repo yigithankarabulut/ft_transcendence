@@ -1,4 +1,4 @@
-import { forgotpasswordUrl } from "../../contants/contants.js";
+import { forgotpasswordUrl } from "../../constants/constants.js";
 
 export async function fetchForgotpassword() {
 	document.querySelector('form').addEventListener('submit', async function(event) {

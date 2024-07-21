@@ -2,7 +2,7 @@ import { navigateTo } from "../../utils/navTo.js";
 
 export async function fetchLocaltournament() {
     if (!localStorage.getItem("access_token")) {
-        console.log("No access token found");
+
         navigateTo("/login");
         } else {
             const canvas = document.getElementById('gameCanvas');
@@ -174,7 +174,6 @@ export async function fetchLocaltournament() {
                     matchWinners.push(winner);
                 }
                 currentMatch++;
-                console.log("current match is", currentMatch);
                 if (currentMatch === 1) {
                     tournamentInfo.innerHTML += `<br>${winner} wins!<br>Next match: ${players[2]} vs ${players[3]}`;
                     setTimeout(startMatch, 3000);

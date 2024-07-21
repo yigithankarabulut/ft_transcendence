@@ -58,7 +58,7 @@ export const router = async () => {
             module[routeFunction]();
         }
     } catch (err) {
-        console.log("Error while render/routing component:", err);
+        console.error("Error while render/routing component:", err);
     }
 }
 
