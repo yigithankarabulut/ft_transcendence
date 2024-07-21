@@ -8,6 +8,8 @@ services:
       dockerfile: Dockerfile
       args:
         - NGINX_SSL_CN=${NGINX_SSL_CN}
+    environment:
+      - SERVER_NAME=${SERVER_NAME}
     depends_on:
       - apigateway
       - bucketservice

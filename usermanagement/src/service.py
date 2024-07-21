@@ -36,10 +36,6 @@ class UserManagementService(IUserManagementService):
             new_user = self.repository.get_by_username(user.username)
             if new_user:
                 return BaseResponse(True, "Username already exists", None).res()
-        if data.phone != user.phone:
-            new_user = self.repository.get_by_phone(user.phone)
-            if new_user:
-                return BaseResponse(True, "Phone already exists", None).res()
         if data.email != user.email:
             if data.oauth_users > 0:
                 return BaseResponse(True, "You logged in with oauth provider. You can't change your email", None).res()
@@ -50,7 +46,6 @@ class UserManagementService(IUserManagementService):
         data.first_name = user.first_name
         data.last_name = user.last_name
         data.username = user.username
-        data.phone = user.phone
         data.email = user.email
         new_users = self.repository.update(data)
         if not new_users:
@@ -279,6 +274,8 @@ class UserManagementService(IUserManagementService):
         user = self.repository.get_by_email(email)
         if not user:
             return BaseResponse(True, "User not found", None).res()
+        if user.oauth_users > 0:
+            return BaseResponse(True, "OAuth user can't reset password", None).res()
         if user.reset_password_token:
             err = check_token_validity(user.reset_password_token)
             if err is None:
@@ -320,6 +317,8 @@ class UserManagementService(IUserManagementService):
         user = self.repository.get_by_id(id)
         if not user:
             return BaseResponse(True, "User not found", None).res()
+        if user.oauth_users > 0:
+            return BaseResponse(True, "OAuth user can't change password", None).res()
         if user.password != sha256(req.get("old_password").encode()).hexdigest():
             return BaseResponse(True, "Invalid password", None).res()
 

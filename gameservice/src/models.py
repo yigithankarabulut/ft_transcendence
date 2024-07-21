@@ -20,8 +20,6 @@ class Game(models.Model):
     player2 = models.CharField(max_length=100) # player2 (user_id)
     player1_score = models.IntegerField(default=0) # player1_score
     player2_score = models.IntegerField(default=0) # player2_score
-    winner = models.CharField(max_length=100, blank=True, null=True)  # winner (user_id)
-    loser = models.CharField(max_length=100, blank=True, null=True)  # loser (user_id)
 
 
 class Player(models.Model):

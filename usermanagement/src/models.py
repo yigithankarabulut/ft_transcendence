@@ -11,7 +11,6 @@ class UserManagement(models.Model):
     password = models.CharField(null=True, max_length=128)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=100)
     email = models.EmailField(max_length=100, unique=True)
     oauth_users = models.IntegerField(default=0)
     email_verified = models.BooleanField(default=False)

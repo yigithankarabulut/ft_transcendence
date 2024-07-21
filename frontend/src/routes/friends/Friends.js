@@ -73,12 +73,6 @@ export async function fetchFriends() {
                             </div>
                         </td>
                         <td>
-                            <div class="widget-26-job-info">
-                                <p class="type m-0">Email: ${user_res.email}</p>
-                                <p class="text-muted m-0">Phone: <span class="location">${user_res.phone}</span></p>
-                            </div>
-                        </td>
-                        <td>
                             <div class="widget-26-job-salary">ID: ${user_res.id}</div>
                         </td>
                         <td>

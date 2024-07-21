@@ -36,6 +36,7 @@ class Pong(AsyncWebsocketConsumer):
         super().__init__(*args, **kwargs)
         self.room_id = None
         self.access_token = None
+        self.username = None
 
     async def connect(self):
         # burada oda idsi aliniyor url den yaninda kullanici adi alinacak sonuc olarak statlar frontende donulecek

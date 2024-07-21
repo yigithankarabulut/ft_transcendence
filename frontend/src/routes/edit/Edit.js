@@ -32,21 +32,18 @@ export async function fetchEdit() {
         document.querySelector("input[name='first-name']").value = user.first_name;
         document.querySelector("input[name='user-name']").value = user.username;
         document.querySelector("input[name='last-name']").value = user.last_name;
-        document.querySelector("input[name='phone']").value = user.phone;
         document.querySelector("input[name='email']").value = user.email;
 
         document.getElementById("save-button").addEventListener("click", async () => {
             const userName = document.querySelector("input[name='user-name']").value;
             const firstName = document.querySelector("input[name='first-name']").value;
             const lastName = document.querySelector("input[name='last-name']").value;
-            const phone = document.querySelector("input[name='phone']").value;
             const email = document.querySelector("input[name='email']").value;
             const fields_warning = document.getElementById('fields-warning');
 
             let body = {
                 first_name: firstName,
                 last_name: lastName,
-                phone: phone,
                 username: userName,
                 email: email,
             };
@@ -93,8 +90,6 @@ export async function fetchEdit() {
                         insertIntoElement('fields-warning', "Error: " + err.error);
                     } else if (err.username) {
                         insertIntoElement('fields-warning', "Username error: " + err.username);
-                    } else if (err.phone) {
-                        insertIntoElement('fields-warning', "Phone error: " + err.phone);
                     } else if (err.first_name) {
                         insertIntoElement('fields-warning', "First name error: " + err.first_name);
                     } else if (err.last_name) {

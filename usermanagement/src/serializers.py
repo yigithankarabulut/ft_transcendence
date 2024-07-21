@@ -12,7 +12,6 @@ class CreateManagementSerializer(serializers.Serializer):
     last_name = serializers.CharField(required=True, min_length=3, max_length=100)
     username = serializers.CharField(required=True, min_length=3, max_length=20)
     email = serializers.EmailField(required=True)
-    phone = serializers.CharField(required=True, min_length=10, max_length=15)
 
     def bind(self, validated_data):
         return UserManagement(**validated_data)
@@ -45,7 +44,6 @@ class ManagementSerializer(serializers.Serializer):
             "last_name": instance.last_name,
             "username": instance.username,
             "email": instance.email,
-            "phone": instance.phone,
         }
     
     def single_representation_oauth(self, instance):
@@ -75,7 +73,6 @@ class RegisterSerializer(serializers.Serializer):
     first_name = serializers.CharField(required=True, min_length=3, max_length=100)
     last_name = serializers.CharField(required=True, min_length=3, max_length=100)
     email = serializers.EmailField(required=True)
-    phone = serializers.CharField(required=True, min_length=10, max_length=15)
 
     def bind(self, validated_data):
         return UserManagement(**validated_data)
@@ -113,7 +110,6 @@ class OauthCreateSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     first_name = serializers.CharField(required=True, min_length=3, max_length=100)
     last_name = serializers.CharField(required=True, min_length=3, max_length=100)
-    phone = serializers.CharField(required=False)
     provider = serializers.CharField(required=True)
     provider_user_id = serializers.CharField(required=True)
     access_token = serializers.CharField(required=True)
@@ -140,6 +136,5 @@ class OauthCreateSerializer(serializers.Serializer):
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
             email=validated_data['email'],
-            phone=validated_data['phone']
         )
         return user_management

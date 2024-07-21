@@ -14,4 +14,4 @@ RUN pip3 install -r requirements.txt
 
 EXPOSE 8011
 
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8011"]
+CMD ["daphne", "gameplayservice.asgi:application", "-b", "0.0.0.0", "-p", "8011"]

@@ -14,12 +14,11 @@ form.addEventListener("submit", (e) => {
     const email = document.getElementById("email").value;
     const firstname = document.getElementById("first_name").value;
     const lastname = document.getElementById("last_name").value;
-    const phone = document.getElementById("phone").value;
     const fields_warning = document.getElementById('fields-warning');
     const fields_success = document.getElementById('fields-success');
 
 
-    if (!username || !email  || !password || !firstname || !lastname || !phone)
+    if (!username || !email  || !password || !firstname || !lastname)
     {
         insertIntoElement('fields-warning', "fields shouldn't be empty");
         return;
@@ -39,7 +38,6 @@ form.addEventListener("submit", (e) => {
             password: password,
             first_name: firstname,
             last_name: lastname,
-            phone: phone,
         }),
     })
     .then(res => {
@@ -62,8 +60,6 @@ form.addEventListener("submit", (e) => {
             insertIntoElement('fields-warning', "Username error: " + err.username[0]);
         } else if (err.email) {
             insertIntoElement('fields-warning', "Email error: " + err.email[0]);
-        } else if (err.phone) {
-            insertIntoElement('fields-warning', "Phone error: " + err.phone[0]);
         } else if (err.password) {
             insertIntoElement('fields-warning', "Password error: " + err.password[0]);
         } else if (err.first_name) {

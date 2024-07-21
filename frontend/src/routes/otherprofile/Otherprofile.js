@@ -44,7 +44,7 @@ export async function fetchOtherprofile() {
         document.getElementById("user-name").textContent = user.username;
         document.getElementById("profile-first-name").textContent = user.first_name;
         document.getElementById("profile-last-name").textContent = user.last_name;
-        document.getElementById("phone").textContent = user.phone;
+        document.getElementById("profile-pp-email").textContent = user.email;
         document.getElementById("profile-status").textContent = user_status ? "Online" : "Offline";
 
         // Fetch match history

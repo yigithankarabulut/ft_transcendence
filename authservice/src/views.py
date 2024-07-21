@@ -14,7 +14,7 @@ def generate_access_token(user_id, jti):
     payload = {
         'user_id': user_id,
         'jti': jti,  # unique identifier for the token pair.
-        'exp': datetime.now(tz=timezone.utc) + timedelta(seconds=5),
+        'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=45),
         'iat': datetime.now(tz=timezone.utc)
     }
     access_token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
@@ -171,7 +171,6 @@ class AuthHandler(viewsets.ViewSet):
             'email': user_info.get('email'),
             'first_name': user_info.get('first_name'),
             'last_name': user_info.get('last_name'),
-            'phone': user_info.get('phone'),
             'provider': 'intra',
             'provider_user_id': user_info.get('id'),
             'access_token': oauth_token.get('access_token'),

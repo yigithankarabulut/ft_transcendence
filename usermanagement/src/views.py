@@ -200,7 +200,7 @@ class AuthHandler(viewsets.ViewSet):
         resp = {
             "redirect_url": redirect_url,
         }
-        return Response(resp, status=200, content_type='application/json', headers={'Access-Control-Allow-Origin': '*'})
+        return Response(resp, status=200)
 
     def oauth_user_create(self, request):
         req = OauthCreateSerializer(data=request.data)

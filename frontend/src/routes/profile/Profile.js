@@ -29,7 +29,6 @@ export async function fetchProfile() {
         document.getElementById("user-name").textContent = user.username;
         document.getElementById("profile-first-name").textContent = user.first_name;
         document.getElementById("profile-last-name").textContent = user.last_name;
-        document.getElementById("phone").textContent = user.phone;
         document.getElementById("email").textContent = user.email;
         if (localStorage.getItem("status")) {
             document.getElementById("profile-status").textContent = localStorage.getItem("status");

@@ -52,13 +52,13 @@ class FriendsRepository(IFriendsRepository):
         except:
             return False
         return False
-
+        
     def delete(self, sender_id, receiver_id):
         try:
             fr = Friends.objects.filter(sender_id=sender_id, receiver_id=receiver_id, deleted_at=None).first()
             if fr is None:
                 return False
-            fr.soft_delete()
+            fr.delete()
         except:
             return False
         return True
@@ -76,7 +76,7 @@ class FriendsRepository(IFriendsRepository):
             fr = Friends.objects.filter(sender_id=sender_id, receiver_id=receiver_id, deleted_at=None).first()
             if fr is None:
                 return False
-            fr.soft_delete()
+            fr.delete()
         except:
             return False
         return True
@@ -85,11 +85,11 @@ class FriendsRepository(IFriendsRepository):
         try:
             fr = Friends.objects.filter(sender_id=sender_id, receiver_id=receiver_id).first()
             if not fr:
-                return False
+                return False 
         except:
             return False
         return True
-
+        
     def get_all_friends(self, user_id):
         try:
             senders = Friends.objects.filter(sender_id=user_id, state=1, deleted_at=None).values('receiver_id')
