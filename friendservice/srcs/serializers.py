@@ -19,6 +19,10 @@ class PaginationSerializer(serializers.Serializer):
     limit = serializers.IntegerField(required=False, default=10, min_value=1, max_value=500)
 
 
+class RelationshipSerializer(serializers.Serializer):
+    players = serializers.ListField(child=serializers.CharField(), required=True)
+
+
 class FriendsSerializer(serializers.Serializer):
     @staticmethod
     def single_representation(instance):

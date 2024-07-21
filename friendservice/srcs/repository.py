@@ -39,6 +39,10 @@ class IFriendsRepository(ABC):
     def get_double(self, sender_id, receiver_id):
         pass
 
+    @abstractmethod
+    def get_state_by_id(self, owner_id, friend_id):
+        pass
+
 
 class FriendsRepository(IFriendsRepository):
     def insert(self, sender_id, receiver_id):
@@ -121,3 +125,15 @@ class FriendsRepository(IFriendsRepository):
         if fr2:
             return fr2
         return None
+
+    def get_state_by_id(self, owner_id, friend_id):
+        try:
+            fr = Friends.objects.filter(sender_id=owner_id, receiver_id=friend_id).first()
+            fr2 = Friends.objects.filter(sender_id=friend_id, receiver_id=owner_id).first()
+        except:
+            return -1
+        if fr:
+            return fr.state
+        if fr2:
+            return fr2.state
+        return 5

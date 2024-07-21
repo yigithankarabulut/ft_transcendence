@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
-from .serializers import PaginationSerializer, ReceiverSerializer
+from .serializers import PaginationSerializer, ReceiverSerializer, RelationshipSerializer
 from .service import FriendsService
 from .repository import FriendsRepository
 
@@ -93,3 +93,17 @@ class FriendsHandler(viewsets.ViewSet):
         if err:
             return Response(res, status=500)
         return Response(res, status=200)
+
+    def relationships(self, request) -> Response:
+        id = request.headers.get('id')
+        if not id:
+            return Response({"error": "User ID is required"}, status=400)
+        req = RelationshipSerializer(data=request.data)
+        if not req.is_valid():
+            return Response(req.errors, status=400)
+        players = req.validated_data.get('players')
+        res, err = self.service.get_relationships(id, players)
+        if err:
+            return Response(res, status=500)
+        return Response(res, status=200)
+        

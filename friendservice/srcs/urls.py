@@ -8,5 +8,5 @@ urlpatterns = [
     path('request', FriendsHandler.as_view({'get': 'request'})),
     path('list', FriendsHandler.as_view({'get': 'list'})),
     path('delete', FriendsHandler.as_view({'delete': 'delete'})),
+    path('relationships', FriendsHandler.as_view({'post': 'relationships'})),
 ]
-

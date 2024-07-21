@@ -31,6 +31,10 @@ class IFriendsService(ABC):
     def get_friends(self, user_id, page, limit) -> BaseResponse:
         pass
 
+    @abstractmethod
+    def get_relationships(self, id, players) -> BaseResponse:
+        pass
+
 
 class FriendsService(IFriendsService):
     def __init__(self, repository: IFriendsRepository):
@@ -134,3 +138,14 @@ class FriendsService(IFriendsService):
             "total_records": paginator.count
         }
         return BaseResponse(False, "Friends found", res, paginate_data).res()
+
+    def get_relationships(self, id, players) -> BaseResponse:
+        res = []
+        for player in players:
+            friendship = self.repository.get_state_by_id(id, player)
+            if friendship == -1:
+                return BaseResponse(True, "Failed to get relationship", None).res()
+            res.append({
+                player: friendship
+            })
+        return BaseResponse(False, "Relationships found", res).res()
