@@ -1,8 +1,7 @@
 import { navigateTo } from "../../utils/navTo.js";
 
 export async function fetchLocaltournament() {
-    const access_token = localStorage.getItem("access_token");
-    if (!access_token) {
+    if (!localStorage.getItem("access_token")) {
         console.log("No access token found");
         navigateTo("/login");
         } else {
@@ -11,8 +10,8 @@ export async function fetchLocaltournament() {
             const scoreBoard = document.getElementById('scoreBoard');
             const tournamentInfo = document.getElementById('tournamentInfo');
 
-            scoreBoard.style.color = 'white';
-            tournamentInfo.style.color = 'white';
+            scoreBoard.style.color = 'black';
+            tournamentInfo.style.color = 'black';
 
             let players = [];
             let currentMatch = 0;

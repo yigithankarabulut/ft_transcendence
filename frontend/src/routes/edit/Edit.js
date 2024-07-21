@@ -1,10 +1,9 @@
 import { navigateTo } from "../../utils/navTo.js";
-import { insertIntoElement } from "../../utils/utils.js";
+import { insertIntoElement, RefreshToken } from "../../utils/utils.js";
 import { userDetailUrl, updateUserUrl, pictureUrl, avatarUpdateUrl } from "../../contants/contants.js";
 
 export async function fetchEdit() {
-    const access_token = localStorage.getItem("access_token");
-    if (!access_token) {
+    if (!localStorage.getItem("access_token")) {
         navigateTo("/login");
         return;
     }
@@ -14,7 +13,7 @@ export async function fetchEdit() {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${access_token}`,
+                "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
             }
         });
 
@@ -26,9 +25,8 @@ export async function fetchEdit() {
         const data = await response.json();
         const user = data.data[0];
 
-        document.getElementById("profile-pic").src = pictureUrl + "?id=" + user.id;
 
-
+        document.getElementById("profile-pic").src = pictureUrl + "?id=" + user.id + "&timestamp=" + new Date().getTime();
         document.getElementById("full-name").textContent = `${user.first_name} ${user.last_name}`;
         document.getElementById("user-name").textContent = user.username;
         document.querySelector("input[name='first-name']").value = user.first_name;
@@ -37,7 +35,6 @@ export async function fetchEdit() {
         document.querySelector("input[name='phone']").value = user.phone;
 
         document.getElementById("save-button").addEventListener("click", async () => {
-            const access_token = localStorage.getItem("access_token");
             const userName = document.querySelector("input[name='user-name']").value;
             const firstName = document.querySelector("input[name='first-name']").value;
             const lastName = document.querySelector("input[name='last-name']").value;
@@ -52,24 +49,39 @@ export async function fetchEdit() {
                 email: user.email,
             };
 
-            try {
-                const response = await fetch(updateUserUrl, {
-                    method: "PUT",
+            const postUpdateUserRequest = () => {
+                return fetch(updateUserUrl, {
+                    method: 'PUT',
                     headers: {
-                        "Authorization": `Bearer ${access_token}`,
                         "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
                     },
                     body: JSON.stringify(body),
                 });
+            };
 
+            const handleResponse = response => {
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw errorData;
+                    return response.json().then(errorData => {
+                        if (response.status === 401 && errorData.error === "Token has expired") {
+                            return RefreshToken().then(() => {
+                                return postUpdateUserRequest().then(handleResponse);
+                            });
+                        } else {
+                            throw errorData;
+                        }
+                    });
                 }
-                alert("Profile updated successfully");
-                navigateTo("/profile");
+                return response.json();
+            };
 
-                } catch (err) {
+            postUpdateUserRequest()
+                .then(handleResponse)
+                .then(() => {
+                    alert("Profile updated successfully");
+                    navigateTo("/profile");
+                })
+                .catch(err => {
                     if (err.error) {
                         insertIntoElement('fields-warning', "Error: " + err.error);
                     } else if (err.username) {
@@ -84,7 +96,7 @@ export async function fetchEdit() {
                         insertIntoElement('fields-warning', "Error: internal server error");
                         console.log(err);
                     }
-                }
+                });
         });
 
         document.getElementById("cancel-button").addEventListener("click", () => {
@@ -95,29 +107,45 @@ export async function fetchEdit() {
             navigateTo("/change-password");
         });
 
-        document.getElementById("update-avatar").addEventListener("click", async () => {
+        document.getElementById("update-avatar").addEventListener("click", () => {
             const image = document.getElementById("avatar-image").files[0];
             const formData = new FormData();
             formData.append('image', image);
 
-            try {
-                const res = await fetch(avatarUpdateUrl, {
+            const postAvatarUpdate = () => {
+                return fetch(avatarUpdateUrl, {
                     method: "POST",
                     headers: {
-                        "Authorization": `Bearer ${access_token}`,
+                        "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
                     },
                     body: formData,
                 });
+            };
 
-                if (!res.ok) {
-                    throw new Error("Couldn't update avatar");
+            const handleResponse = response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        if (response.status === 401 && errorData.error === "Token has expired") {
+                            return RefreshToken().then(() => {
+                                return postAvatarUpdate().then(handleResponse);
+                            });
+                        } else {
+                            throw new Error("Couldn't update avatar");
+                        }
+                    });
                 }
-                const data = await res.json();
-                console.log(data);
-                navigateTo("/profile");
-            } catch (err) {
-                console.log(err);
-            }
+                return response.json();
+            };
+
+            postAvatarUpdate()
+                .then(handleResponse)
+                .then(data => {
+                    alert("Avatar updated successfully");
+                    navigateTo("/profile");
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         });
 
     } catch (err) {

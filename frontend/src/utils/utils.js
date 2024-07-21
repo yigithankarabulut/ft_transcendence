@@ -32,7 +32,6 @@ export let userStatuses = [];
 
 export async function onlineStatus() {
     let userId = await CheckAuth();
-    console.log('User ID: ', userId);
     if (!userId) {
         return;
     }
@@ -89,7 +88,14 @@ export function goPagination(totalPages, currentPage, onClick, elementId) {
         event.preventDefault();
         if (currentPage > 1) {
             currentPage--;
-            onClick(currentPage);
+            try {
+                await onClick(currentPage);
+            } catch (error) {
+                if (error.message === "Token has expired") {
+                    await RefreshToken();
+                    await onClick(currentPage);
+                }
+            }
         }
     });
     paginationContainer.appendChild(prevButton);
@@ -99,7 +105,14 @@ export function goPagination(totalPages, currentPage, onClick, elementId) {
         pageButton.innerHTML = `<li class="page-item ${i === currentPage ? "active" : ""}"><a href="#" class="page-link">${i}</a></li>`;
         pageButton.addEventListener("click", async (event) => {
             event.preventDefault();
-            onClick(i);
+            try {
+                await onClick(i);
+            } catch (error) {
+                if (error.message === "Token has expired") {
+                    await RefreshToken();
+                    await onClick(i);
+                }
+            }
         });
         paginationContainer.appendChild(pageButton);
     }
@@ -110,15 +123,21 @@ export function goPagination(totalPages, currentPage, onClick, elementId) {
         event.preventDefault();
         if (currentPage < totalPages) {
             currentPage++;
-            onClick(currentPage);
+            try {
+                await onClick(currentPage);
+            } catch (error) {
+                if (error.message === "Token has expired") {
+                    await RefreshToken();
+                    await onClick(currentPage);
+                }
+            }
         }
     });
     paginationContainer.appendChild(nextButton);
 }
 
 export async function CheckAuth() {
-
-    const access_token = localStorage.getItem("access_token");
+    const access_token = localStorage.getItem("access_token")
     if (!access_token) {
         return false;
     }

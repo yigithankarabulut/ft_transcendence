@@ -11,12 +11,11 @@ export async function fetchGame() {
   localStorage.removeItem("game_id");
   console.log("Gameid: " + game_id);
 
-  const access_token = localStorage.getItem("access_token");
   const response = await fetch(userDetailUrl, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${access_token}`,
+      "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
     }
   });
   if (!response.ok) {
@@ -33,7 +32,7 @@ export async function fetchGame() {
     return;
   }
 
-  var connection = GamePlaySocketUrl + "?room=" + game_id + "?token=" + access_token;
+  var connection = GamePlaySocketUrl + "?room=" + game_id + "?token=" + localStorage.getItem("access_token");
   ws = new WebSocket(connection);
 
 
