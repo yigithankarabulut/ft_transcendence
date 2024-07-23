@@ -22,7 +22,7 @@ class UserManagementHandler(viewsets.ViewSet):
             return Response({'error': 'User id is required'}, status=400)
         res, err = self.service.get(user_id)
         if err:
-            return Response(res, status=500)
+            return Response(res, status=401)
         return Response(res, status=200)
 
     def get_user_by_username(self, request):

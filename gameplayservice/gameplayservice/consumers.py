@@ -36,7 +36,6 @@ class Pong(AsyncWebsocketConsumer):
         super().__init__(*args, **kwargs)
         self.room_id = None
         self.access_token = None
-        self.username = None
 
     async def connect(self):
         query_params = self.scope['query_string'].decode('utf-8')
@@ -62,6 +61,7 @@ class Pong(AsyncWebsocketConsumer):
         if tmp_player_name == None:
             await self.close()
             return
+        logging.error("User %s is line 64 ", tmp_player_name)
 
         try:
             response = requests.get(
@@ -73,7 +73,7 @@ class Pong(AsyncWebsocketConsumer):
                 return
             else:
                 res = response.json()
-                logging.error("check game response: %s", res)
+                logging.error("check game responses: %s", res)
         except Exception as e:
             logging.error("Error: %s", str(e))
 
@@ -104,7 +104,8 @@ class Pong(AsyncWebsocketConsumer):
                 rooms[self.room_id]['game_status'] = 0
                 self.username = tmp_player_name
                 logging.error(rooms[self.room_id])
-            elif len(rooms[self.room_id]) > 1:
+            elif len(rooms[self.room_id]) > 1: # *
+                logging.error("User %s is line 108 ", tmp_player_name)
                 if tmp_player_name == rooms[self.room_id]['padd_left']['username']:
                     await self.close()
                     return
@@ -113,6 +114,8 @@ class Pong(AsyncWebsocketConsumer):
                     'info': padd_right.copy(),
                     'username': tmp_player_name
                 }
+                logging.error("User %s is line 117  ", tmp_player_name)
+                logging.error(rooms[self.room_id])
                 self.username = tmp_player_name
                 await self.start_game(self.room_id)
 
@@ -143,13 +146,13 @@ class Pong(AsyncWebsocketConsumer):
                     'message': 'game_over',
                     'winner': winner,
                     'newGame': event['newGame'],
-                    }))
+                }))
             else:
                 await self.send(text_data=json.dumps({
                     'message': 'game_over',
                     'winner': winner,
                     'newGame': "",
-                    }))
+                }))
 
             await self.channel_layer.group_discard(
                 self.room_id,
@@ -307,6 +310,8 @@ class Pong(AsyncWebsocketConsumer):
 
     async def receive(self, text_data=None, bytes_data=None):
         room_id = self.room_id
+        if room_id not in rooms:
+            return
         if rooms[room_id]['game_status'] != 1:
             return
         if text_data == 'w':
@@ -420,6 +425,7 @@ class Pong(AsyncWebsocketConsumer):
                 del rooms[room_id]
                 break
             await asyncio.sleep(0.025)
+
     async def disconnect_message(self, event):
         room_id = event['message']
         disconnected_user = rooms[room_id]['disconnected_username']
@@ -431,7 +437,7 @@ class Pong(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'message': 'game_over',
             'winner': winner
-            }))
+        }))
         await self.channel_layer.group_discard(
             room_id,
             self.channel_name,

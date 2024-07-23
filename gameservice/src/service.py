@@ -294,7 +294,8 @@ class GameService(IGameService):
 
     def check_game(self, user_id, game_id) -> BaseResponse:
         try:
-            game = Game.objects.get(id=game_id)
+            game = Game.objects.filter(status=0).get(id=game_id)
+            logging.error(game)
         except Game.DoesNotExist:
             return BaseResponse(True, 'Game not found', None).res()
         if game.deleted_at:
