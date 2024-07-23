@@ -64,9 +64,7 @@ export async function onlineStatus() {
         const user = data.data[0];
         userId = user.id;
 
-        // Eğer mevcut bir WebSocket bağlantısı varsa yeni bir bağlantı kurmayın
         if (socket && socket.readyState === WebSocket.OPEN) {
-            // Server'dan online_users listesini iste
             socket.send(JSON.stringify({ type: 'getOnlineUsers' }));
             return;
         }
@@ -100,7 +98,7 @@ export async function onlineStatus() {
         console.error('Error: ', error);
         if (error.message === 'Token has expired') {
             await RefreshToken();
-            return onlineStatus(); // Retry after token refresh
+            return onlineStatus();
         }
     }
 }
@@ -110,7 +108,7 @@ export async function onlineStatus() {
 export function goPagination(totalPages, currentPage, onClick, elementId) {
     const paginationContainer = document.getElementById(elementId);
     paginationContainer.innerHTML = "";
-    // Create previous button
+
     const prevButton = document.createElement("li");
     prevButton.innerHTML = `<li class="page-item ${currentPage === 1 ? "disabled" : ""}"><a href="#" class="page-link">&laquo;</a></li>`;
     prevButton.addEventListener("click", async (event) => {
@@ -128,7 +126,7 @@ export function goPagination(totalPages, currentPage, onClick, elementId) {
         }
     });
     paginationContainer.appendChild(prevButton);
-    // Create page number buttons
+
     for (let i = 1; i <= totalPages; i++) {
         const pageButton = document.createElement("li");
         pageButton.innerHTML = `<li class="page-item ${i === currentPage ? "active" : ""}"><a href="#" class="page-link">${i}</a></li>`;
@@ -145,7 +143,6 @@ export function goPagination(totalPages, currentPage, onClick, elementId) {
         });
         paginationContainer.appendChild(pageButton);
     }
-    // Create next button
     const nextButton = document.createElement("li");
     nextButton.innerHTML = `<li class="page-item ${currentPage === totalPages ? "disabled" : ""}"><a href="#" class="page-link">&raquo;</a></li>`;
     nextButton.addEventListener("click", async (event) => {

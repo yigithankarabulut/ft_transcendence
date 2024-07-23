@@ -25,7 +25,7 @@ form.addEventListener("submit", (e) => {
     }
 
     toggleHidden('register');
-    // toggleHidden('register-spinner');
+
 
     fetch(registerUrl, {
         method: "POST",
@@ -70,9 +70,7 @@ form.addEventListener("submit", (e) => {
             insertIntoElement('fields-warning', "Error: internal server error");
             console.error(err);
         }
-        // toggleHidden('fields-warning');
         toggleHidden('register');
-        // toggleHidden('register-spinner');
     })
 })
 }

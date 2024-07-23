@@ -27,7 +27,6 @@ const route = {
     "/change-password": "fetchChangepassword",
     "/uname": "fetchConflictusername",
     "/404": "fetchAoa",
-    // add more routes here.
 };
 
 export const router = async () => {

@@ -2,7 +2,7 @@ import { navigateTo } from "../../utils/navTo.js";
 import { userStatuses, goPagination, RefreshToken } from "../../utils/utils.js";
 import { userGetByIdUrl, matchHistoryUrl, pictureUrl } from "../../constants/constants.js";
 
-let currentPage = 1; // Current page
+let currentPage = 1;
 let total_pages = 1;
 export async function fetchOtherprofile() {
     if (!localStorage.getItem("access_token")) {
@@ -14,7 +14,6 @@ export async function fetchOtherprofile() {
         const id = urlParams.get('id');
         const user_status = userStatuses.includes(id) ? true : false;
 
-        // Fetch user details
         const fetchUserDetails = async () => {
             const response = await fetch(userGetByIdUrl + "?id=" + id, {
                 method: "GET",

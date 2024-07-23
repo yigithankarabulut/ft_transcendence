@@ -2,7 +2,7 @@ import { navigateTo } from "../../utils/navTo.js";
 import { userStatuses, RefreshToken, goPagination } from "../../utils/utils.js";
 import { searchUrl, friendAdd, pictureUrl, friendRelationshipUrl } from "../../constants/constants.js";
 
-let currentPage = 1; // Current page
+let currentPage = 1;
 let total_pages = 1;
 
 export async function fetchUsers() {
@@ -18,7 +18,7 @@ export async function fetchUsers() {
 
     document.getElementById("search-button").addEventListener("click", async () => {
         const searchValue = document.getElementById("search").value;
-        if (searchValue == "")//TODO: Test Edilecek
+        if (searchValue == "")
         return;
         await fetchUserSearch(searchValue);
     });
@@ -60,10 +60,10 @@ export async function fetchUsers() {
             }
 
             const tableBody = document.querySelector('.widget-26 tbody');
-            tableBody.innerHTML = ''; // Clear previous content
+            tableBody.innerHTML = '';
             const  postData = users.map(user => user.id);
             console.log(postData);
-            const resp = await fetch(friendRelationshipUrl, { //TODO: Access Token
+            const resp = await fetch(friendRelationshipUrl, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -149,9 +149,9 @@ export async function fetchUsers() {
                             event.preventDefault();
                             const button = document.getElementById(`add-friend-button-${user.id}`);
                             button.value = "Pending";
-                            button.disabled = true; // Butonu tıklanamaz hale getirme
-                            button.style.backgroundColor = "yellow"; // Arka planı sarı yapma
-                            button.style.color = "black"; // Metin rengini siyah yapma
+                            button.disabled = true;
+                            button.style.backgroundColor = "yellow";
+                            button.style.color = "black";
                             addUser(user.id);
                         });
                     }
@@ -165,7 +165,7 @@ export async function fetchUsers() {
             console.error(error);
             if (error.message === 'Token has expired') {
                 await RefreshToken();
-                return fetchUserSearch(searchValue); // Retry fetching after token refresh
+                return fetchUserSearch(searchValue); 
             } else {
                 alert(error.message);
             }

@@ -2,7 +2,7 @@ import { navigateTo } from "../../utils/navTo.js";
 import { goPagination, RefreshToken } from "../../utils/utils.js";
 import { gameDetailUrl, joinUrl } from "../../constants/constants.js";
 
-let currentPage = 1; // Current page
+let currentPage = 1; 
 let total_pages = 1;
 
 export async function fetchJoin() {
