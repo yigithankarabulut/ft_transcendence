@@ -104,7 +104,7 @@ class Pong(AsyncWebsocketConsumer):
                 rooms[self.room_id]['game_status'] = 0
                 self.username = tmp_player_name
                 logging.error(rooms[self.room_id])
-            elif len(rooms[self.room_id]) > 1: # *
+            elif len(rooms[self.room_id]) > 1:
                 logging.error("User %s is line 108 ", tmp_player_name)
                 if tmp_player_name == rooms[self.room_id]['padd_left']['username']:
                     await self.close()
@@ -120,6 +120,27 @@ class Pong(AsyncWebsocketConsumer):
                 await self.start_game(self.room_id)
 
     def init_game(self, room_id):
+        try:
+            body = {
+                'game_id': int(self.room_id),
+                'status': 1,
+                'player1': rooms[room_id]['padd_left']['username'],
+                'player2': rooms[room_id]['padd_right']['username'],
+                'player1_score': 0,
+                'player2_score': 0,
+            }
+            response = requests.put(
+                GameUpdate_URL,
+                data=json.dumps(body),
+                headers={
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {self.access_token}',
+                },
+            )
+            if response.status_code != 200:
+                logging.error("Error: %s", response.json())
+        except Exception as e:
+            logging.error(str(e))
         rooms[room_id]['ball'] = {
             'speedX': 10,
             'speedY': 10,
@@ -132,9 +153,6 @@ class Pong(AsyncWebsocketConsumer):
         rooms[room_id]['padd_right']['info']['score'] = 0
         rooms[room_id]['game_status'] = 1
         rooms[room_id]['user_count'] = 2
-        tmp = rooms[room_id]['padd_left']
-        rooms[room_id]['padd_left'] = rooms[room_id]['padd_right']
-        rooms[room_id]['padd_right'] = tmp
 
     async def pong_message(self, event):
         if event['message'] == 'game_over':
@@ -233,10 +251,10 @@ class Pong(AsyncWebsocketConsumer):
 
     def reset_game(self, room_id):
         if rooms[room_id]['ball']['speedX'] > 0:
-            rooms[room_id]['padd_right']['info']['score'] += 1
+            rooms[room_id]['padd_left']['info']['score'] += 1
             rooms[room_id]['ball']['speedX'] = 10
         else:
-            rooms[room_id]['padd_left']['info']['score'] += 1
+            rooms[room_id]['padd_right']['info']['score'] += 1
             rooms[room_id]['ball']['speedX'] = -10
         if rooms[room_id]['padd_left']['info']['score'] == 5 or rooms[room_id]['padd_right']['info']['score'] == 5:
             return
@@ -300,6 +318,8 @@ class Pong(AsyncWebsocketConsumer):
                             'Authorization': f'Bearer {self.access_token}',
                         },
                     )
+                    logging.error("User %s is line 264 ", self.username)
+                    logging.error("User %s is --------->>>>< response %s", self.username, response.json())
                     if response.status_code == 200:
                         res = response.json()
                         logging.error(res)
@@ -357,8 +377,10 @@ class Pong(AsyncWebsocketConsumer):
                     body = {
                         'game_id': int(self.room_id),
                         'status': 2,
-                        'player1_score': int(rooms[room_id]['padd_right']['info']['score']),
-                        'player2_score': int(rooms[room_id]['padd_left']['info']['score']),
+                        'player1': rooms[room_id]['padd_left']['username'],
+                        'player2': rooms[room_id]['padd_right']['username'],
+                        'player1_score': int(rooms[room_id]['padd_left']['info']['score']),
+                        'player2_score': int(rooms[room_id]['padd_right']['info']['score']),
                     }
                     response = requests.put(
                         GameUpdate_URL,
@@ -395,8 +417,10 @@ class Pong(AsyncWebsocketConsumer):
                 body = {
                     'game_id': int(self.room_id),
                     'status': 2,
-                    'player1_score': int(rooms[room_id]['padd_right']['info']['score']),
-                    'player2_score': int(rooms[room_id]['padd_left']['info']['score']),
+                    'player1': rooms[room_id]['padd_left']['username'],
+                    'player2': rooms[room_id]['padd_right']['username'],
+                    'player1_score': int(rooms[room_id]['padd_left']['info']['score']),
+                    'player2_score': int(rooms[room_id]['padd_right']['info']['score']),
                 }
                 response = requests.put(
                     GameUpdate_URL,

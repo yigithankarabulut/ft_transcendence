@@ -20,6 +20,4 @@ EXPOSE 8010
 
 ENTRYPOINT ["sh", "./start.sh"]
 
-# CMD ["gunicorn", "--capture-output", "--bind", "0.0.0.0:8010", "gameservice.wsgi", "--workers=3"]
-
 CMD ["python3", "manage.py", "runserver", "0.0.0.0:8010"]

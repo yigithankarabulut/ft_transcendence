@@ -27,6 +27,11 @@ export async function fetchChangepassword() {
 			return;
 		}
 
+		if (currentPassword.lengh < 8 ) {
+			insertIntoElement('fields-warning', 'Current password should be at least 8 characters');
+			return;
+		}
+
 		let body = {
 			"new_password": newPassword,
 			"old_password": currentPassword,
@@ -77,6 +82,8 @@ export async function fetchChangepassword() {
 					insertIntoElement('fields-warning', "Error: " + err.error);
 				} else if (err.new_password) {
 					insertIntoElement('fields-warning', "Password error: " + err.new_password[0]);
+				} else if (err.old_password) {
+					insertIntoElement('fields-warning', "Password error: " + err.old_password[0]);
 				}
 			});
 	});

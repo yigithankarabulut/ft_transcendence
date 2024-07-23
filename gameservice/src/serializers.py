@@ -18,6 +18,8 @@ class CreateRoomSerializer(serializers.Serializer):
 class UpdateGameSerializer(serializers.Serializer):
     game_id = serializers.IntegerField(required=True)
     status = serializers.IntegerField(required=True, min_value=0, max_value=3)
+    player1 = serializers.CharField(required=False)
+    player2 = serializers.CharField(required=False)
     player1_score = serializers.IntegerField(required=True)
     player2_score = serializers.IntegerField(required=True)
 

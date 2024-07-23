@@ -104,8 +104,29 @@ class GameService(IGameService):
 
     def update_game(self, request) -> BaseResponse:
         game = Game.objects.get(id=request['game_id'])
-        game.player1_score = request['player1_score']
-        game.player2_score = request['player2_score']
+        if request['status'] == 3:
+            game.player1_score = request['player1_score']
+            game.player2_score = request['player2_score']
+            game.status = request['status']
+            game.save()
+            return BaseResponse(False, 'Game updated successfully', None).res()
+
+        player1_username = request['player1']
+        player2_username = request['player2']
+        request['player1'] = self.get_user_by_username(player1_username)['id']
+        request['player2'] = self.get_user_by_username(player2_username)['id']
+
+        if game.player1 != request['player1'] and game.player1 == request['player2']:
+            game.player1 = request['player2']
+            game.player2 = request['player1']
+            game.player1_score = request['player2_score']
+            game.player2_score = request['player1_score']
+        else:
+            game.player1 = request['player1']
+            game.player2 = request['player2']
+            game.player1_score = request['player1_score']
+            game.player2_score = request['player2_score']
+
         game.status = request['status']
         game.save()
         if game.status != 2:
@@ -128,22 +149,13 @@ class GameService(IGameService):
             }
             return BaseResponse(False, 'Game updated successfully', res).res()
         
-        other_players = []
-        players = Player.objects.filter(room=room)
-        for player in players:
-            if player.user_id != game.player1 and player.user_id != game.player2:
-                other_players.append(player.user_id)
-
-        other_game1 = Game.objects.filter(room=room).filter(player1=other_players[0]).filter(player2=other_players[1]).first()
-        other_game2 = Game.objects.filter(room=room).filter(player1=other_players[1]).filter(player2=other_players[0]).first()
-        other_game = None
-        if other_game1:
-            other_game = other_game1
-        elif other_game2:
-            other_game = other_game2
+        other_game1 = Game.objects.filter(room=room, status=0).first()
+        other_game2 = Game.objects.filter(room=room, status=3).first()
         
-        if other_game.status != 0 or other_game.status != 3:
-            other_game = None
+        other_game = other_game1 if other_game1 is not None else None
+        other_game = other_game2 if other_game2 is not None else other_game
+
+        logging.error("other_game is %s", other_game)
 
         if game.player1_score > game.player2_score:
             new_game = Game.objects.create(room=room, status=0, player1=game.player1)
@@ -327,3 +339,15 @@ class GameService(IGameService):
             "lose_count": lose_count,
         }
         return stats
+
+
+    def get_user_by_username(self, username):
+        try:
+            response = requests.get(f"{SERVICE_ROUTES['/user']}/user/get?username={username}")
+        except Exception as e:
+            return BaseResponse(True, str(e), None).res()
+        if response.status_code != 200:
+            return BaseResponse(True, response.json()['error'], None).res()
+        res = response.json()
+        user = res['data'][0]
+        return user
