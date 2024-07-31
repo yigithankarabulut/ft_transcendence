@@ -1,80 +1,69 @@
-# TODO: user search boş gönderilmiycek, form validation. avatar eklenmeden istek atılınca erroru handlela. gameplayde updategame token kaldır. friends ->>><<<<
-# ------ Common Storages Credentials ------
-REDIS_HOST=redis
-REDIS_PORT=6379
-RABBITMQ_HOST=rabbitmq
-RABBITMQ_PORT=5672
-RABBITMQ_DEFAULT_USER=guest
-RABBITMQ_DEFAULT_PASS=guest
+REDIS_HOST=
+REDIS_PORT=
+RABBITMQ_HOST=
+RABBITMQ_PORT=
+RABBITMQ_DEFAULT_USER=
+RABBITMQ_DEFAULT_PASS=
 RABBITMQ_DEFAULT_VHOST=/
-RABBITMQ_QUEUE_NAME=mail-service
+RABBITMQ_QUEUE_NAME=
 
-SERVER_NAME="127.0.0.1"
-FRONTEND_URL="https://127.0.0.1:443"
-NGINX_SSL_CN="127.0.0.1:443"
+SERVER_NAME=""
+FRONTEND_URL=""
+NGINX_SSL_CN=""
 
-# Apigateway TODO: update apigateway cors and allowed hosts settings
-ApiGateway_SECRET_KEY="MySecretKey-ApiGateway-123-ABC-456-DEF"
-ApiGateway_DEBUG=False
+ApiGateway_SECRET_KEY=""
+ApiGateway_DEBUG=
 
-# Gameservice
-GameService_SECRET_KEY="MySecretKey-GameService-123-ABC-456-DEF"
-GameService_DEBUG=True
-GameService_DB_NAME=gamepostgres
-GameService_DB_USER=yigit
-GameService_DB_PASSWORD=yigit
-GameService_DB_HOST=gamepostgres
-GameService_DB_PORT=5432
+GameService_SECRET_KEY=""
+GameService_DEBUG=
+GameService_DB_NAME=
+GameService_DB_USER=
+GameService_DB_PASSWORD=
+GameService_DB_HOST=
+GameService_DB_PORT=
 
-# Authservice TODO: update authservice cors and allowed hosts settings
-AuthService_SECRET_KEY="MySecretKey-AuthService-123-ABC-456-DEF"
-AuthService_DEBUG=False
-INTRA_REDIRECT_URL='https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-dc37cfd139ab23e08bf900d921dfd5e1aaa6d5d5884b8f2d701707e575cc6b36&redirect_uri=https%3A%2F%2F127.0.0.1%3A443%2Fapi%2Fauth%2Fintra%2Fcallback&response_type=code'
-INTRA_UID='u-s4t2ud-dc37cfd139ab23e08bf900d921dfd5e1aaa6d5d5884b8f2d701707e575cc6b36'
-INTRA_SECRET='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'
-INTRA_API_URL="https://api.intra.42.fr"
-INTRA_CALLBACK_URL="https://127.0.0.1:443/api/auth/intra/callback"
+AuthService_SECRET_KEY=""
+AuthService_DEBUG=
+INTRA_REDIRECT_URL=''
+INTRA_UID=''
+INTRA_SECRET=''
+INTRA_API_URL=""
+INTRA_CALLBACK_URL=""
 
-# Bucketservice
-BucketService_SECRET_KEY="MySecretKey-BucketService-123-ABC-456-DEF"
-BucketService_DEBUG=False
-BucketService_DB_NAME=bucketpostgres
-BucketService_DB_USER=yigit
-BucketService_DB_PASSWORD=yigit
-BucketService_DB_HOST=bucketpostgres
-BucketService_DB_PORT=5432
+BucketService_SECRET_KEY=""
+BucketService_DEBUG=
+BucketService_DB_NAME=
+BucketService_DB_USER=
+BucketService_DB_PASSWORD=
+BucketService_DB_HOST=
+BucketService_DB_PORT=
 
-# Friendservice
-FriendService_SECRET_KEY="MySecretKey-FriendService-123-ABC-456-DEF"
-FriendService_DEBUG=False
-FriendService_DB_NAME=friendpostgres
-FriendService_DB_USER=yigit
-FriendService_DB_PASSWORD=yigit
-FriendService_DB_HOST=friendspostgres
-FriendService_DB_PORT=5432
+FriendService_SECRET_KEY=""
+FriendService_DEBUG=
+FriendService_DB_NAME=
+FriendService_DB_USER=
+FriendService_DB_PASSWORD=
+FriendService_DB_HOST=
+FriendService_DB_PORT=
 
-# Gameplayservice
-GamePlayService_SECRET_KEY="MySecretKey-GameplayService-123-ABC-456-DEF"
-GamePlayService_DEBUG=False
+GamePlayService_SECRET_KEY=""
+GamePlayService_DEBUG=
 
-# TODO: Mailservice rabbitmq/host/port/debug/secrkey and smtp server needs to be updated
-MailService_SECRET_KEY="MySecretKey-MailService-123-ABC-456-DEF"
-MailService_DEBUG=False
-MailService_EMAIL_HOST=smtp.gmail.com
-MailService_EMAIL_PORT=587
-MailService_EMAIL_USE_TLS=True
-MailService_EMAIL_HOST_USER=yigithannkarabulutt@gmail.com
-MailService_EMAIL_HOST_PASSWORD=aowjdppvonjvayng
+MailService_SECRET_KEY=""
+MailService_DEBUG=
+MailService_EMAIL_HOST=
+MailService_EMAIL_PORT=
+MailService_EMAIL_USE_TLS=
+MailService_EMAIL_HOST_USER=
+MailService_EMAIL_HOST_PASSWORD=
 
-# Statusservice
-StatusService_SECRET_KEY="MySecretKey-StatusService-123-ABC-456-DEF"
-StatusService_DEBUG=False
+StatusService_SECRET_KEY=""
+StatusService_DEBUG=
 
-# UserManagemen
-UserManagement_SECRET_KEY="MySecretKey-UserManagement-123-ABC-456-DEF"
-UserManagement_DEBUG=False
-UserManagement_DB_NAME=userpostgres
-UserManagement_DB_USER=yigit
-UserManagement_DB_PASSWORD=yigit
-UserManagement_DB_HOST=userpostgres
-UserManagement_DB_PORT=5432
+UserManagement_SECRET_KEY=""
+UserManagement_DEBUG=
+UserManagement_DB_NAME=
+UserManagement_DB_USER=
+UserManagement_DB_PASSWORD=
+UserManagement_DB_HOST=
+UserManagement_DB_PORT=
