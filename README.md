@@ -1,4 +1,4 @@
-# FT_Trasncendence
+# ft_trasncendence
 
 Final project of the Ecole 42 Common Core curriculum. An advanced version of the classic Pong game, built using a microservices architecture with AI opponents, remote multiplayer capabilities, and robust user authentication. Frontend developed with Pure JS as a Single Page Application. Backend developed with Django Rest Framework.
 
@@ -32,14 +32,15 @@ To set up this project, follow these steps:
    ```sh
    git clone https://github.com/yigithankarabulut/ft_transcendence.git
    cd ft_transcendence
+   ```
 
 2. **Edit .env file**\
-  Edit .env files for both frontend and backend with necessary configurations
+  Edit .env file for both frontend and backend with necessary configurations
 
 4. **Run with Docker Compose**
    ```sh
    docker-compose up --build
-   
+   ```
 
 ## Architecture
 Our microservices architecture includes the following components:
