@@ -1,6 +1,6 @@
 # FT_Trasncendence
 
-Ecole 42 Commen Core müfredatının son projesi. Klasik Pong oyununun gelişmiş bir versiyonunu, AI rakipleri, uzaktan çok oyunculu yetenekler ve sağlam kullanıcı kimlik doğrulaması içeren bir mikroservis mimarisi kullanarak oluşturuldu. Frontend Single Page Application şeklinde Pure JS ile geliştirildi. Backend Django Rest Framework ile geliştirildi. 
+Final project of the Ecole 42 Common Core curriculum. An advanced version of the classic Pong game, built using a microservices architecture with AI opponents, remote multiplayer capabilities, and robust user authentication. Frontend developed with Pure JS as a Single Page Application. Backend developed with Django Rest Framework.
 
 Project Subject: https://cdn.intra.42.fr/pdf/pdf/117706/en.subject.pdf
 
@@ -14,7 +14,7 @@ Project Subject: https://cdn.intra.42.fr/pdf/pdf/117706/en.subject.pdf
 This project aims to create an enhanced version of the Pong game with a focus on scalability, security, and advanced gameplay features. By leveraging microservices architecture and modern web technologies, we've built a robust platform that goes beyond the traditional Pong experience.
 
 ## Features
-- **Microservices Architecture**: Backend designed as microservices for improved scalability and maintainability.
+- **Microservices Architecture**: Backend designed as microservices for improved scalability and maintainability. Each service has its own database.
 - **User Management**: Standard user management system with authentication across tournaments.
 - **Remote Authentication**: Implement secure remote authentication for users.
 - **Two-Factor Authentication (2FA)**: Enhanced security with 2FA and JWT (JSON Web Tokens).
