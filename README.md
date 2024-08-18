@@ -1,4 +1,4 @@
-# ft_trasncendence
+# ft_transcendence
 
 Final project of the Ecole 42 Common Core curriculum. An advanced version of the classic Pong game, built using a microservices architecture with AI opponents, remote multiplayer capabilities, and robust user authentication. Frontend developed with Pure JS as a Single Page Application. Backend developed with Django Rest Framework.
 
